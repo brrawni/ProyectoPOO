@@ -1,3 +1,5 @@
+Package LodeRunner;
+
 public class Oro extends Entidad{
     private int valor;
 

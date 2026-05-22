@@ -1,5 +1,6 @@
 package motor;
 
+import java.awt.Graphics2d;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import javax.swing.*;
