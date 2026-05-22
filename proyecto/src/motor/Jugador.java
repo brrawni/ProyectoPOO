@@ -1,5 +1,10 @@
 package motor;
 
+/* 
+Representa al jugador controlado por el usuario.
+Extiende Entidad y agrega el concepto de vidas.
+*/
+
 public abstract class Jugador extends Entidad {
     protected int vidas;
 
