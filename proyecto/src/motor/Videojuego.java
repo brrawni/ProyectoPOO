@@ -7,7 +7,7 @@ import java.awt.Graphics;
 public abstract class Videojuego extends JGame{
     protected int nivelActual;
     protected boolean enEjecucion;
-    protected int nivelActual;
+    protected int puntaje;
 
     public Videojuego(String title, int ancho, int alto) {
         super(title, ancho, alto);
