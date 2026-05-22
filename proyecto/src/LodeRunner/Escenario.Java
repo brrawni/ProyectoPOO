@@ -20,7 +20,7 @@ public class Escenario{
 
     }
     public void cargarNivel(int numeroNivel){
-        
+        numeroNivel = numeroNivel;
     }
     public void actualizarPozos(){
 
