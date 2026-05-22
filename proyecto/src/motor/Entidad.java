@@ -22,14 +22,14 @@ public abstract class Entidad {
         this.visible = true;
     }
 
-    public class obtenerLimites() {
+    public class Rectangle obtenerLimites() {
         return new Rectangle(x, y, ancho, alto);
     }
-    public class obtenerX() {
+    public class int obtenerX() {
         return x;
     }
 
-    public class obtenerY() {
+    public class int obtenerY() {
         return y;
     }
 
