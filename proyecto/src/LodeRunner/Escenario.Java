@@ -1,8 +1,6 @@
-Package LodeRunner;
+package LodeRunner;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
+import java.awt.*;
 import java.util.HashMap;
 
 public class Escenario{
@@ -37,13 +35,22 @@ public class Escenario{
                     case 1: // Ladrillo Común
                         g.setColor(new Color(139, 69, 19)); // Color marrón para el ladrillo
                         g.fillRect(x, y, ancho_bloque, alto_bloque);
+                        g.setColor(Color.BLACK); // Borde estético para distinguir bloques
+                        g.drawRect(x, y, ancho_bloque, alto_bloque);
                         break;  
                     case 3: // Escalera
-                        g.setColor(new Color(139, 69, 19)); // Color marrón para la escalera
-                        g.fillRect(x, y, ancho_bloque, alto_bloque);
+                        g.setColor(Color.BLUE); //Azul para la escalera
+                        g.fillRect(x + 4, y, 4, alto_bloque);
+                        g.fillRect(x + ancho_bloque - 8, y, 4, alto_bloque);
+                        // Un peldaño en el medio
+                        g.fillRect(x + 4, y + (alto_bloque / 2) - 2, ancho_bloque - 8, 4);
                         break;
                     case 4: // Barra/Soga
-                        g.drawImage(sprites.get(4), x, y, ancho_bloque, alto_bloque, null);
+                        g.setColor(Color.WHITE);
+                        g.fillRect(x, y + 4, ancho_bloque, 4);
+                        break;
+                    default:
+                        //no dibujar, pantalla negra
                         break;
                 }
             }
@@ -70,7 +77,10 @@ public class Escenario{
     public void actualizarPozos(){
 
     }
-    public void obtenerTipoBloqueEn(int fila, int columna){
-
+    public int obtenerTipoBloqueEn(int fila, int columna){
+        if (fila >= 0 && fila < matrizMundo.length && columna >= 0 && columna < matrizMundo[0].length){
+            return matrizMundo[fila][columna];
+        }
+        return 1;
     }
 }

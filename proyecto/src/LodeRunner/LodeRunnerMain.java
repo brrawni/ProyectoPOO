@@ -1,4 +1,4 @@
-Package LodeRunner;
+package LodeRunner;
 
 import motor.Videojuego;
 import LodeRunner.Escenario;
