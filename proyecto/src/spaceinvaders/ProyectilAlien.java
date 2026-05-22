@@ -1,6 +1,6 @@
 package spaceinvaders;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import motor.Proyectil;
 
 public class ProyectilAlien extends Proyectil {
@@ -28,7 +28,7 @@ public class ProyectilAlien extends Proyectil {
     }
 
     @Override
-    public void dibujar(Graphics g) {
+    public void dibujar(Graphics2D g) {
         g.fillRect(x, y, ancho, alto);
     }
 }

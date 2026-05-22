@@ -1,6 +1,6 @@
 package spaceinvaders;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import motor.Jugador;
 
 public class CanonJugador extends Jugador {
@@ -45,7 +45,7 @@ public class CanonJugador extends Jugador {
     }
 
     @Override
-    public void dibujar(Graphics g) {
+    public void dibujar(Graphics2D g) {
         // Lógica para dibujar el cañón del jugador
         g.fillRect(x, y, ancho, alto); // Ejemplo de un rectángulo representando al cañón
     }

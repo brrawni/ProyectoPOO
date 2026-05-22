@@ -1,5 +1,6 @@
 package motor;
 
+import java.awt.Graphics2D;
 /*Base abstracta para proyectiles disparados por jugador o enemigos.
 tiene dirección (dx, dy), estado activo, y lógica de impacto.
 */ 
@@ -26,4 +27,5 @@ public abstract class Proyectil extends Entidad {
 
     public abstract void mover();
     public abstract void verificarImpacto();
+    public abstract void dibujar(Graphics2D g);
 }

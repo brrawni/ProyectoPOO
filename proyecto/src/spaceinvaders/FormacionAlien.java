@@ -1,6 +1,6 @@
 package spaceinvaders;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import motor.Enemigo;
 
 public class FormacionAlien {
@@ -55,7 +55,7 @@ public class FormacionAlien {
         }
     }
 
-    public void dibujarFormacion(Graphics g) {
+    public void dibujarFormacion(Graphics2D g) {
         // Lógica para dibujar toda la formación de aliens
         for (Alien[] fila : aliens) {
             for (Alien alien : fila) {
