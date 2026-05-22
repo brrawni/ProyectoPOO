@@ -3,8 +3,9 @@ import motor.Entidad;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
 
-abstract class Videojuego extends JGame {
-    protected int puntaje;
+
+public abstract class Videojuego extends JGame{
+    protected int nivelActual;
     protected boolean enEjecucion;
     protected int nivelActual;
 
