@@ -6,6 +6,7 @@ import java.awt.Graphics;
 public class Alien extends Entidad {
     private int velocidad;
     private boolean direccionDerecha;
+    private int FrameAnimacion;
 
     public Alien(int x, int y, int velocidad) {
         super(x, y);
