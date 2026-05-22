@@ -1,4 +1,4 @@
-package LodeRunner;
+Package LodeRunner;
 
 import java.awt.Graphics2D;
 import motor.Entidad;
