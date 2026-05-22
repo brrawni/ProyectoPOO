@@ -9,14 +9,12 @@ public class Alien extends Entidad {
     public static final int CANGREJO = 1;
     public static final int PULPO = 2;
     private int tipo;
-    
-    private boolean direccionDerecha;
+
     private int FrameAnimacion;
 
-    public Alien(int x, int y, int velocidad) {
-        super(x, y);
-        this.velocidad = velocidad;
-        this.direccionDerecha = true; // Comienza moviéndose hacia la derecha
+    public Alien(int tipo, int x, int y) {
+        super(x, y, 32, 32);
+        this.tipo = tipo;
     }
 
     public void mover() {
@@ -27,9 +25,15 @@ public class Alien extends Entidad {
         }
     }
 
-    public void cambiarDireccion() {
-        direccionDerecha = !direccionDerecha;
+    public void disparar() {
+        // Lógica para disparar un proyectil
     }
+
+    public void actualizar() {
+        // Lógica para actualizar la animación del alien
+    }
+
+
 
     @Override
     public void dibujar(Graphics g) {
