@@ -37,7 +37,7 @@ public abstract class Entidad {
     
     public abstract class boolean detectarColision();
 
-    public abstract class void dibujar(Graphics g);
+    public abstract class void dibujar(Graphics2D g);
 
 }
 
