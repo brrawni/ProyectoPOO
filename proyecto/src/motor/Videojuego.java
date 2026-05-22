@@ -1,7 +1,7 @@
 package motor;
 import java.awt.Graphics;
 
-public class Videojuego {
+public abstract class Videojuego {
     protected int nivelActual;
     protected boolean enEjecucion;
     protected int puntaje;
