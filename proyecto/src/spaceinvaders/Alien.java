@@ -4,7 +4,12 @@ import motor.Entidad;
 import java.awt.Graphics;
 
 public class Alien extends Entidad {
-    private int velocidad;
+
+    public static final int CALAMAR = 0;
+    public static final int CANGREJO = 1;
+    public static final int PULPO = 2;
+    private int tipo;
+    
     private boolean direccionDerecha;
     private int FrameAnimacion;
 
