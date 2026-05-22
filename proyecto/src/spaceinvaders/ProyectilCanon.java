@@ -1,6 +1,6 @@
 package spaceinvaders;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import motor.Proyectil;
 
 public class ProyectilCanon extends Proyectil {
@@ -37,7 +37,7 @@ public class ProyectilCanon extends Proyectil {
     }
 
     @Override
-    public void dibujar(Graphics g) {
+    public void dibujar(Graphics2D g) {
         // Lógica para dibujar el proyectil del cañón
         g.fillRect(x, y, ancho, alto); // Ejemplo de un rectángulo representando al proyectil
     }

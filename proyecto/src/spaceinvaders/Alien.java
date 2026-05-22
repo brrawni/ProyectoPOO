@@ -1,7 +1,7 @@
 package spaceinvaders;
 
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import motor.Enemigo;
 
 public class Alien extends Enemigo {
@@ -56,7 +56,7 @@ public class Alien extends Enemigo {
     
 
     @Override
-    public void dibujar(Graphics g) {
+    public void dibujar(Graphics2D g) {
         // Aquí puedes dibujar el alien usando g.drawImage o g.fillRect, etc.
         g.fillRect(x, y, 40, 30); // Ejemplo de un rectángulo representando al alien
     }

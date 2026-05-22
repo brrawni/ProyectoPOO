@@ -1,7 +1,6 @@
 package motor;
 
-import java.awt.Graphics2d;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -22,22 +21,22 @@ public abstract class Entidad {
         this.visible = true;
     }
 
-    public class Rectangle obtenerLimites() {
+    public Rectangle obtenerLimites() {
         return new Rectangle(x, y, ancho, alto);
     }
-    public class int obtenerX() {
+    public int obtenerX() {
         return x;
     }
 
-    public class int obtenerY() {
+    public int obtenerY() {
         return y;
     }
 
     public abstract void mover();
     
-    public abstract class boolean detectarColision();
+    public abstract boolean detectarColision();
 
-    public abstract class void dibujar(Graphics2D g);
+    public abstract void dibujar(Graphics2D g);
 
 }
 
@@ -122,7 +121,7 @@ abstract class JGame extends GameLoop {
     @Override
     public void draw() {
         // Obtenemos el gráfico del lienzo de Swing de forma segura
-        Graphics g = canvas.getGraphics();
+        Graphics2D g = (Graphics2D) canvas.getGraphics();
         if (g != null) {
             Graphics2D g2d = (Graphics2D) g;
             gameDraw(g2d); // Llamamos al dibujo pasándole el objeto gráfico

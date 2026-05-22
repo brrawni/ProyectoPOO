@@ -1,5 +1,6 @@
 package motor;
 
+import java.awt.Graphics2D;
 /* 
 Representa al jugador controlado por el usuario.
 Extiende Entidad y agrega el concepto de vidas.
@@ -24,4 +25,6 @@ public abstract class Jugador extends Entidad {
     }
 
     public abstract void mover();
+    public abstract boolean detectarColision();
+    public abstract void dibujar(Graphics2D g);
 }
