@@ -1,42 +1,18 @@
 package motor;
+import motor.Entidad;
+import java.awt.Graphics2D;
 import java.awt.Graphics;
 
-public class Videojuego {
-    protected int nivelActual;
-    protected boolean enEjecucion;
+abstract class Videojuego extends JGame {
     protected int puntaje;
+    protected boolean enEjecucion;
+    protected int nivelActual;
 
-    public Videojuego() {
-        this.nivelActual = 1;
-        this.enEjecucion = false;
+    public Videojuego(String title, int ancho, int alto) {
+        super(title, ancho, alto);
         this.puntaje = 0;
-    }
-
-    public void iniciar(){
         this.enEjecucion = true;
-        this.puntaje = 0;
         this.nivelActual = 1;
     }
 
-    public void pausar(){
-        this.enEjecucion = false;
-    }
-
-    public void reanudar() {
-        this.enEjecucion = true;
-    }
-
-    public int obtenerPuntaje() {
-        return puntaje;
-    }
-
-    public void sumarPuntaje(int puntos) {
-        if(puntos > 0){
-            this.puntaje += puntos;
-        }
-    }
-
-    public abstract void actualizar();
-    public abstract void dibujar(Graphics g);
-    public abstract boolean verificarFinJuego();
 }
