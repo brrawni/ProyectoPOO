@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import motor.Enemigo;
 
 public class Alien extends Enemigo {
-
+    private int  direccion = 1;
     public static final int CALAMAR = 0;
     public static final int CANGREJO = 1;
     public static final int PULPO = 2;
@@ -18,12 +18,24 @@ public class Alien extends Enemigo {
         this.tipo = tipo;
     }
 
-    public void mover(int direccion) {
-        if (direccion == 1) {
-            x += velocidad * direccion;
-        }
+    public void bajar(int cantidad) {
+        y += cantidad; // Baja el alien
     }
 
+    public void setVelocidad(float velocidad) {
+        this.velocidad = velocidad;
+    }
+
+    public void setDireccion(int direccion) {
+        this.direccion = direccion;
+    }
+    
+    @Override
+    public void mover() {
+        x += velocidad * direccion;
+    }
+
+    @Override
     public void disparar() {
         // Lógica para disparar un proyectil
     }
@@ -40,6 +52,7 @@ public class Alien extends Enemigo {
         return frameAnimacion < 15 ? 0 : 1; // Retorna 0 o 1 para alternar entre dos frames
     }
 
+    @Override
     public int obtenerPuntaje() {
         // Retorna el puntaje basado en el tipo de alien
         switch (tipo) {
@@ -54,6 +67,11 @@ public class Alien extends Enemigo {
         }
     }
     
+    @Override
+    public boolean detectarColision() {
+        // Lógica para detectar colisiones con proyectiles del jugador
+        return false; // Placeholder
+    }
 
     @Override
     public void dibujar(Graphics2D g) {

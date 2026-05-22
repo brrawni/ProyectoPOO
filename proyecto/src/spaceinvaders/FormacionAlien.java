@@ -1,9 +1,11 @@
 package spaceinvaders;
 
 import java.awt.Graphics2D;
-import motor.Enemigo;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FormacionAlien {
+    private float velocidad = 1.0f; // Velocidad base de movimiento de la formación
     private Alien[][] aliens;
     private int filas;
     private int columnas;
@@ -36,6 +38,7 @@ public class FormacionAlien {
         for (Alien[] fila : aliens) {
             for (Alien alien : fila) {
                 if (alien != null && alien.estaVivo()) {
+                    alien.setVelocidad(velocidad * multiplicadorVelocidad); // Ajusta la velocidad de cada alien
                     alien.mover();
                     if (alien.obtenerX() <= 0 || alien.obtenerX() >=760) { // Suponiendo que el ancho de la pantalla es 760
                         cambioDireccion = true;
@@ -48,7 +51,8 @@ public class FormacionAlien {
             for (Alien[] fila : aliens) {
                 for (Alien alien : fila) {
                     if (alien != null && alien.estaVivo()) {
-                        aliens.mover(direccion); // Mueve el alien en la nueva dirección
+                        alien.setDireccion(direccion); // Mueve el alien en la nueva dirección
+                        alien.mover(); // Mueve el alien en la nueva dirección
                     }
                 }
             }
@@ -89,8 +93,24 @@ public class FormacionAlien {
         return false;
     }
 
+    public void disparoAleatorio(CanonJugador jugador) {
+        // Lógica para que un alien dispare un proyectil de forma aleatoria
+        List<Alien> aliensVivos = new ArrayList<>();
+        for(Alien[] fila : aliens) {
+            for (Alien alien : fila) {
+                if (alien != null && alien.estaVivo()) {
+                    aliensVivos.add(alien);
+                }
+            }
+        }
+        if(!aliensVivos.isEmpty()) {
+            Alien tirador = aliensVivos.get((int)(Math.random() * aliensVivos.size()));
+        }
+    }
+
     public void actualizarVelocidad() {
         int vivos = contarVivos();
-        multiplicadorVelocidad = 1.0f + (10 - vivos) * 0.1f; // Aumenta la velocidad a medida que quedan menos aliens
+        int total = filas * columnas;
+        multiplicadorVelocidad = 1.0f + (total - vivos) * 0.1f; // Aumenta la velocidad a medida que quedan menos aliens
     }
 }
