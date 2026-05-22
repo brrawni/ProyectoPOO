@@ -21,6 +21,22 @@ public abstract class Entidad {
         this.visible = true;
     }
 
+    public class obtenerLimites() {
+        return new Rectangle(x, y, ancho, alto);
+    }
+    public class obtenerX() {
+        return x;
+    }
+    public class obtenerY() {
+        return y;
+    }
+
+    public abstract void mover();
+    
+    public abstract class boolean detectarColision();
+
+    public abstract class void dibujar(Graphics g);
+
 }
 
 
