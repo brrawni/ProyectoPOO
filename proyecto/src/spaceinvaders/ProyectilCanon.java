@@ -12,9 +12,11 @@ public class ProyectilCanon extends Proyectil {
         this.formacion = formacion;
     }
 
-    
-    
     @Override
+    public void mover() {
+        y += dy; // Mueve el proyectil hacia arriba
+    }
+    
     public void actualizar() {
         // Aquí puedes agregar lógica para eliminar el proyectil si sale de la pantalla, etc.
         y += dy;                    // mueve usando dy del padre
