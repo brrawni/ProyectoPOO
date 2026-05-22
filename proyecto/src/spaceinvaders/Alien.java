@@ -10,19 +10,17 @@ public class Alien extends Enemigo {
     public static final int CANGREJO = 1;
     public static final int PULPO = 2;
     private int tipo;
-    private boolean direccionDerecha = true; // Dirección inicial del movimiento
-    private int FrameAnimacion;
+   
+    private int frameAnimacion;
 
     public Alien(int tipo, int x, int y) {
         super(x, y, 32, 32, 1.0f); // Tamaño y velocidad del alien
         this.tipo = tipo;
     }
 
-    public void mover() {
-        if (direccionDerecha) {
-            x += velocidad;
-        } else {
-            x -= velocidad;
+    public void mover(int direccion) {
+        if (direccion == 1) {
+            x += velocidad * direccion;
         }
     }
 
@@ -32,10 +30,14 @@ public class Alien extends Enemigo {
 
     public void actualizar() {
         // Lógica para actualizar la animación del alien
-        FrameAnimacion++;
-        if (FrameAnimacion >= 30) { // Cambia de frame cada 30 actualizaciones
-            FrameAnimacion = 0;
+        frameAnimacion++;
+        if (frameAnimacion >= 30) { // Cambia de frame cada 30 actualizaciones
+            frameAnimacion = 0;
         }
+    }
+
+    public int obtenerFrameAnimacion() {
+        return frameAnimacion < 15 ? 0 : 1; // Retorna 0 o 1 para alternar entre dos frames
     }
 
     public int obtenerPuntaje() {
