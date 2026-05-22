@@ -15,5 +15,4 @@ public abstract class Videojuego extends JGame{
         this.enEjecucion = true;
         this.nivelActual = 1;
     }
-
 }

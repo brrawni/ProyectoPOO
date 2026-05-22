@@ -1,5 +1,6 @@
 Package LodeRunner;
 
+import LodeRunner.Escenario;
 import LodeRunner.Oro;
 import motor.Entidad;
 
