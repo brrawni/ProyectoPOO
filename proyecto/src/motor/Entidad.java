@@ -27,6 +27,7 @@ public abstract class Entidad {
     public class obtenerX() {
         return x;
     }
+
     public class obtenerY() {
         return y;
     }
