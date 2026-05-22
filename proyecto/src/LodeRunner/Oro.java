@@ -1,6 +1,8 @@
-Package LodeRunner;
+package LodeRunner;
 
 import motor.Entidad;
+
+import java.awt.*;
 
 
 public class Oro extends Entidad{
