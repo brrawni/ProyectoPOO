@@ -17,6 +17,8 @@ public class ProyectilCanon extends Proyectil {
         y += dy; // Mueve el proyectil hacia arriba
     }
     
+
+
     public void actualizar() {
         // Aquí puedes agregar lógica para eliminar el proyectil si sale de la pantalla, etc.
         y += dy;                    // mueve usando dy del padre
@@ -24,11 +26,24 @@ public class ProyectilCanon extends Proyectil {
         verificarImpacto();
     }
 
+    @Override
     public void verificarImpacto() {
         for (Alien[] fila : formacion.getAliens()) {
             for (Alien alien : fila) {
                 if (alien != null && alien.estaVivo() && this.obtenerLimites().intersects(alien.obtenerLimites())) {
-                    alien.vivo = false;
+                    alien.morir(); // El alien ha sido impactado
+                    this.desactivar();
+                    return;
+                }
+            }
+        }
+    }
+
+    public void detectarColision(FormacionAlien formacion) {
+        for (Alien[] fila : formacion.getAliens()) {
+            for (Alien alien : fila) {
+                if (alien != null && alien.estaVivo() && this.obtenerLimites().intersects(alien.obtenerLimites())) {
+                    alien.morir(); // El alien ha sido impactado
                     this.desactivar();
                     return;
                 }

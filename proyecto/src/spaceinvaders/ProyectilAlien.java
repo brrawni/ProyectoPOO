@@ -1,3 +1,4 @@
+// ProyectilAlien.java
 package spaceinvaders;
 
 import java.awt.Graphics2D;
@@ -12,10 +13,9 @@ public class ProyectilAlien extends Proyectil {
         this.jugador = jugador;
     }
 
-    @Override
     public void actualizar() {
         y += dy;
-        if (y > 600) desactivar();
+        if (y > 740) desactivar();
         verificarImpacto();
     }
 
@@ -25,6 +25,16 @@ public class ProyectilAlien extends Proyectil {
             jugador.perderVida();
             this.desactivar();
         }
+    }
+
+    @Override
+    public boolean detectarColision() {
+        return jugador != null && this.obtenerLimites().intersects(jugador.obtenerLimites());
+    }
+
+    @Override
+    public void mover() {
+        // El movimiento se maneja en actualizar() usando dy
     }
 
     @Override

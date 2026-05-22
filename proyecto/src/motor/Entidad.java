@@ -1,10 +1,10 @@
 package motor;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 public abstract class Entidad {
     protected int x;

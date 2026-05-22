@@ -27,7 +27,7 @@ public abstract class Enemigo extends Entidad {
 
     public abstract void mover();
     public abstract void disparar();
-    public abstract void obtenerPuntaje();
+    public abstract int obtenerPuntaje();
     public abstract boolean detectarColision();
     public abstract void dibujar(Graphics2D g);
 }
