@@ -16,20 +16,17 @@ public class ProyectilAlien extends Proyectil {
     public void actualizar() {
         y += dy;
         if (y > 740) desactivar();
-        verificarImpacto();
-    }
-
-    @Override
-    public void verificarImpacto() {
-        if (jugador != null && this.obtenerLimites().intersects(jugador.obtenerLimites())) {
-            jugador.perderVida();
-            this.desactivar();
-        }
+        detectarColision();
     }
 
     @Override
     public boolean detectarColision() {
-        return jugador != null && this.obtenerLimites().intersects(jugador.obtenerLimites());
+        if (jugador != null && this.obtenerLimites().intersects(jugador.obtenerLimites())) {
+            jugador.perderVida();
+            this.desactivar();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -39,6 +36,8 @@ public class ProyectilAlien extends Proyectil {
 
     @Override
     public void dibujar(Graphics2D g) {
-        g.fillRect(x, y, ancho, alto);
+        if (estaActivo()) {
+            g.fillRect(x, y, ancho, alto);
+        }
     }
 }
