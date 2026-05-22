@@ -9,6 +9,8 @@ public class FormacionAlien {
     private int columnas;
     private int direccion = 1; // 1 para derecha, -1 para izquierda
     private float multiplicadorVelocidad = 1.0f; // Velocidad de movimiento de la formación
+     // Dirección inicial del movimiento
+
 
     public FormacionAlien(int filas, int columnas) {
         this.filas = filas;
@@ -23,12 +25,31 @@ public class FormacionAlien {
         }
     }
 
+
+    public Alien[][] getAliens() {
+        return aliens;
+    }
+
     public void moverTodos() {
+        boolean cambioDireccion = false;
         // Lógica para mover toda la formación de aliens
         for (Alien[] fila : aliens) {
             for (Alien alien : fila) {
-                if (alien != null) {
+                if (alien != null && alien.estaVivo()) {
                     alien.mover();
+                    if (alien.obtenerX() <= 0 || alien.obtenerX() >=760) { // Suponiendo que el ancho de la pantalla es 760
+                        cambioDireccion = true;
+                    }
+                }
+            }
+        }
+        if (cambioDireccion){
+            direccion *= -1; // Cambia la dirección
+            for (Alien[] fila : aliens) {
+                for (Alien alien : fila) {
+                    if (alien != null && alien.estaVivo()) {
+                        aliens.mover(direccion); // Mueve el alien en la nueva dirección
+                    }
                 }
             }
         }
