@@ -21,39 +21,31 @@ public class ProyectilCanon extends Proyectil {
 
     public void actualizar() {
         // Aquí puedes agregar lógica para eliminar el proyectil si sale de la pantalla, etc.
-        y += dy;                    // mueve usando dy del padre
+        mover();                    // mueve usando dy del padre
         if (y < 0) desactivar();   // si sale de pantalla se destruye
-        verificarImpacto();
+        if(estaActivo()){
+            detectarColision();
+        } // Verifica colisión con los aliens
     }
 
     @Override
-    public void verificarImpacto() {
-        for (Alien[] fila : formacion.getAliens()) {
+    public boolean detectarColision() {
+        for(Alien[] fila : formacion.getAliens()) {
             for (Alien alien : fila) {
                 if (alien != null && alien.estaVivo() && this.obtenerLimites().intersects(alien.obtenerLimites())) {
                     alien.morir(); // El alien ha sido impactado
                     this.desactivar();
-                    return;
+                    return true; //hubo colision
                 }
             }
         }
-    }
-
-    public void detectarColision(FormacionAlien formacion) {
-        for (Alien[] fila : formacion.getAliens()) {
-            for (Alien alien : fila) {
-                if (alien != null && alien.estaVivo() && this.obtenerLimites().intersects(alien.obtenerLimites())) {
-                    alien.morir(); // El alien ha sido impactado
-                    this.desactivar();
-                    return;
-                }
-            }
-        }
+        return false;
     }
 
     @Override
     public void dibujar(Graphics2D g) {
-        // Lógica para dibujar el proyectil del cañón
-        g.fillRect(x, y, ancho, alto); // Ejemplo de un rectángulo representando al proyectil
+        if(estaActivo()) {
+            g.fillRect(x, y, ancho, alto); // Dibuja el proyectil como un rectángulo
+        }
     }
 }

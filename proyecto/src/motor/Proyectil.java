@@ -26,6 +26,6 @@ public abstract class Proyectil extends Entidad {
     }
 
     public abstract void mover();
-    public abstract void verificarImpacto();
+    //public abstract void verificarImpacto();
     public abstract void dibujar(Graphics2D g);
 }

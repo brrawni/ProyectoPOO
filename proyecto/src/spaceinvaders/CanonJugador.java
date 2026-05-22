@@ -22,7 +22,7 @@ public class CanonJugador extends Jugador {
         x -= 5; // Mueve el cañón hacia la izquierda
     }
 
-    public void disparar(FormacionAliens formacion) {
+    public void disparar(FormacionAlien formacion) {
     if (puedeDisparar && proyectil == null) {
         proyectil = new ProyectilCanon(x + ancho / 2, y, formacion);
         puedeDisparar = false;
@@ -34,7 +34,7 @@ public class CanonJugador extends Jugador {
         puedeDisparar = true; // El jugador puede disparar nuevamente
     }
 
-    @Override
+
     public void actualizar() {
         if (proyectil != null) {
             proyectil.actualizar(); // actualiza posición y colisiones
@@ -44,11 +44,21 @@ public class CanonJugador extends Jugador {
             }
         }
     }
+
+    @Override
+    public boolean detectarColision() {
+        return false;
+    }
     
 
     @Override
     public void dibujar(Graphics2D g) {
         // Lógica para dibujar el cañón del jugador
-        g.fillRect(x, y, ancho, alto); // Ejemplo de un rectángulo representando al cañón
+    g.fillRect(x, y, ancho, alto); 
+        
+        // ¡Importante! Si el proyectil existe, el cañón también tiene que mandarlo a dibujarse
+    if (proyectil != null) {
+            proyectil.dibujar(g);
+        }
     }
 }
