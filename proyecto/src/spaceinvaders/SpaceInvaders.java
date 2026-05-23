@@ -1,11 +1,10 @@
 package spaceinvaders;
 
-import java.awt.Graphics2D;
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 import motor.Videojuego;
-import javax.swing.SwingUtilities;
 
 
 public class SpaceInvaders extends Videojuego {
@@ -16,6 +15,7 @@ public class SpaceInvaders extends Videojuego {
     private NaveNodriza nodriza;
 
     //estado del juego
+    private Nivel nivel;
     private int nivelActual = 1;
     private int puntaje = 0; 
     private boolean enEjecucion = true;
@@ -30,6 +30,22 @@ public class SpaceInvaders extends Videojuego {
         super("Space Invaders", ANCHO_PANTALLA, ALTO_PANTALLA);
     }
 
+    private void inicializarNivel(){
+        nivel = new Nivel(nivelActual);
+        nivel.cargar();
+
+        canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 60, 32, 32, 3);
+
+        formacion = new FormacionAlien(5, 11, nivel.obtenerVelocidadAlien());
+
+        nodriza = new NaveNodriza(nivel);
+        escudos = new ArrayList<>();
+        int numEscudos = 4;
+        for(int i=0; i<numEscudos; i++) {
+            escudos.add(new Escudo(150 + i * 150, ALTO_PANTALLA - 150));
+        }
+    }
+
     @Override
     public void gameStartup() {
         inicializarNivel();
@@ -38,7 +54,7 @@ public class SpaceInvaders extends Videojuego {
         ControlTeclado control = new ControlTeclado(canon, formacion, this);
         canvas.addKeyListener(control);
         canvas.setFocusable(true);
-        canvas.requestFocusWindow();
+        canvas.requestFocusInWindow();
     }
 
     @Override
@@ -84,7 +100,7 @@ public class SpaceInvaders extends Videojuego {
 
         //dibujar todo
         canon.dibujar(g);
-        formacion.dibujarTodos(g);
+        formacion.dibujarFormacion(g);
         nodriza.dibujar(g);
         for(Escudo escudo : escudos) {
             escudo.dibujar(g);

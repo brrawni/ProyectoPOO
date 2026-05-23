@@ -7,9 +7,10 @@ public class NaveNodriza extends Enemigo {
     private int contadorDisparos;
     private boolean visible = false;
 
-    public NaveNodriza() {
+    public NaveNodriza(Nivel nivel) {
         super(-50, 40, 60, 30, 2.0f); //arranca fuera de pantalla
         this.contadorDisparos = 0;
+        this.vivo = false;
     }
 
     public void aparecer() {

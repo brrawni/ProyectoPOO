@@ -14,7 +14,8 @@ public class FormacionAlien {
      // Dirección inicial del movimiento
 
 
-    public FormacionAlien(int filas, int columnas) {
+    public FormacionAlien(int filas, int columnas, float velocidad) {
+        this.velocidad = velocidad;
         this.filas = filas;
         this.columnas = columnas;
         aliens = new Alien[filas][columnas];
