@@ -7,24 +7,48 @@ import java.awt.*;
 
 public class Oro extends Entidad{
     private static final int valor = 250;
-    private boolean recolectado; 
+    private boolean recolectadoPorGuardia;
+    private boolean recolectadoPorHeroe;
+    private Guardia guardiaQueLoLleva;
 
     public Oro(int x, int y, int ancho, int alto) {
         super(x, y, ancho, alto);
-        recolectado = false;
+        recolectadoPorGuardia = false;
+        recolectadoPorHeroe = false;
     }
-    
     @Override
-    public void dibujar(Graphics2D g) {
-        if (!recolectado) {
-            // Aquí dibujas el oro usando el objeto 'g'
+    public void mover(){
+        if (recolectadoPorGuardia){
+            //Logica para que el oro "siga" al guardia
+            this.x = guardiaQueLoLleva.getX();
+            this.y = guardiaQueLoLleva.getY() + 4;
         }
     }
-    public void recolectar() {
-        recolectado = true;
+    @Override
+    public void dibujar(Graphics2D g) {
+        if (!recolectadoPorHeroe) {
+            // Aquí dibujas el oro usando el objeto 'g'
+            g.setColor(Color.YELLOW);
+            g.fillOval(super.x, super.y, super.ancho, super.alto);
+        }
     }
-    public boolean estaRecolectado() {
-        return recolectado;
+    public boolean detectarColision(PersonajeLodeRunner p){
+        return new Rectangle(this.x, this.y, this.ancho, this.alto).intersects(new Rectangle(p.getX(), p.getY(), p.getAncho(), p.getAlto()));
+    }
+
+    @Override
+    public boolean detectarColision() {
+        return false;
+    }
+
+    public void esRecolectado(Guardia guardia, Heroe heroe) {
+        if (guardia != null && detectarColision(guardia) ){
+            this.guardiaQueLoLleva = guardia;
+            recolectadoPorGuardia = true;
+        }
+        else if (heroe != null && detectarColision(heroe)){
+            recolectadoPorHeroe = true;
+        }
     }
     public void setX(int x) {
         super.x = x;
@@ -32,7 +56,11 @@ public class Oro extends Entidad{
     public void setY(int y) {
         super.y = y;
     }
-    public int obtenerValor() {
+    public static int obtenerValor() {
         return valor;
+    }
+    public void serSoltado() {
+        this.recolectadoPorGuardia = false;
+        this.guardiaQueLoLleva = null;
     }
 }

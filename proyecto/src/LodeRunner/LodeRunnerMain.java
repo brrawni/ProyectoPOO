@@ -3,7 +3,10 @@ package LodeRunner;
 import motor.Videojuego;
 import LodeRunner.Escenario;
 import LodeRunner.PersonajeLodeRunner;
-import LodeRunner.Oro;  
+import LodeRunner.Oro;
+
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,7 +19,7 @@ public class LodeRunnerMain extends Videojuego {
     private ArrayList<Guardia> guardianes;
     private ArrayList<Oro> lingotes;
 
-    public LodeRunner() {
+    public LodeRunnerMain() {
         super("Lode Runner - UNLPam Edition", 800, 600);
     }
 
