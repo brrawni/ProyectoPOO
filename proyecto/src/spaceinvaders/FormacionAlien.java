@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FormacionAlien {
+    private List<ProyectilAlien> proyectiles = new ArrayList<>();
     private float velocidad = 1.0f; // Velocidad base de movimiento de la formación
     private Alien[][] aliens;
     private int filas;
@@ -23,7 +24,7 @@ public class FormacionAlien {
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
                 int tipo = (i % 3); // Alternar entre los tipos de alien
-                aliens[i][j] = new Alien(tipo, j * 40, i * 40); // Posicionar cada alien
+                aliens[i][j] = new Alien(tipo, 50+(j * 40),60 +(i * 40)); // Posicionar cada alien
             }
         }
     }
@@ -64,10 +65,14 @@ public class FormacionAlien {
         // Lógica para dibujar toda la formación de aliens
         for (Alien[] fila : aliens) {
             for (Alien alien : fila) {
-                if (alien != null) {
+                if (alien != null && alien.estaVivo()) {
                     alien.dibujar(g);
                 }
             }
+        }
+        g.setColor(java.awt.Color.RED);
+        for (ProyectilAlien p : proyectiles) {
+            p.dibujar(g);
         }
     }
 
@@ -104,8 +109,22 @@ public class FormacionAlien {
                 }
             }
         }
-        if(!aliensVivos.isEmpty()) {
-            Alien tirador = aliensVivos.get((int)(Math.random() * aliensVivos.size()));
+        if(!aliensVivos.isEmpty()){
+            int indiceAleatorio = (int)(Math.random() * aliensVivos.size());
+            Alien tirador = aliensVivos.get(indiceAleatorio);
+            proyectiles.add(new ProyectilAlien(tirador.obtenerX()+15, tirador.obtenerY()+30, jugador));
+        }
+    }
+
+    public void actualizarProyectiles() {
+        // Recorremos la lista al revés para poder borrar proyectiles sin que salte error
+        for (int i = proyectiles.size() - 1; i >= 0; i--) {
+            ProyectilAlien p = proyectiles.get(i);
+            p.actualizar(); // Esto lo mueve y chequea si te dio a vos
+
+            if (!p.estaActivo()) {
+                proyectiles.remove(i); // Si chocó o salió de pantalla, lo borramos
+            }
         }
     }
 
