@@ -5,7 +5,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import motor.Videojuego;
-import java.awt.event.KeyEvent;
+import javax.swing.SwingUtilities;
 
 
 public class SpaceInvaders extends Videojuego {
@@ -63,7 +63,7 @@ public class SpaceInvaders extends Videojuego {
             nodriza.aparecer(); // Aparece desde la izquierda
             ticksNaveNodriza = 0;
         }
-        naveNodriza.actualizar();
+        nodriza.actualizar();
 
         //verificar fin de juego
         if(verificarFinJuego()) {
@@ -85,7 +85,7 @@ public class SpaceInvaders extends Videojuego {
         //dibujar todo
         canon.dibujar(g);
         formacion.dibujarTodos(g);
-        naveNodriza.dibujar(g);
+        nodriza.dibujar(g);
         for(Escudo escudo : escudos) {
             escudo.dibujar(g);
         }
