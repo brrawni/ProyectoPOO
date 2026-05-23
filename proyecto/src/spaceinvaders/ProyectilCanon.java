@@ -48,4 +48,20 @@ public class ProyectilCanon extends Proyectil {
             g.fillRect(x, y, ancho, alto); // Dibuja el proyectil como un rectángulo
         }
     }
+
+    public void verificarImpacto() {
+    // 1. contra aliens
+        for (Alien[] fila : formacion.getAliens()) {
+            for (Alien alien : fila) {
+                if (alien != null && alien.estaVivo() && obtenerLimites().intersects(alien.obtenerLimites())) {
+                    alien.morir();
+                    desactivar();
+                    return;
+                }
+            }
+        }
+    // 2. contra nave nodriza (se agrega cuando tengamos PartidaSpaceInvaders)
+    // 3. contra escudos (se agrega cuando tengamos PartidaSpaceInvaders)
+    }
+
 }
