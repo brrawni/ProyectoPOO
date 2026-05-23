@@ -1,8 +1,7 @@
 package motor;
 
-import java.awt.Graphics2d;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.*;
+import java.awt.Graphics2D;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
@@ -22,22 +21,22 @@ public abstract class Entidad {
         this.visible = true;
     }
 
-    public class Rectangle obtenerLimites() {
+    public Rectangle obtenerLimites() {
         return new Rectangle(x, y, ancho, alto);
     }
-    public class int obtenerX() {
+    public int obtenerX() {
         return x;
     }
 
-    public class int obtenerY() {
+    public int obtenerY() {
         return y;
     }
 
     public abstract void mover();
     
-    public abstract class boolean detectarColision();
+    public abstract boolean detectarColision();
 
-    public abstract class void dibujar(Graphics2D g);
+    public abstract void dibujar(Graphics2D g);
 
 }
 
