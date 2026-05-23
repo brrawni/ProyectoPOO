@@ -1,13 +1,16 @@
 package spaceinvaders;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import motor.Videojuego;
+import java.awt.image.BufferStrategy;
+
 
 
 public class SpaceInvaders extends Videojuego {
+    private BufferedImage buffer;
     //entidades principales del juego
     private FormacionAlien formacion;
     private CanonJugador canon;
@@ -31,10 +34,11 @@ public class SpaceInvaders extends Videojuego {
     }
 
     private void inicializarNivel(){
+        buffer = new BufferedImage(ANCHO_PANTALLA, ALTO_PANTALLA, BufferedImage.TYPE_INT_ARGB);
         nivel = new Nivel(nivelActual);
         nivel.cargar();
 
-        canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 60, 32, 32, 3);
+        canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 80, 32, 32, 3);
 
         formacion = new FormacionAlien(5, 11, nivel.obtenerVelocidadAlien());
 
@@ -54,6 +58,7 @@ public class SpaceInvaders extends Videojuego {
         ControlTeclado control = new ControlTeclado(canon, formacion, this);
         canvas.addKeyListener(control);
         canvas.setFocusable(true);
+        canvas.requestFocus();
         canvas.requestFocusInWindow();
     }
 
@@ -67,6 +72,7 @@ public class SpaceInvaders extends Videojuego {
         // Mover la formación de aliens y actualizar su velocidad
         formacion.moverTodos();
         formacion.actualizarVelocidad();
+        formacion.actualizarProyectiles();
 
         //disparo aleatorio de aliens
         if(Math.random() < 0.02){ //probabilidad de disparo de aliens (2% por frame creo)
@@ -90,13 +96,53 @@ public class SpaceInvaders extends Videojuego {
         if(formacion.contarVivos() == 0) {
             siguienteNivel();
         }
+
+        try {
+            Thread.sleep(16);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void gameDraw(Graphics2D g) {
+        if (buffer == null) return;
+        Graphics2D g2d = buffer.createGraphics();
         // Dibujar fondo
+        g2d.setColor(Color.BLACK);
+        g2d.fillRect(0,0,ANCHO_PANTALLA, ALTO_PANTALLA);
+
+        // C. Pintamos entidades en blanco
+        g2d.setColor(Color.WHITE);
+        canon.dibujar(g2d);
+        formacion.dibujarFormacion(g2d);
+        nodriza.dibujar(g2d);
+
+        // D. Los escudos se dibujan con su propio color
+        for(Escudo escudo : escudos) {
+            escudo.dibujar(g2d);
+        }
+
+        // E. HUD
+        g2d.setColor(Color.WHITE);
+        g2d.drawString("Puntaje: " + puntaje, 20, 20);
+        g2d.drawString("Vidas: " + canon.obtenerVidas(), ANCHO_PANTALLA - 100, 20);
+        g2d.drawString("Nivel: " + nivelActual, ANCHO_PANTALLA / 2 - 30, 20);
+
+        if(!enEjecucion) {
+            g2d.setColor(Color.RED);
+            g2d.drawString("GAME OVER", ANCHO_PANTALLA / 2 - 40, ALTO_PANTALLA / 2);
+        }
+
+        // F. Descartamos el pincel temporal
+        g2d.dispose();
+
+        // G. ¡Pegamos la imagen terminada en la pantalla! Cero parpadeos.
+        g.drawImage(buffer, 0, 0, null);
         g.setColor(Color.BLACK);
         g.fillRect(0,0,ANCHO_PANTALLA, ALTO_PANTALLA);
+
+        g.setColor(Color.WHITE);
 
         //dibujar todo
         canon.dibujar(g);
@@ -118,6 +164,7 @@ public class SpaceInvaders extends Videojuego {
             g.drawString("GAME OVER", ANCHO_PANTALLA / 2 - 40, ALTO_PANTALLA / 2);
         }
     }
+
 
     @Override
     public void gameShutdown() {

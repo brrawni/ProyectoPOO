@@ -60,7 +60,6 @@ Destruye el segmento golpeado y los adyacentes.
         return true;
     }
 
-    @Override
     public void actualizar() {
         // El escudo no tiene lógica de actualización por sí mismo
     }
@@ -91,5 +90,11 @@ Destruye el segmento golpeado y los adyacentes.
             }
         }
     }
+
+    @Override
+    public void mover(){
+        //no se mueve
+    }
+
     
 }
