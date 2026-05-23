@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import motor.Videojuego;
+import java.awt.event.KeyEvent;
+
 
 public class SpaceInvaders extends Videojuego {
     //entidades principales del juego
@@ -31,6 +33,12 @@ public class SpaceInvaders extends Videojuego {
     @Override
     public void gameStartup() {
         inicializarNivel();
+
+        //registrar control de teclado
+        ControlTeclado control = new ControlTeclado(canon, formacion, this);
+        canvas.addKeyListener(control);
+        canvas.setFocusable(true);
+        canvas.requestFocusWindow();
     }
 
     @Override
@@ -88,5 +96,28 @@ public class SpaceInvaders extends Videojuego {
         g.drawString("Vidas: " + canon.obtenerVidas(), ANCHO_PANTALLA - 100, 20);
         g.drawString("Nivel: " + nivelActual, ANCHO_PANTALLA / 2 - 30, 20);
 
-        verificarColisiones();
+        //pantalla game over
+        if(!enEjecucion) {
+            g.setColor(Color.RED);
+            g.drawString("GAME OVER", ANCHO_PANTALLA / 2 - 40, ALTO_PANTALLA / 2);
+        }
+    }
+
+    @Override
+    public void gameShutdown() {
+        // Aquí puedes liberar recursos si es necesario y guardar el puntaje o estado del juego
+    }
+
+    public void siguienteNivel() {
+        nivelActual++;
+        inicializarNivel(); //entidades con mas velocidad
+    }
+
+    public boolean verificarFinJuego() {
+        return canon.obtenerVidas() <= 0 || formacion.llegoAlSuelo();
+    }
+
+    public void sumarPuntaje(int puntos) {
+        puntaje += puntos;
+    }
 }
