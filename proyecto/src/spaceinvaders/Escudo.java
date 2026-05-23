@@ -36,9 +36,9 @@ public class Escudo extends Entidad {
 Recibe daño en una posición específica de la pantalla.
 Destruye el segmento golpeado y los adyacentes.
 */  
-    public void recibirDano(int xImpacto, int yImpacto) {
-        int col = (xImpacto - x) / TAMAÑO;
-        int fila = (yImpacto - y) / TAMAÑO;
+    public void recibirDano(int px, int py) {
+        int col = (px - x) / TAMAÑO;
+        int fila = (py - y) / TAMAÑO;
 
         for(int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
