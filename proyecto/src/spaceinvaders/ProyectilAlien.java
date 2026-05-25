@@ -29,6 +29,7 @@ public class ProyectilAlien extends Proyectil {
         return false;
     }
 
+    
     @Override
     public void mover() {
         // El movimiento se maneja en actualizar() usando dy

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FormacionAlien {
+    private List<Escudo> escudos; // Para detectar colisiones con los escudos
     private List<ProyectilAlien> proyectiles = new ArrayList<>();
     private float velocidad = 1.0f; // Velocidad base de movimiento de la formación
     private Alien[][] aliens;
@@ -35,31 +36,33 @@ public class FormacionAlien {
     }
 
     public void moverTodos() {
-        boolean cambioDireccion = false;
-        // Lógica para mover toda la formación de aliens
-        for (Alien[] fila : aliens) {
-            for (Alien alien : fila) {
-                if (alien != null && alien.estaVivo()) {
-                    alien.setVelocidad(velocidad * multiplicadorVelocidad); // Ajusta la velocidad de cada alien
-                    alien.mover();
-                    if (alien.obtenerX() <= 0 || alien.obtenerX() >=760) { // Suponiendo que el ancho de la pantalla es 760
-                        cambioDireccion = true;
-                    }
-                }
-            }
-        }
-        if (cambioDireccion){
-            direccion *= -1; // Cambia la dirección
-            for (Alien[] fila : aliens) {
-                for (Alien alien : fila) {
-                    if (alien != null && alien.estaVivo()) {
-                        alien.setDireccion(direccion); // Mueve el alien en la nueva dirección
-                        alien.mover(); // Mueve el alien en la nueva dirección
-                    }
+    boolean cambioDireccion = false;
+
+    for (Alien[] fila : aliens) {
+        for (Alien alien : fila) {
+            if (alien != null && alien.estaVivo()) {
+                alien.setVelocidad(velocidad * multiplicadorVelocidad);
+                alien.setDireccion(direccion); // siempre seteamos la dirección actual
+                alien.mover();
+                if (alien.obtenerX() <= 0 || alien.obtenerX() >= 760) {
+                    cambioDireccion = true;
                 }
             }
         }
     }
+
+    // Solo cambiar dirección y bajar, sin mover de nuevo
+    if (cambioDireccion) {
+        direccion *= -1;
+        for (Alien[] fila : aliens) {
+            for (Alien alien : fila) {
+                if (alien != null && alien.estaVivo()) {
+                    alien.bajar(20);
+                }
+            }
+        }
+    }
+}
 
     public void dibujarFormacion(Graphics2D g) {
         // Lógica para dibujar toda la formación de aliens
@@ -121,6 +124,19 @@ public class FormacionAlien {
         for (int i = proyectiles.size() - 1; i >= 0; i--) {
             ProyectilAlien p = proyectiles.get(i);
             p.actualizar(); // Esto lo mueve y chequea si te dio a vos
+
+            //verificar que golpeo en escudo
+            for (Escudo escudo : escudos) {
+                if (p.obtenerLimites().intersects(escudo.obtenerLimites())) {
+                    escudo.recibirDano(p.obtenerX(), p.obtenerY()); // El escudo recibe daño
+                    p.desactivar(); // El proyectil se destruye
+                    break; // No hace falta seguir chequeando otros escudos
+                }
+            }
+
+             if (!p.estaActivo()) {
+                proyectiles.remove(i); // Si chocó o salió de pantalla, lo borramos
+            }
 
             if (!p.estaActivo()) {
                 proyectiles.remove(i); // Si chocó o salió de pantalla, lo borramos
