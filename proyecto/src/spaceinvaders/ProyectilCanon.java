@@ -24,11 +24,29 @@ public class ProyectilCanon extends Proyectil {
 
     public void actualizar() {
         // Aquí puedes agregar lógica para eliminar el proyectil si sale de la pantalla, etc.
+
         mover();                    // mueve usando dy del padre
+
         if (y < 0) desactivar();   // si sale de pantalla se destruye
+
         if(estaActivo()){
             detectarColision();
         } // Verifica colisión con los aliens
+
+
+        //detectar colision con escudo
+        if (activo && escudos != null) {
+            for (Escudo escudo : escudos) {
+
+                // Le pasamos el rectángulo de la bala al escudo.
+                // Si el escudo devuelve true, significa que rompimos un bloque.
+                if (escudo.recibirImpacto(this.obtenerLimites())) {
+
+                    activo = false; // El proyectil se desactiva
+                    break;          // Salimos del bucle porque la bala ya explotó
+                }
+            }
+        }
     }
 
     @Override

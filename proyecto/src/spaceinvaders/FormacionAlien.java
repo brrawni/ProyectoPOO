@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FormacionAlien {
-    private List<Escudo> escudos; // Para detectar colisiones con los escudos
+    private List<Escudo> escudos = new ArrayList<>(); // Para detectar colisiones con los escudos
     private List<ProyectilAlien> proyectiles = new ArrayList<>();
     private float velocidad = 1.0f; // Velocidad base de movimiento de la formación
     private Alien[][] aliens;
@@ -103,19 +103,23 @@ public class FormacionAlien {
     }
 
     public void disparoAleatorio(CanonJugador jugador) {
-        // Lógica para que un alien dispare un proyectil de forma aleatoria
         List<Alien> aliensVivos = new ArrayList<>();
-        for(Alien[] fila : aliens) {
+        for (Alien[] fila : aliens) {
             for (Alien alien : fila) {
                 if (alien != null && alien.estaVivo()) {
                     aliensVivos.add(alien);
                 }
             }
         }
-        if(!aliensVivos.isEmpty()){
-            int indiceAleatorio = (int)(Math.random() * aliensVivos.size());
-            Alien tirador = aliensVivos.get(indiceAleatorio);
-            proyectiles.add(new ProyectilAlien(tirador.obtenerX()+15, tirador.obtenerY()+30, jugador));
+        if (!aliensVivos.isEmpty()) {
+            int indice = (int)(Math.random() * aliensVivos.size());
+            Alien tirador = aliensVivos.get(indice);
+            proyectiles.add(new ProyectilAlien(
+                    tirador.obtenerX() + 15,
+                    tirador.obtenerY() + 30,
+                    jugador,
+                    escudos  // ← la lista ya la tiene la formación como atributo
+            ));
         }
     }
 
@@ -137,10 +141,6 @@ public class FormacionAlien {
              if (!p.estaActivo()) {
                 proyectiles.remove(i); // Si chocó o salió de pantalla, lo borramos
             }
-
-            if (!p.estaActivo()) {
-                proyectiles.remove(i); // Si chocó o salió de pantalla, lo borramos
-            }
         }
     }
 
@@ -148,5 +148,9 @@ public class FormacionAlien {
         int vivos = contarVivos();
         int total = filas * columnas;
         multiplicadorVelocidad = 1.0f + (total - vivos) * 0.1f; // Aumenta la velocidad a medida que quedan menos aliens
+    }
+
+    public void setEscudos(List<Escudo> escudosDelNivel) {
+        this.escudos = escudosDelNivel;
     }
 }

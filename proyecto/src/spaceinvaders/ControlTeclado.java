@@ -34,6 +34,6 @@ public class ControlTeclado extends KeyAdapter {
     public void procesarEntrada(CanonJugador canon, FormacionAlien formacion) {
         if (izquierda) canon.moverIzquierda();
         if (derecha)   canon.moverDerecha();
-        if (disparo)   canon.disparar(formacion, escudos); // Pasamos la lista de escudos para que el proyectil pueda detectar colisiones
+        if (disparo)   canon.disparar(formacion); // Pasamos la lista de escudos para que el proyectil pueda detectar colisiones
     }
 }
