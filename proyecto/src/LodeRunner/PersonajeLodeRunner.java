@@ -7,10 +7,10 @@ import motor.Entidad;
 import java.awt.*;
 
 public abstract class PersonajeLodeRunner extends Entidad{
-    protected boolean subiendoEscalera;
-    protected boolean colgadoDeBarra;
-    protected boolean enCaidaLibre;
-    protected boolean inmovilizado;
+    protected boolean enEscalera = false;
+    protected boolean colgadoDeBarra = false;
+    protected boolean enCaidaLibre = false;
+    protected boolean inmovilizado = false;
     protected int direccion; //0: izquierda, 1: derecha, 2: arriba, 3: abajo
     protected Escenario escenario;
 
@@ -51,13 +51,24 @@ class Guardia extends PersonajeLodeRunner{
         int filaAbajo = (this.y + this.alto) / 32;
         int columnaAbajo = (this.x + this.ancho) / 32;
         int tipoBloque = escenario.obtenerTipoBloqueEn(filaAbajo, columnaAbajo);
-        if (tipoBloque == 0){
+        if (tipoBloque == 0)
             colision = false;
-        }
-        else {
+        else{
             colision = true;
+            if (tipoBloque == 3){
+                enEscalera = true;
+                direccion = 3;
+            }
+            else if (tipoBloque == 4){
+                colgadoDeBarra = true;
+                direccion = 3;
+            }
+
         }
         return colision;
+    }
+    public boolean detectarColision(Entidad entidad){
+        return new Rectangle(this.x, this.y, this.ancho, this.alto).intersects(new Rectangle(entidad.obtenerX(), entidad.obtenerY(), entidad.obtenerAncho(), entidad.obtenerAlto()));
     }
     @Override
     public void dibujar(Graphics2D g){
@@ -67,17 +78,62 @@ class Guardia extends PersonajeLodeRunner{
 
     }
     public void mover(){
-        if (direccion == 0){
-            //mover izquierda
+        boolean tienePiso = detectarColision();
+        if (!tienePiso && !enEscalera && !colgadoDeBarra){
+            aplicarGravedad();
+            return;
         }
-        else if (direccion == 1){
-            //mover derecha
-        }
-        else if (direccion == 2){
-            //mover arriba
-        }
-        else if (direccion == 3){
-            //mover abajo
+        int columnaIzquierda, columnaDerecha, tipoBloque;
+        int filaCentro = (this.y + this.alto/2) / 32; //si el centro de gravedad del guardia choca contra un bloque
+
+        switch (direccion){
+            case 0:
+                columnaIzquierda = (this.x - 2) / 32; //anticipamos el siguiente paso del guardia
+                tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaIzquierda);
+                if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
+                    this.x -= 2;
+                    if (tipoBloque == 3){
+                        enEscalera = true;
+                        direccion = 2;
+                    }
+                    else{
+                        enEscalera = false;
+                        colgadoDeBarra = false;
+                    }
+                }
+                else{
+                    direccion = 1; //cambiar de direccion a la derecha
+                }
+                break;
+            case 1:
+                columnaDerecha = (this.x + 2) / 32; //anticipamos el siguiente paso del guardia
+                tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaDerecha);
+                if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
+                    this.x += 2;
+                    if (tipoBloque == 3){
+                        enEscalera = true;
+                        direccion = 2;
+                    }
+                    else{
+                        enEscalera = false;
+                        colgadoDeBarra = false;
+                    }
+                }
+                else{
+                    direccion = 0; //cambiar de direccion a la izquierda
+                }
+                break;
+            case 2:
+                if (enEscalera){
+                    this.y -= 2;
+                }
+                break;
+            case 3:
+                if (enEscalera || colgadoDeBarra)
+                    this.y += 2;
+                else
+                    aplicarGravedad();
+                break;
         }
     }
     public void moverAleatoriamente(){
@@ -85,9 +141,13 @@ class Guardia extends PersonajeLodeRunner{
     }
     
     public void robarOro(Oro oro){
-        oroGuardado = oro;
+        if (oro != null && detectarColision(oro)){
+            oroGuardado = oro;
+            oroGuardado.esRecolectado(this, null);
+        }
     }
     public void soltarOro(){
+        oroGuardado.serSoltado();
         oroGuardado = null;
     }
     @Override
