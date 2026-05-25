@@ -24,7 +24,7 @@ public class CanonJugador extends Jugador {
         x -= 5; // Mueve el cañón hacia la izquierda
     }
 
-    public void disparar(FormacionAlien formacion, List<Escudo> escudos) {
+    public void disparar(FormacionAlien formacion) {
     if (puedeDisparar && proyectil == null) {
         proyectil = new ProyectilCanon(x + ancho / 2, y, formacion, escudos); // Crea un nuevo proyectil en la posición del cañón
         puedeDisparar = false;
@@ -62,5 +62,9 @@ public class CanonJugador extends Jugador {
     if (proyectil != null) {
             proyectil.dibujar(g);
         }
+    }
+
+    public void setEscudos(List<Escudo> escudos){
+        this.escudos = escudos;
     }
 }
