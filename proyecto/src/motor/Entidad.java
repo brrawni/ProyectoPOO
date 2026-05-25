@@ -32,6 +32,10 @@ public abstract class Entidad {
         return y;
     }
 
+    public int obtenerAlto(){ return alto; }
+
+    public int obtenerAncho(){ return ancho; }
+
     public abstract void mover();
     
     public abstract boolean detectarColision();

@@ -27,7 +27,7 @@ public class LodeRunnerMain extends Videojuego {
     public void gameStartup() {
         // Acá instanciás tu Escenario, tu Héroe y tus Guardianes
         escenario = new Escenario(32, 32, 1); // Ejemplo de creación del escenario
-        heroe = new Heroe(100, 100, 32, 32); // Ejemplo de creación del héroe
+        heroe = new Heroe(100, 100, 32, 32, escenario); // Ejemplo de creación del héroe
         guardianes = new ArrayList<>();
         lingotes = new ArrayList<>();
         cronometro = new Timer();
