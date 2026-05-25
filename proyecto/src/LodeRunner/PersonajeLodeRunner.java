@@ -11,13 +11,17 @@ public abstract class PersonajeLodeRunner extends Entidad{
     protected boolean colgadoDeBarra;
     protected boolean enCaidaLibre;
     protected boolean inmovilizado;
+    protected int direccion; //0: izquierda, 1: derecha, 2: arriba, 3: abajo
+    protected Escenario escenario;
 
-    public PersonajeLodeRunner(int x, int y, int ancho, int alto){
+    public PersonajeLodeRunner(int x, int y, int ancho, int alto, Escenario escenario){
         super(x, y, ancho, alto);
         super.visible = true;
+        this.escenario = escenario;
     }
     public void aplicarGravedad(){
-
+        this.y += 4; // Cae por gravedad
+        this.direccion = 3; // Mirando hacia abajo
     }
     public abstract void mover();
     public int getX(){
@@ -35,16 +39,25 @@ public abstract class PersonajeLodeRunner extends Entidad{
 }
 
 class Guardia extends PersonajeLodeRunner{
-    private int direccion; // 0: izquierda, 1: derecha, 2: arriba, 3: abajo
     private Oro oroGuardado;
 
-    public Guardia(int x, int y, int ancho, int alto){
-        super(x, y, ancho, alto);
+    public Guardia(int x, int y, int ancho, int alto, Escenario escenario){
+        super(x, y, ancho, alto, escenario);
         super.visible = true;
     }
     @Override
     public boolean detectarColision() {
-        return false;
+        boolean colision = true;
+        int filaAbajo = (this.y + this.alto) / 32;
+        int columnaAbajo = (this.x + this.ancho) / 32;
+        int tipoBloque = escenario.obtenerTipoBloqueEn(filaAbajo, columnaAbajo);
+        if (tipoBloque == 0){
+            colision = false;
+        }
+        else {
+            colision = true;
+        }
+        return colision;
     }
     @Override
     public void dibujar(Graphics2D g){
@@ -67,7 +80,7 @@ class Guardia extends PersonajeLodeRunner{
             //mover abajo
         }
     }
-    public void moverAleatoriamente(Escenario esc){
+    public void moverAleatoriamente(){
 
     }
     
@@ -96,11 +109,10 @@ class Guardia extends PersonajeLodeRunner{
 }
 
 class Heroe extends PersonajeLodeRunner{
-    private int direccion; // 0: izquierda, 1: derecha, 2: arriba, 3: abajo
     private int vidas;
 
-    public Heroe(int x, int y, int ancho, int alto){
-        super(x, y, ancho, alto);
+    public Heroe(int x, int y, int ancho, int alto, Escenario escenario){
+        super(x, y, ancho, alto, escenario);
         super.visible = true;
     }
     @Override
