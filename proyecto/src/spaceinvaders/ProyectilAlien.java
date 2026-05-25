@@ -1,0 +1,43 @@
+// ProyectilAlien.java
+package spaceinvaders;
+
+import java.awt.Graphics2D;
+import motor.Proyectil;
+
+public class ProyectilAlien extends Proyectil {
+
+    private CanonJugador jugador;
+
+    public ProyectilAlien(int x, int y, CanonJugador jugador) {
+        super(x, y, 5, 10, 0, 5.0f);
+        this.jugador = jugador;
+    }
+
+    public void actualizar() {
+        y += dy;
+        if (y > 740) desactivar();
+        detectarColision();
+    }
+
+    @Override
+    public boolean detectarColision() {
+        if (jugador != null && this.obtenerLimites().intersects(jugador.obtenerLimites())) {
+            jugador.perderVida();
+            this.desactivar();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void mover() {
+        // El movimiento se maneja en actualizar() usando dy
+    }
+
+    @Override
+    public void dibujar(Graphics2D g) {
+        if (estaActivo()) {
+            g.fillRect(x, y, ancho, alto);
+        }
+    }
+}
