@@ -5,11 +5,11 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import motor.Videojuego;
-import java.awt.image.BufferStrategy;
 
 
 
 public class SpaceInvaders extends Videojuego {
+    private ControlTeclado teclado;
     private BufferedImage buffer;
     //entidades principales del juego
     private FormacionAlien formacion;
@@ -55,8 +55,8 @@ public class SpaceInvaders extends Videojuego {
         inicializarNivel();
 
         //registrar control de teclado
-        ControlTeclado control = new ControlTeclado(canon, formacion, this);
-        canvas.addKeyListener(control);
+        teclado = new ControlTeclado();
+        canvas.addKeyListener(teclado);
         canvas.setFocusable(true);
         canvas.requestFocus();
         canvas.requestFocusInWindow();
@@ -65,6 +65,9 @@ public class SpaceInvaders extends Videojuego {
     @Override
     public void gameUpdate(double delta) {
         if (!enEjecucion) return;
+
+        teclado.procesarEntrada(canon, formacion);
+        canon.actualizar();
 
         // Actualizar el canon del jugador
         canon.actualizar();

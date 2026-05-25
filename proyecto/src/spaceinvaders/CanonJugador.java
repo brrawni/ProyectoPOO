@@ -1,9 +1,11 @@
 package spaceinvaders;
 
 import java.awt.Graphics2D;
+import java.util.List;
 import motor.Jugador;
 
 public class CanonJugador extends Jugador {
+    private List<Escudo> escudos; // Para detectar colisiones con los escudos
     private ProyectilCanon proyectil;
     private boolean puedeDisparar = true; // Controla si el jugador puede disparar
 
@@ -22,9 +24,9 @@ public class CanonJugador extends Jugador {
         x -= 5; // Mueve el cañón hacia la izquierda
     }
 
-    public void disparar(FormacionAlien formacion) {
+    public void disparar(FormacionAlien formacion, List<Escudo> escudos) {
     if (puedeDisparar && proyectil == null) {
-        proyectil = new ProyectilCanon(x + ancho / 2, y, formacion);
+        proyectil = new ProyectilCanon(x + ancho / 2, y, formacion, escudos); // Crea un nuevo proyectil en la posición del cañón
         puedeDisparar = false;
     }
 }

@@ -1,15 +1,18 @@
 package spaceinvaders;
 
 import java.awt.Graphics2D;
+import java.util.List;
 import motor.Proyectil;
 
 public class ProyectilCanon extends Proyectil {
     float velocidad = -5.0f; // Velocidad del proyectil hacia arriba
     private FormacionAlien formacion;
+    private List<Escudo> escudos;
 
-    public ProyectilCanon(int x, int y, FormacionAlien formacion) {
+    public ProyectilCanon(int x, int y, FormacionAlien formacion, List<Escudo> escudos) {
         super(x, y, 5, 10, 0, -8.0f); // Tamaño y velocidad del proyectil
         this.formacion = formacion;
+        this.escudos = escudos;
     }
 
     @Override
@@ -62,6 +65,12 @@ public class ProyectilCanon extends Proyectil {
         }
     // 2. contra nave nodriza (se agrega cuando tengamos PartidaSpaceInvaders)
     // 3. contra escudos (se agrega cuando tengamos PartidaSpaceInvaders)
+    for (Escudo escudo : escudos) {
+        if (obtenerLimites().intersects(escudo.obtenerLimites())) {
+            escudo.recibirDano(x, y); // El escudo recibe daño
+            desactivar(); // El proyectil se destruye
+            return;
+            }
+        }
     }
-
 }
