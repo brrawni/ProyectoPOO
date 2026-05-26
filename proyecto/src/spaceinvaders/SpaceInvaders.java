@@ -5,11 +5,11 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import motor.Videojuego;
-import java.awt.image.BufferStrategy;
 
 
 
 public class SpaceInvaders extends Videojuego {
+    private ControlTeclado teclado;
     private BufferedImage buffer;
     //entidades principales del juego
     private FormacionAlien formacion;
@@ -48,6 +48,8 @@ public class SpaceInvaders extends Videojuego {
         for(int i=0; i<numEscudos; i++) {
             escudos.add(new Escudo(150 + i * 150, ALTO_PANTALLA - 150));
         }
+        formacion.setEscudos(escudos);
+        canon.setEscudos(escudos);
     }
 
     @Override
@@ -55,8 +57,8 @@ public class SpaceInvaders extends Videojuego {
         inicializarNivel();
 
         //registrar control de teclado
-        ControlTeclado control = new ControlTeclado(canon, formacion, this);
-        canvas.addKeyListener(control);
+        teclado = new ControlTeclado();
+        canvas.addKeyListener(teclado);
         canvas.setFocusable(true);
         canvas.requestFocus();
         canvas.requestFocusInWindow();
@@ -65,6 +67,9 @@ public class SpaceInvaders extends Videojuego {
     @Override
     public void gameUpdate(double delta) {
         if (!enEjecucion) return;
+
+        teclado.procesarEntrada(canon, formacion);
+        canon.actualizar();
 
         // Actualizar el canon del jugador
         canon.actualizar();
@@ -108,22 +113,23 @@ public class SpaceInvaders extends Videojuego {
     public void gameDraw(Graphics2D g) {
         if (buffer == null) return;
         Graphics2D g2d = buffer.createGraphics();
-        // Dibujar fondo
+
+        // 1. Dibujar fondo en el buffer
         g2d.setColor(Color.BLACK);
         g2d.fillRect(0,0,ANCHO_PANTALLA, ALTO_PANTALLA);
 
-        // C. Pintamos entidades en blanco
+        // 2. Pintamos entidades en el buffer
         g2d.setColor(Color.WHITE);
         canon.dibujar(g2d);
         formacion.dibujarFormacion(g2d);
         nodriza.dibujar(g2d);
 
-        // D. Los escudos se dibujan con su propio color
+        // 3. Los escudos
         for(Escudo escudo : escudos) {
             escudo.dibujar(g2d);
         }
 
-        // E. HUD
+        // 4. HUD
         g2d.setColor(Color.WHITE);
         g2d.drawString("Puntaje: " + puntaje, 20, 20);
         g2d.drawString("Vidas: " + canon.obtenerVidas(), ANCHO_PANTALLA - 100, 20);
@@ -134,35 +140,13 @@ public class SpaceInvaders extends Videojuego {
             g2d.drawString("GAME OVER", ANCHO_PANTALLA / 2 - 40, ALTO_PANTALLA / 2);
         }
 
-        // F. Descartamos el pincel temporal
+        // 5. Descartamos el pincel temporal
         g2d.dispose();
 
-        // G. ¡Pegamos la imagen terminada en la pantalla! Cero parpadeos.
+        // 6. ¡Pegamos la imagen terminada en la pantalla de una sola vez!
         g.drawImage(buffer, 0, 0, null);
-        g.setColor(Color.BLACK);
-        g.fillRect(0,0,ANCHO_PANTALLA, ALTO_PANTALLA);
 
-        g.setColor(Color.WHITE);
-
-        //dibujar todo
-        canon.dibujar(g);
-        formacion.dibujarFormacion(g);
-        nodriza.dibujar(g);
-        for(Escudo escudo : escudos) {
-            escudo.dibujar(g);
-        }
-
-        //HUD puntaje y vidas
-        g.setColor(Color.WHITE);
-        g.drawString("Puntaje: " + puntaje, 20, 20);
-        g.drawString("Vidas: " + canon.obtenerVidas(), ANCHO_PANTALLA - 100, 20);
-        g.drawString("Nivel: " + nivelActual, ANCHO_PANTALLA / 2 - 30, 20);
-
-        //pantalla game over
-        if(!enEjecucion) {
-            g.setColor(Color.RED);
-            g.drawString("GAME OVER", ANCHO_PANTALLA / 2 - 40, ALTO_PANTALLA / 2);
-        }
+        // ¡Y LISTO! NO PONGAS NADA MÁS ABAJO DE ESTO.
     }
 
 
