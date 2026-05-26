@@ -27,7 +27,7 @@ public class Oro extends Entidad{
     @Override
     public void dibujar(Graphics2D g) {
         if (!recolectadoPorHeroe) {
-            // Aquí dibujas el oro usando el objeto 'g'
+            // Dibujar oro usando el objeto 'g'
             g.setColor(Color.YELLOW);
             g.fillOval(super.x, super.y, super.ancho, super.alto);
         }

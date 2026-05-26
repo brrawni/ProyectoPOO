@@ -4,10 +4,10 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class Escenario{
-    private int ancho_bloque = 32;
+    private int ancho_bloque;
     private int[][] matrizMundo;
     private HashMap<Point, Long> mapaPozosTemporales;
-    private int alto_bloque = 32; //bloques de 32 pixeles
+    private int alto_bloque;
     private int numeroNivel;
     private boolean escaleraSalidaActiva;
     private HashMap<Integer, Image> sprites;
