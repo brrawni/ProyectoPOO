@@ -31,12 +31,6 @@ public class LodeRunnerMain extends Videojuego {
         guardias = new ArrayList<>();
         lingotes = new ArrayList<>();
         cronometro = new Timer();
-        //Comenzar a añadir guardias
-        for (int numeroGuardias = 10; numeroGuardias > 0; numeroGuardias--){
-            guardias.add(new Guardia((int)(Math.random()*15) * 32, (int)(Math.random()*10) * 32, 32, 64, escenario));
-        }
-        //Añadir lingotes
-        int orosCreados = 0;
         // 1. Spawneo inteligente de Guardias
         int guardiasCreados = 0;
         while (guardiasCreados < 10) {
@@ -54,7 +48,9 @@ public class LodeRunnerMain extends Videojuego {
                 guardiasCreados++;
             }
         }
-        // Spawneo de lingotes
+        //2.Spawneo de lingotes
+        //Añadir lingotes
+        int orosCreados = 0;
         while (orosCreados < 15) {
             int columnaRand = (int)(Math.random() * 14); // Columnas del mapa
             int filaRand = (int)(Math.random() * 9);    // Filas del mapa (sin llegar al fondo)
@@ -77,7 +73,8 @@ public class LodeRunnerMain extends Videojuego {
             g.perseguir(heroe);
             g.mover();
             for (Oro o : lingotes){
-                o.esRecolectado(g, heroe);
+                g.robarOro(o);
+                o.mover();
             }
         }
         try {
@@ -98,7 +95,7 @@ public class LodeRunnerMain extends Videojuego {
         // Dibujamos guardias en azul
         escenario.dibujar(g2);
         g2.setColor(Color.RED); //Heroe de rojo
-        heroe.dibujar(g);
+        heroe.dibujar(g2);
         for (Guardia guardia : guardias){
             g2.setColor(Color.BLUE);
             guardia.dibujar(g2);
