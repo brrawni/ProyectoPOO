@@ -1,22 +1,21 @@
 package LodeRunner;
 
 import motor.Videojuego;
-import LodeRunner.Escenario;
-import LodeRunner.PersonajeLodeRunner;
-import LodeRunner.Oro;
-
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
 public class LodeRunnerMain extends Videojuego {
+    private BufferedImage buffer;
+    //Imagen para cancelar parpadeos
     private int lingotesRestantes;
     private Timer cronometro;
     private Escenario escenario;
     private Heroe heroe;
-    private ArrayList<Guardia> guardianes;
+    private ArrayList<Guardia> guardias;
     private ArrayList<Oro> lingotes;
 
     public LodeRunnerMain() {
@@ -25,22 +24,107 @@ public class LodeRunnerMain extends Videojuego {
 
     @Override
     public void gameStartup() {
+        buffer = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
         // Acá instanciás tu Escenario, tu Héroe y tus Guardianes
         escenario = new Escenario(32, 32, 1); // Ejemplo de creación del escenario
-        heroe = new Heroe(100, 100, 32, 32, escenario); // Ejemplo de creación del héroe
-        guardianes = new ArrayList<>();
+        heroe = new Heroe(1*32, 1*32, 32, 64, escenario); // Ejemplo de creación del héroe
+        guardias = new ArrayList<>();
         lingotes = new ArrayList<>();
         cronometro = new Timer();
+        //Comenzar a añadir guardias
+        for (int numeroGuardias = 10; numeroGuardias > 0; numeroGuardias--){
+            guardias.add(new Guardia((int)(Math.random()*15) * 32, (int)(Math.random()*10) * 32, 32, 64, escenario));
+        }
+        //Añadir lingotes
+        int orosCreados = 0;
+        // 1. Spawneo inteligente de Guardias
+        int guardiasCreados = 0;
+        while (guardiasCreados < 10) {
+            int colRand = (int)(Math.random() * 14); // Columnas de 0 a 13
+            int filaRand = (int)(Math.random() * 8); // Filas de 0 a 7 (evitamos el fondo)
+
+            // Verificamos los 3 bloques involucrados en el cuerpo del guardia
+            int bloqueCabeza = escenario.obtenerTipoBloqueEn(filaRand, colRand);
+            int bloquePies = escenario.obtenerTipoBloqueEn(filaRand + 1, colRand);
+            int bloquePiso = escenario.obtenerTipoBloqueEn(filaRand + 2, colRand);
+
+            // Regla: Cabeza en el aire, pies en el aire, y apoyado en un ladrillo (1) o escalera (3)
+            if (bloqueCabeza == 0 && bloquePies == 0 && (bloquePiso == 1 || bloquePiso == 3)) {
+                guardias.add(new Guardia(colRand * 32, filaRand * 32, 32, 64, escenario));
+                guardiasCreados++;
+            }
+        }
+        // Spawneo de lingotes
+        while (orosCreados < 15) {
+            int columnaRand = (int)(Math.random() * 14); // Columnas del mapa
+            int filaRand = (int)(Math.random() * 9);    // Filas del mapa (sin llegar al fondo)
+
+            int bloqueActual = escenario.obtenerTipoBloqueEn(filaRand, columnaRand);
+            int bloqueDeAbajo = escenario.obtenerTipoBloqueEn(filaRand + 1, columnaRand);
+
+            // Regla de oro: El casillero actual debe ser Aire (0) y el de abajo Ladrillo (1)
+            if (bloqueActual == 0 && bloqueDeAbajo == 1) {
+                lingotes.add(new Oro(columnaRand * 32, filaRand * 32, 32, 32));
+                orosCreados++;
+            }
+        }
     }
 
     @Override
     public void gameUpdate(double delta) {
         // Acá ejecutas las colisiones de las hitboxes y los movimientos
+        for (Guardia g : guardias){
+            g.perseguir(heroe);
+            g.mover();
+            for (Oro o : lingotes){
+                o.esRecolectado(g, heroe);
+            }
+        }
+        try {
+            Thread.sleep(32);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void gameDraw(Graphics2D g) {
-        // Acá dibujas el mapa y los personajes usando el objeto 'g'
+        if (buffer == null)
+            return;
+        // 1. Limpiamos la pantalla entera pintándola de negro
+        Graphics2D g2 = buffer.createGraphics();
+        g2.setColor(Color.BLACK);
+        g2.fillRect(0, 0, 800, 600); // Ajustá al ancho y alto real de la ventana
+        // Dibujamos guardias en azul
+        escenario.dibujar(g2);
+        g2.setColor(Color.RED); //Heroe de rojo
+        heroe.dibujar(g);
+        for (Guardia guardia : guardias){
+            g2.setColor(Color.BLUE);
+            guardia.dibujar(g2);
+        }
+        for (Oro o : lingotes){
+            g2.setColor(Color.YELLOW);
+            o.dibujar(g2);
+        }
+        //lo descartamos
+        g2.dispose();
+        //pegamos la imagen en la pantalla para que no haya parpadeos
+        g.drawImage(buffer, 0, 0, null);
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, 800, 600);
+        //comenzar a dibujar
+        escenario.dibujar(g);
+        g.setColor(Color.RED);
+        heroe.dibujar(g);
+        for (Guardia guardia : guardias){
+            g.setColor(Color.BLUE);
+            guardia.dibujar(g);
+        }
+        for (Oro o : lingotes){
+            g.setColor(Color.YELLOW);
+            o.dibujar(g);
+        }
     }
 
     @Override
