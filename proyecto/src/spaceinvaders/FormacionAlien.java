@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FormacionAlien {
+    private List<Escudo> escudos = new ArrayList<>(); // Para detectar colisiones con los escudos
     private List<ProyectilAlien> proyectiles = new ArrayList<>();
     private float velocidad = 1.0f; // Velocidad base de movimiento de la formación
     private Alien[][] aliens;
@@ -35,31 +36,33 @@ public class FormacionAlien {
     }
 
     public void moverTodos() {
-        boolean cambioDireccion = false;
-        // Lógica para mover toda la formación de aliens
-        for (Alien[] fila : aliens) {
-            for (Alien alien : fila) {
-                if (alien != null && alien.estaVivo()) {
-                    alien.setVelocidad(velocidad * multiplicadorVelocidad); // Ajusta la velocidad de cada alien
-                    alien.mover();
-                    if (alien.obtenerX() <= 0 || alien.obtenerX() >=760) { // Suponiendo que el ancho de la pantalla es 760
-                        cambioDireccion = true;
-                    }
-                }
-            }
-        }
-        if (cambioDireccion){
-            direccion *= -1; // Cambia la dirección
-            for (Alien[] fila : aliens) {
-                for (Alien alien : fila) {
-                    if (alien != null && alien.estaVivo()) {
-                        alien.setDireccion(direccion); // Mueve el alien en la nueva dirección
-                        alien.mover(); // Mueve el alien en la nueva dirección
-                    }
+    boolean cambioDireccion = false;
+
+    for (Alien[] fila : aliens) {
+        for (Alien alien : fila) {
+            if (alien != null && alien.estaVivo()) {
+                alien.setVelocidad(velocidad * multiplicadorVelocidad);
+                alien.setDireccion(direccion); // siempre seteamos la dirección actual
+                alien.mover();
+                if (alien.obtenerX() <= 0 || alien.obtenerX() >= 760) {
+                    cambioDireccion = true;
                 }
             }
         }
     }
+
+    // Solo cambiar dirección y bajar, sin mover de nuevo
+    if (cambioDireccion) {
+        direccion *= -1;
+        for (Alien[] fila : aliens) {
+            for (Alien alien : fila) {
+                if (alien != null && alien.estaVivo()) {
+                    alien.bajar(20);
+                }
+            }
+        }
+    }
+}
 
     public void dibujarFormacion(Graphics2D g) {
         // Lógica para dibujar toda la formación de aliens
@@ -100,19 +103,23 @@ public class FormacionAlien {
     }
 
     public void disparoAleatorio(CanonJugador jugador) {
-        // Lógica para que un alien dispare un proyectil de forma aleatoria
         List<Alien> aliensVivos = new ArrayList<>();
-        for(Alien[] fila : aliens) {
+        for (Alien[] fila : aliens) {
             for (Alien alien : fila) {
                 if (alien != null && alien.estaVivo()) {
                     aliensVivos.add(alien);
                 }
             }
         }
-        if(!aliensVivos.isEmpty()){
-            int indiceAleatorio = (int)(Math.random() * aliensVivos.size());
-            Alien tirador = aliensVivos.get(indiceAleatorio);
-            proyectiles.add(new ProyectilAlien(tirador.obtenerX()+15, tirador.obtenerY()+30, jugador));
+        if (!aliensVivos.isEmpty()) {
+            int indice = (int)(Math.random() * aliensVivos.size());
+            Alien tirador = aliensVivos.get(indice);
+            proyectiles.add(new ProyectilAlien(
+                    tirador.obtenerX() + 15,
+                    tirador.obtenerY() + 30,
+                    jugador,
+                    escudos  // ← la lista ya la tiene la formación como atributo
+            ));
         }
     }
 
@@ -122,7 +129,16 @@ public class FormacionAlien {
             ProyectilAlien p = proyectiles.get(i);
             p.actualizar(); // Esto lo mueve y chequea si te dio a vos
 
-            if (!p.estaActivo()) {
+            //verificar que golpeo en escudo
+            for (Escudo escudo : escudos) {
+                if (p.obtenerLimites().intersects(escudo.obtenerLimites())) {
+                    escudo.recibirDano(p.obtenerX(), p.obtenerY()); // El escudo recibe daño
+                    p.desactivar(); // El proyectil se destruye
+                    break; // No hace falta seguir chequeando otros escudos
+                }
+            }
+
+             if (!p.estaActivo()) {
                 proyectiles.remove(i); // Si chocó o salió de pantalla, lo borramos
             }
         }
@@ -132,5 +148,9 @@ public class FormacionAlien {
         int vivos = contarVivos();
         int total = filas * columnas;
         multiplicadorVelocidad = 1.0f + (total - vivos) * 0.1f; // Aumenta la velocidad a medida que quedan menos aliens
+    }
+
+    public void setEscudos(List<Escudo> escudosDelNivel) {
+        this.escudos = escudosDelNivel;
     }
 }

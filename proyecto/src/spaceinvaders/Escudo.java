@@ -6,9 +6,17 @@ import java.awt.Color;
 
 public class Escudo extends Entidad {
     private boolean[][] segmentos; // Matriz para representar los segmentos del escudo
-    private static final int TAMAÑO = 5; // Tamaño de cada segmento
+    private static final int TAMAÑO = 10; // Tamaño de cada segmento
     private static final int FILAS = 6; // Número de filas de segmentos
     private static final int COLUMNAS = 8; // Número de columnas de segmentos
+
+    private int[][] forma = {
+            {0, 1, 1, 1, 1, 1, 1, 0},
+            {1, 1, 1, 1, 1, 1, 1, 1},
+            {1, 1, 1, 1, 1, 1, 1, 1},
+            {1, 1, 1, 0, 0, 1, 1, 1},
+            {1, 1, 0, 0, 0, 0, 1, 1}
+    };
 
     public Escudo(int x, int y) {
         super(x, y, TAMAÑO * COLUMNAS, TAMAÑO * FILAS);
@@ -75,17 +83,54 @@ Destruye el segmento golpeado y los adyacentes.
         }
     }
 
+    public boolean recibirImpacto(java.awt.Rectangle limitesProyectil) {
+        // Recorremos la matriz cuadradito por cuadradito
+        for (int fila = 0; fila < forma.length; fila++) {
+            for (int col = 0; col < forma[fila].length; col++) {
+
+                // Solo nos importan los bloques que todavía están sanos (1)
+                if (forma[fila][col] == 1) {
+
+                    // Calculamos dónde está dibujado ESTE pequeño cuadradito en la pantalla
+                    int bloqueX = x + (col * TAMAÑO);
+                    int bloqueY = y + (fila * TAMAÑO);
+                    java.awt.Rectangle limitesBloque = new java.awt.Rectangle(bloqueX, bloqueY, TAMAÑO, TAMAÑO);
+
+                    // Verificamos si la bala tocó este cuadradito específico
+                    if (limitesProyectil.intersects(limitesBloque)) {
+
+                        // ¡Boom! Convertimos el bloque en 0 para que desaparezca
+                        forma[fila][col] = 0;
+
+                        // Opcional: Para que se sienta más como Space Invaders,
+                        // podemos hacer que la bala rompa un poquito más alrededor (efecto cráter)
+                        if (fila + 1 < forma.length) forma[fila + 1][col] = 0;
+                        if (col + 1 < forma[fila].length) forma[fila][col + 1] = 0;
+                        if (col - 1 >= 0) forma[fila][col - 1] = 0;
+
+                        // Le avisamos a la bala que impactó para que se desactive
+                        return true;
+                    }
+                }
+            }
+        }
+        // Si la bala pasó por un "agujero" (puros ceros), retorna false y sigue de largo
+        return false;
+    }
+
     @Override
     public void dibujar(Graphics2D g) {
-        g.setColor(Color.GREEN);
-        for (int i = 0; i < FILAS; i++) {
-            for (int j = 0; j < COLUMNAS; j++) {
-                if (segmentos[i][j]) {
-                    g.fillRect(
-                        x + j * TAMAÑO,
-                        y + i * TAMAÑO,
-                        TAMAÑO, TAMAÑO
-                    );
+        g.setColor(Color.GREEN); // El color clásico de los escudos
+
+        // Recorremos la matriz fila por fila, columna por columna
+        for (int fila = 0; fila < forma.length; fila++) {
+            for (int col = 0; col < forma[fila].length; col++) {
+
+                // Solo dibujamos si en esta posición hay un 1 (bloque intacto)
+                if (forma[fila][col] == 1) {
+                    int bloqueX = x + (col * TAMAÑO);
+                    int bloqueY = y + (fila * TAMAÑO);
+                    g.fillRect(bloqueX, bloqueY, TAMAÑO, TAMAÑO);
                 }
             }
         }
