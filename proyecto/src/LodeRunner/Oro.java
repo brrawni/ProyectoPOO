@@ -42,7 +42,7 @@ public class Oro extends Entidad{
     }
 
     public void esRecolectado(Guardia guardia, Heroe heroe) {
-        if (guardia != null && detectarColision(guardia) ){
+        if (guardia != null && guardiaQueLoLleva == null && detectarColision(guardia) ){
             this.guardiaQueLoLleva = guardia;
             recolectadoPorGuardia = true;
         }
