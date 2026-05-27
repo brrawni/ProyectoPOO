@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,7 +20,8 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     private Heroe heroe;
     private ArrayList<Guardia> guardias;
     private ArrayList<Oro> lingotes;
-
+    private boolean mirandoIzq;
+    private boolean mirandoDer;
     public LodeRunnerMain() {
         super("Lode Runner - UNLPam Edition", 800, 600);
     }
@@ -78,6 +78,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     public void gameUpdate(double delta) {
         // Acá ejecutas las colisiones de las hitboxes y los movimientos
         heroe.mover();
+        escenario.actualizarPozos();
         for (Guardia g : guardias){
             g.perseguir(heroe);
             g.mover();
@@ -148,9 +149,9 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     public void keyPressed(KeyEvent e){
         switch(e.getKeyCode()){
             case KeyEvent.VK_SPACE:
-                if (heroe.getDireccion() == 0) //heroe esta mirando a la izquierda
+                if (mirandoIzq) //heroe esta mirando a la izquierda
                     heroe.cavarIzquierda();
-                else if (heroe.getDireccion() == 1)// heroe esta mirando a la derecha
+                else if (mirandoDer)// heroe esta mirando a la derecha
                     heroe.cavarDerecha();
                 break;
             case KeyEvent.VK_UP:
@@ -182,9 +183,13 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 break;
             case KeyEvent.VK_LEFT:
                 heroe.setDireccion(-1);
+                mirandoIzq = true;
+                mirandoDer = false;
                 break;
             case KeyEvent.VK_RIGHT:
                 heroe.setDireccion(-1);
+                mirandoDer = true;
+                mirandoIzq = false;
                 break;
             default:
                 break;

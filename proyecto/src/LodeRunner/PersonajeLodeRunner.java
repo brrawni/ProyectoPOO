@@ -53,7 +53,7 @@ class Guardia extends PersonajeLodeRunner{
         colgadoDeBarra = false;
         boolean hayPiso = true;
 
-        // 2. SENSOR DE CUERPO: ¿Estamos tocando una escalera o barra con el torso?
+        // 2. SENSOR DE CUERPO: Verificar si se esta tocando una escalera o barra con el torso
         int filaCentro = (this.y + this.alto / 2 ) / 32;
         int columnaCentro = (this.x + this.ancho / 2 ) / 32;
         int bloqueCuerpo = escenario.obtenerTipoBloqueEn(filaCentro, columnaCentro);
@@ -92,7 +92,7 @@ class Guardia extends PersonajeLodeRunner{
         double base = (heroe.getX() + heroe.getAncho()/2) - (this.x + this.ancho/2);
         double altura = (heroe.getY() + heroe.getAlto()/2) - (this.y + this.alto/2);
         double hipotenusa = Math.sqrt(Math.pow(base, 2.0) + Math.pow(altura, 2.0));
-        if (hipotenusa < 128){ //El rango de vision de los guardias esta definido en 10 bloques, y cada bloque mide 32 pixeles de largo y ancho
+        if (hipotenusa < 32){ //El rango de vision de los guardias esta definido en 10 bloques, y cada bloque mide 32 pixeles de largo y ancho
             persiguiendo = true;
             if (base > 0)
                 this.direccion = 1; //heroe a la derecha
@@ -115,7 +115,7 @@ class Guardia extends PersonajeLodeRunner{
                 // Al dar falso, el guardia mantiene la dirección horizontal (0 o 1) y sigue de largo.
                 if (bloqueEnPies == 3 || bloqueAbajo == 3) {
                     this.direccion = 3;
-                    return; //este return sirve para que en cada frame no se "Pise" la direccion actual del guardia
+                    //return; //este return sirve para que en cada frame no se "Pise" la direccion actual del guardia
                 }
             }
             if (detectarColision(heroe)){
@@ -179,6 +179,7 @@ class Guardia extends PersonajeLodeRunner{
                 if (enEscalera){
                     this.x = ((this.x + 16)/32)*32; //para que no desfase de la escalera
                     this.y -= 2;
+
                 }
                 break;
             case 3:
@@ -203,10 +204,15 @@ class Guardia extends PersonajeLodeRunner{
     }
     public void moverAleatoriamente(){
         temporizadorPatrulla++;
-        if (temporizadorPatrulla >= 240){ // 60 frames son aproximadamente 1 segundo en el juego, queremos que el guardia cambie de direccion cada 4 segundos
+        if (temporizadorPatrulla >= 60){ // 60 frames son aproximadamente 1 segundo en el juego, queremos que el guardia cambie de direccion cada 4 segundos
             int nuevaDireccion = (int)(Math.random()*2); //genera numeros de 0 a 1 para cambiar de direccion
-            if (!enEscalera && !colgadoDeBarra){
-                this.direccion = nuevaDireccion;
+            this.direccion = nuevaDireccion;
+            if (enEscalera){
+                this.direccion = (int)(Math.random() * (3 - 2 + 1)  + 2);
+                if (escenario.obtenerTipoBloqueEn((this.y + this.alto - 2) / 32, this.x / 32) == 1 ||
+                        escenario.obtenerTipoBloqueEn((this.y - 2) / 32, this.x / 32) == 1) {
+                    this.direccion = nuevaDireccion;
+                }
             }
             temporizadorPatrulla = 0; //reseteamos el temporizador
         }
@@ -290,13 +296,13 @@ class Heroe extends PersonajeLodeRunner{
         int columnaCentro = (this.x + this.ancho / 2) / 32;
         int filaAbajo = (this.y + this.alto) / 32;
         if (escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro - 1) == 1)
-            escenario.setBloque(filaAbajo, columnaCentro - 1, 0);
+            escenario.romperBloque(filaAbajo, columnaCentro - 1);
     }
     public void cavarDerecha(){
         int columnaCentro = (this.x + this.ancho / 2) / 32;
         int filaAbajo = (this.y + this.alto) / 32;
         if (escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro + 1) == 1)
-            escenario.setBloque(filaAbajo, columnaCentro + 1, 0);
+            escenario.romperBloque(filaAbajo, columnaCentro + 1);
     }
     public void recolectarOro(Oro oro){
         oro.esRecolectado(null, this);
