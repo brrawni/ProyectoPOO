@@ -83,4 +83,7 @@ public class Escenario{
         }
         return 1;
     }
+    public void setBloque(int fila, int columna, int tipoBloque){
+        this.matrizMundo[fila][columna] = tipoBloque;
+    }
 }
