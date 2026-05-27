@@ -274,14 +274,19 @@ class Heroe extends PersonajeLodeRunner{
 
     }
     public void cavarIzquierda(){
-
+        int columnaCentro = (this.x + this.ancho / 2) / 32;
+        int filaAbajo = (this.y + this.alto) / 32;
+        if (escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro - 1) == 1)
+            escenario.setBloque(filaAbajo, columnaCentro - 1, 0);
     }
     public void cavarDerecha(){
-
+        int columnaCentro = (this.x + this.ancho / 2) / 32;
+        int filaAbajo = (this.y + this.alto) / 32;
+        if (escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro + 1) == 1)
+            escenario.setBloque(filaAbajo, columnaCentro + 1, 0);
     }
     public void recolectarOro(Oro oro){
         oro.esRecolectado(null, this);
-
     }
     @Override
     public void mover(){
@@ -299,7 +304,7 @@ class Heroe extends PersonajeLodeRunner{
                 columnaIzquierda = (this.x - 2) / 32; //anticipamos el siguiente paso del guardia
                 tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaIzquierda);
                 if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
-                    this.x -= 2;
+                    this.x -= 4;
                     if (tipoBloque == 3){
                         enEscalera = true;
                     }
@@ -316,7 +321,7 @@ class Heroe extends PersonajeLodeRunner{
                 columnaDerecha = (this.x + this.ancho + 2) / 32; //anticipamos el siguiente paso del guardia
                 tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaDerecha);
                 if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
-                    this.x += 2;
+                    this.x += 4;
                     if (tipoBloque == 3){
                         enEscalera = true;
                     }

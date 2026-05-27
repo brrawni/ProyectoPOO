@@ -2,13 +2,15 @@ package LodeRunner;
 
 import motor.Videojuego;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
-public class LodeRunnerMain extends Videojuego {
+public class LodeRunnerMain extends Videojuego implements KeyListener{
     private BufferedImage buffer;
     //Imagen para cancelar parpadeos
     private int lingotesRestantes;
@@ -60,15 +62,20 @@ public class LodeRunnerMain extends Videojuego {
 
             // Regla de oro: El casillero actual debe ser Aire (0) y el de abajo Ladrillo (1)
             if (bloqueActual == 0 && bloqueDeAbajo == 1) {
-                lingotes.add(new Oro(columnaRand * 32, filaRand * 32, 32, 32));
+                lingotes.add(new Oro(columnaRand * 32, filaRand * 32, 16, 16));
                 orosCreados++;
             }
         }
+        canvas.addKeyListener(this);
+        canvas.setFocusable(true);
+        canvas.requestFocus();
+        canvas.requestFocusInWindow();
     }
 
     @Override
     public void gameUpdate(double delta) {
         // Acá ejecutas las colisiones de las hitboxes y los movimientos
+        heroe.mover();
         for (Guardia g : guardias){
             g.perseguir(heroe);
             g.mover();
@@ -135,5 +142,50 @@ public class LodeRunnerMain extends Videojuego {
                 // Lógica para actualizar el cronómetro cada segundo
             }
         }, 0, 1000);
+    }
+    public void keyPressed(KeyEvent e){
+        switch(e.getKeyCode()){
+            case KeyEvent.VK_SPACE:
+                if (heroe.getDireccion() == 0) //heroe esta mirando a la izquierda
+                    heroe.cavarIzquierda();
+                else if (heroe.getDireccion() == 1)// heroe esta mirando a la derecha
+                    heroe.cavarDerecha();
+                break;
+            case KeyEvent.VK_UP:
+                heroe.setDireccion(2);
+                break;
+            case KeyEvent.VK_DOWN:
+                heroe.setDireccion(3);
+                break;
+            case KeyEvent.VK_LEFT:
+                heroe.setDireccion(0);
+                break;
+            case KeyEvent.VK_RIGHT:
+                heroe.setDireccion(1);
+                break;
+            default:
+                break;
+        }
+    }
+    public void keyTyped(KeyEvent e){
+
+    }
+    public void keyReleased(KeyEvent e){
+        switch(e.getKeyCode()){
+            case KeyEvent.VK_UP:
+                heroe.setDireccion(-1);
+                break;
+            case KeyEvent.VK_DOWN:
+                heroe.setDireccion(-1);
+                break;
+            case KeyEvent.VK_LEFT:
+                heroe.setDireccion(-1);
+                break;
+            case KeyEvent.VK_RIGHT:
+                heroe.setDireccion(-1);
+                break;
+            default:
+                break;
+        }
     }
 }
