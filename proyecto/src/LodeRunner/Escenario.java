@@ -75,7 +75,16 @@ public class Escenario{
         };
     }
     public void actualizarPozos(){
-
+        long tiempoActual = System.currentTimeMillis();
+        mapaPozosTemporales.entrySet().removeIf(entrada -> {
+            Point celda = entrada.getKey();
+            long tiempoRoto = entrada.getValue();
+            if (tiempoActual - tiempoRoto >= 5000){ // si la diferencia entre el tiempo actual y el tiempoRoto >= 5000 ms, se rellena el bloque
+                matrizMundo[celda.y][celda.x] = 1;
+                return true;
+            }
+            return false;
+        });
     }
     public int obtenerTipoBloqueEn(int fila, int columna){
         if (fila >= 0 && fila < matrizMundo.length && columna >= 0 && columna < matrizMundo[0].length){
@@ -83,7 +92,9 @@ public class Escenario{
         }
         return 1;
     }
-    public void setBloque(int fila, int columna, int tipoBloque){
-        this.matrizMundo[fila][columna] = tipoBloque;
+    public void romperBloque(int fila, int columna){
+        this.matrizMundo[fila][columna] = 0;
+        long tiempo = System.currentTimeMillis(); //esto devuelve el tiempo en el que un metodo fue llamado
+        mapaPozosTemporales.put(new Point(columna, fila), tiempo);
     }
 }
