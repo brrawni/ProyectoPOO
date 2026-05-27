@@ -133,6 +133,10 @@ class Guardia extends PersonajeLodeRunner{
             aplicarGravedad();
             return;
         }
+        if (tienePiso && !enEscalera && !colgadoDeBarra) {
+            int filaSuelo = (this.y + this.alto) / 32;
+            this.y = (filaSuelo * 32) - this.alto; // Aterrizaje perfecto
+        }
         int columnaIzquierda, columnaDerecha, tipoBloque;
         int filaCentro = (this.y + this.alto/2) / 32; //si el centro de gravedad del guardia choca contra un bloque
 
@@ -181,6 +185,15 @@ class Guardia extends PersonajeLodeRunner{
                 if (enEscalera || colgadoDeBarra){
                     this.x = ((this.x + 16)/32)*32;
                     this.y += 2;
+                    int filaPies = (this.y + this.alto - 1) / 32;
+                    int colCentro = this.x / 32;
+                    int bloquePies = escenario.obtenerTipoBloqueEn(filaPies, colCentro);
+
+                    // Si al bajar, los pies entraron adentro de un ladrillo sólido (1)
+                    if (bloquePies == 1) {
+                        // Lo empujamos hacia arriba forzando su Y para que quede clavado perfecto sobre el piso
+                        this.y = (filaPies * 32) - this.alto;
+                    }
                 }
                 else{
                     aplicarGravedad();
@@ -295,6 +308,10 @@ class Heroe extends PersonajeLodeRunner{
         if (!tienePiso && !enEscalera && !colgadoDeBarra){
             aplicarGravedad();
             return;
+        }
+        if (tienePiso && !enEscalera && !colgadoDeBarra) {
+            int filaSuelo = (this.y + this.alto) / 32;
+            this.y = (filaSuelo * 32) - this.alto; // Aterrizaje perfecto
         }
         int columnaIzquierda, columnaDerecha, tipoBloque;
         int filaCentro = (this.y + this.alto/2) / 32; //si el centro de gravedad del guardia choca contra un bloque

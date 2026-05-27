@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+//Cada sprite mide 16x16
+
 public class LodeRunnerMain extends Videojuego implements KeyListener{
     private BufferedImage buffer;
     //Imagen para cancelar parpadeos
