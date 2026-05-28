@@ -11,9 +11,11 @@ public class CanonJugador extends Jugador {
     private boolean puedeDisparar = true; // Controla si el jugador puede disparar
     private FormacionAlien formacion; // Para acceder a los aliens y detectar colisiones
     private int ticksMovimiento = 0; // Para controlar la velocidad de movimiento del cañón
+    private int vida; // Vida del jugador
 
     public CanonJugador(int x, int y, int ancho, int alto, int vidas) {
         super(x, y, ancho, alto, vidas);
+        this.vida = vidas;
     }
 
     @Override
@@ -39,6 +41,8 @@ public class CanonJugador extends Jugador {
     public void setEscudos(List<Escudo> escudos){ this.escudos = escudos; }
     public void setJuego(SpaceInvaders juego) { this.juego = juego; } 
     public void setFormacion(FormacionAlien formacion) { this.formacion = formacion; }
+    public void setVida(int vida) { this.vida = vida; }
+
 
     public void disparar() {
     if (puedeDisparar && proyectil == null) {
