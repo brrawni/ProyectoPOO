@@ -75,7 +75,7 @@ public class SpaceInvaders extends Videojuego {
     public void gameUpdate(double delta) {
         if (!enEjecucion) return;
 
-        teclado.procesarEntrada(canon, formacion);
+        teclado.procesarEntrada(canon);
 
         // Actualizar el canon del jugador
         canon.actualizar();
