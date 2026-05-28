@@ -163,7 +163,7 @@ public class SpaceInvaders extends Videojuego {
         nivelActual++;
         int vidasActuales = Math.min(canon.obtenerVidas() + 1, 5);
         inicializarNivel();
-        canon.setVidas(vidasActuales);
+        canon.setVida(vidasActuales);
     }
 
     public boolean verificarFinJuego() {
