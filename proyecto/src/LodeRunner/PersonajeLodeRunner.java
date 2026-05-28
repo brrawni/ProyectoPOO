@@ -92,7 +92,7 @@ class Guardia extends PersonajeLodeRunner{
         double base = (heroe.getX() + heroe.getAncho()/2) - (this.x + this.ancho/2);
         double altura = (heroe.getY() + heroe.getAlto()/2) - (this.y + this.alto/2);
         double hipotenusa = Math.sqrt(Math.pow(base, 2.0) + Math.pow(altura, 2.0));
-        if (hipotenusa < 32){ //El rango de vision de los guardias esta definido en 10 bloques, y cada bloque mide 32 pixeles de largo y ancho
+        if (hipotenusa < 32*7){ //El rango de vision de los guardias esta definido en 10 bloques, y cada bloque mide 32 pixeles de largo y ancho
             persiguiendo = true;
             if (base > 0)
                 this.direccion = 1; //heroe a la derecha
@@ -208,10 +208,22 @@ class Guardia extends PersonajeLodeRunner{
             int nuevaDireccion = (int)(Math.random()*2); //genera numeros de 0 a 1 para cambiar de direccion
             this.direccion = nuevaDireccion;
             if (enEscalera){
-                this.direccion = (int)(Math.random() * (3 - 2 + 1)  + 2);
-                if (escenario.obtenerTipoBloqueEn((this.y + this.alto - 2) / 32, this.x / 32) == 1 ||
-                        escenario.obtenerTipoBloqueEn((this.y - 2) / 32, this.x / 32) == 1) {
-                    this.direccion = nuevaDireccion;
+                int colCentro = (this.x + this.ancho / 2) / 32;  // más preciso que this.x/32
+                this.direccion = (int)(Math.random() * 2) + 2; // 2 o 3
+
+                if (this.direccion == 2) {
+                    // Para subir: verificar que no haya techo sólido
+                    int filaArriba = (this.y - 2) / 32;
+                    if (escenario.obtenerTipoBloqueEn(filaArriba, colCentro) == 1) {
+                        this.direccion = nuevaDireccion;
+                    }
+                } else {
+                    // Para bajar: verificar que haya escalera debajo de los pies
+                    int filaPies = (this.y + this.alto) / 32;
+                    int bloqueAbajo = escenario.obtenerTipoBloqueEn(filaPies, colCentro);
+                    if (bloqueAbajo != 3) { // si no hay escalera abajo, no puede bajar
+                        this.direccion = nuevaDireccion;
+                    }
                 }
             }
             temporizadorPatrulla = 0; //reseteamos el temporizador
