@@ -18,10 +18,12 @@ public class CanonJugador extends Jugador {
     public void mover() {
     }
 
+    
     public void moverDerecha() { x += 5; } // Mueve el cañón hacia la derecha
     public void moverIzquierda() { x -= 5; }// Mueve el cañón hacia la izquierda
 
     public void setEscudos(List<Escudo> escudos){ this.escudos = escudos; }
+    public void setJuego(SpaceInvaders juego) { this.juego = juego; } 
 
     public void disparar(FormacionAlien formacion, SpaceInvaders juego) {
     if (puedeDisparar && proyectil == null) {
