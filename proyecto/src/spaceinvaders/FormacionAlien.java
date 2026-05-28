@@ -13,7 +13,10 @@ public class FormacionAlien {
     private int columnas;
     private int direccion = 1; // 1 para derecha, -1 para izquierda
     private float multiplicadorVelocidad = 1.0f; // Velocidad de movimiento de la formación
-     // Dirección inicial del movimiento
+    
+    //correccion de movimiento 
+    private int ticksMovimiento = 0;
+    private int intervaloMovimiento = 30; // mueve cada 30 frames (~0.5 seg a 60fps)
 
 
     public FormacionAlien(int filas, int columnas, float velocidad) {
@@ -36,6 +39,12 @@ public class FormacionAlien {
     }
 
     public void moverTodos() {
+    //agregamos un sistema de ticks para controlar la velocidad de movimiento de la formación
+    ticksMovimiento++;
+    if (ticksMovimiento < intervaloMovimiento) {
+        return; // No mover aún
+    }
+    ticksMovimiento = 0; // Reiniciar contador
     boolean cambioDireccion = false;
 
     for (Alien[] fila : aliens) {
@@ -147,7 +156,7 @@ public class FormacionAlien {
     public void actualizarVelocidad() {
         int vivos = contarVivos();
         int total = filas * columnas;
-        multiplicadorVelocidad = 1.0f + (total - vivos) * 0.1f; // Aumenta la velocidad a medida que quedan menos aliens
+        intervaloMovimiento = Math.max(5, 30 - (total - vivos)); // Aumenta la velocidad a medida que quedan menos aliens
     }
 
     public void setEscudos(List<Escudo> escudosDelNivel) {

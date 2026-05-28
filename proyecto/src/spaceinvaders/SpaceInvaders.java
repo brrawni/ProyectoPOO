@@ -40,7 +40,7 @@ public class SpaceInvaders extends Videojuego {
 
         canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 80, 32, 32, 3);
 
-        formacion = new FormacionAlien(5, 11, nivel.obtenerVelocidadAlien());
+        formacion = new FormacionAlien(4, 8, 0.5f);
 
         nodriza = new NaveNodriza(nivel);
         escudos = new ArrayList<>();
