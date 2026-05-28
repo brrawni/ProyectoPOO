@@ -16,7 +16,7 @@ public class FormacionAlien {
     
     //correccion de movimiento 
     private int ticksMovimiento = 0;
-    private int intervaloMovimiento = 30; // mueve cada 30 frames (~0.5 seg a 60fps)
+    private int intervaloMovimiento = 8; // mueve cada 8 frames (ajustable para dificultad)
 
 
     public FormacionAlien(int filas, int columnas, float velocidad) {

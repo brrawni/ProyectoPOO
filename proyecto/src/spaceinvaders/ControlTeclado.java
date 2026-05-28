@@ -31,7 +31,7 @@ public class ControlTeclado extends KeyAdapter {
     }
 
     // El gameloop llama esto cada frame
-    public void procesarEntrada(CanonJugador canon, FormacionAlien formacion) {
+    public void procesarEntrada(CanonJugador canon) {
         if (izquierda) canon.moverIzquierda();
         if (derecha)   canon.moverDerecha();
         if (disparo)   canon.disparar(); // Pasamos la lista de escudos para que el proyectil pueda detectar colisiones
