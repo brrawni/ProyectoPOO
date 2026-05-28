@@ -10,6 +10,7 @@ public class CanonJugador extends Jugador {
     private ProyectilCanon proyectil;
     private boolean puedeDisparar = true; // Controla si el jugador puede disparar
     private FormacionAlien formacion; // Para acceder a los aliens y detectar colisiones
+    private int ticksMovimiento = 0; // Para controlar la velocidad de movimiento del cañón
 
     public CanonJugador(int x, int y, int ancho, int alto, int vidas) {
         super(x, y, ancho, alto, vidas);
@@ -20,8 +21,20 @@ public class CanonJugador extends Jugador {
     }
 
     
-    public void moverDerecha() { x += 5; } // Mueve el cañón hacia la derecha
-    public void moverIzquierda() { x -= 5; }// Mueve el cañón hacia la izquierda
+    public void moverDerecha() {
+        ticksMovimiento++;
+        if (ticksMovimiento >= 5) { // Controla la velocidad de movimiento
+            x += 5; // Mueve el cañón hacia la derecha
+            ticksMovimiento = 0;
+        }
+    } // Mueve el cañón hacia la derecha
+    public void moverIzquierda() { 
+        ticksMovimiento++;
+        if (ticksMovimiento >= 5) { // Controla la velocidad de movimiento
+            x -= 5; // Mueve el cañón hacia la izquierda
+            ticksMovimiento = 0;
+        }
+     }// Mueve el cañón hacia la izquierda
 
     public void setEscudos(List<Escudo> escudos){ this.escudos = escudos; }
     public void setJuego(SpaceInvaders juego) { this.juego = juego; } 
