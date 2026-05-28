@@ -69,7 +69,6 @@ public class SpaceInvaders extends Videojuego {
         if (!enEjecucion) return;
 
         teclado.procesarEntrada(canon, formacion);
-        canon.actualizar();
 
         // Actualizar el canon del jugador
         canon.actualizar();
@@ -86,7 +85,7 @@ public class SpaceInvaders extends Videojuego {
         
         // controlar aparición de la nave nodriza
         ticksNaveNodriza++;
-        if(ticksNaveNodriza >= 600) { // Aparece cada 10 segundos
+        if(ticksNaveNodriza >= 1800) { // Aparece cada 10 segundos
             nodriza.aparecer(); // Aparece desde la izquierda
             ticksNaveNodriza = 0;
         }
@@ -102,11 +101,6 @@ public class SpaceInvaders extends Videojuego {
             siguienteNivel();
         }
 
-        try {
-            Thread.sleep(16);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -146,8 +140,11 @@ public class SpaceInvaders extends Videojuego {
         // 6. ¡Pegamos la imagen terminada en la pantalla de una sola vez!
         g.drawImage(buffer, 0, 0, null);
 
-        // ¡Y LISTO! NO PONGAS NADA MÁS ABAJO DE ESTO.
     }
+
+    public NaveNodriza getNaveNodriza()  { return nodriza; }
+    public int getContadorDisparos()     { return contadorDisparos; }
+    public void sumarPuntaje(int puntos) { puntaje += puntos; }
 
 
     @Override
@@ -157,14 +154,16 @@ public class SpaceInvaders extends Videojuego {
 
     public void siguienteNivel() {
         nivelActual++;
+        int vidasActuales = canon.obtenerVidas()+1; // recompensa con una vida extra
+        int vidaMaxima = 5;
+        if(vidasActuales > vidaMaxima) vidasActuales = vidaMaxima; // límite de vidas
+        
         inicializarNivel(); //entidades con mas velocidad
+        canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 80, 32, 32, vidasActuales);
+        canon.setEscudos(escudos);
     }
 
     public boolean verificarFinJuego() {
         return canon.obtenerVidas() <= 0 || formacion.llegoAlSuelo();
-    }
-
-    public void sumarPuntaje(int puntos) {
-        puntaje += puntos;
     }
 }
