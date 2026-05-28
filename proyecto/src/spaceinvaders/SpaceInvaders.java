@@ -168,25 +168,5 @@ public class SpaceInvaders extends Videojuego {
         return canon.obtenerVidas() <= 0 || formacion.llegoAlSuelo();
     }
 
-    //sobrescribo run por la velocidad del juego
-    @Override
-    public void run() {
-        startup();
-        long tiempoAnterior = System.currentTimeMillis();
-        while (runFlag) {
-            long ahora = System.currentTimeMillis();
-            long delta = ahora - tiempoAnterior;
-            if(delta >= 16) { // Aproximadamente 60 FPS
-                update();
-                draw();
-                tiempoAnterior = ahora;
-            } else {
-                try {
-                    Thread.sleep(16 - delta); // Duerme el tiempo restante para mantener 60 FPS
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        }
-        shutdown();
+
 }
