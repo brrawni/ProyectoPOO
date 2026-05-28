@@ -5,7 +5,7 @@ public class Main {
     public static void main(String[] args) {
         //SpaceInvaders juego = new SpaceInvaders();
         //juego.run();
-        LodeRunnerMain juego = new LodeRunnerMain();
+        SpaceInvaders juego = new SpaceInvaders();
         juego.run();
     }
 }

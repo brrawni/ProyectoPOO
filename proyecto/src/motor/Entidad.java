@@ -66,9 +66,10 @@ class Plataforma extends JFrame {
 
 // 2. El Bucle Puro (Clase abstracta de la cátedra)
 abstract class GameLoop {
-    private boolean runFlag = false;
+    protected boolean runFlag = false;
 
     public void run() {
+        runFlag = true;
     startup();
     long tiempoAnterior = System.currentTimeMillis();
     
