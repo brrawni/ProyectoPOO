@@ -31,13 +31,13 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         buffer = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
         // Acá instanciás tu Escenario, tu Héroe y tus Guardianes
         escenario = new Escenario(32, 32, 1); // Ejemplo de creación del escenario
-        heroe = new Heroe(1*32, 1*32, 32, 64, escenario); // Ejemplo de creación del héroe
+        heroe = new Heroe(1*32, 1*32, 32, 32, escenario); // Ejemplo de creación del héroe
         guardias = new ArrayList<>();
         lingotes = new ArrayList<>();
         cronometro = new Timer();
         // 1. Spawneo inteligente de Guardias
         int guardiasCreados = 0;
-        while (guardiasCreados < 10) {
+        while (guardiasCreados < 2) {
             int colRand = (int)(Math.random() * 14); // Columnas de 0 a 13
             int filaRand = (int)(Math.random() * 8); // Filas de 0 a 7 (evitamos el fondo)
 
@@ -48,7 +48,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
 
             // Regla: Cabeza en el aire, pies en el aire, y apoyado en un ladrillo (1) o escalera (3)
             if (bloqueCabeza == 0 && bloquePies == 0 && (bloquePiso == 1 || bloquePiso == 3)) {
-                guardias.add(new Guardia(colRand * 32, filaRand * 32, 32, 64, escenario));
+                guardias.add(new Guardia(colRand * 32, filaRand * 32, 32, 32, escenario));
                 guardiasCreados++;
             }
         }
