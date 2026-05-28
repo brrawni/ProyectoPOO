@@ -68,7 +68,7 @@ class Guardia extends PersonajeLodeRunner{
         int filaAbajo = (this.y + this.alto) / 32;
         int bloquePies = escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro);
 
-        if (bloquePies == 0) {
+        if (bloquePies == 0 || bloquePies == 4) {
             hayPiso = false; // Hay aire, nos caemos
         } else {
             hayPiso = true; // Hay piso (ladrillo, escalera, etc.)
@@ -99,7 +99,7 @@ class Guardia extends PersonajeLodeRunner{
             else if (base < 0)
                 this.direccion = 0; //heroe a la izquierda
             if (this.y > heroe.getY()){
-                if (enEscalera || colgadoDeBarra){ //si encuentra soga o escalera, sube
+                if (enEscalera){ //si encuentra soga o escalera, sube
                     this.direccion = 2; //heroe esta arriba
 
                 }
@@ -116,6 +116,9 @@ class Guardia extends PersonajeLodeRunner{
                 if (bloqueEnPies == 3 || bloqueAbajo == 3) {
                     this.direccion = 3;
                     //return; //este return sirve para que en cada frame no se "Pise" la direccion actual del guardia
+                }
+                else if (colgadoDeBarra && Math.abs(base) <= 16 && bloqueAbajo != 1) {
+                    this.direccion = 3; // Le mandamos la orden de bajar
                 }
             }
             if (detectarColision(heroe)){
@@ -148,6 +151,12 @@ class Guardia extends PersonajeLodeRunner{
                     this.x -= 2;
                     if (tipoBloque == 3){
                         enEscalera = true;
+                        colgadoDeBarra = false;
+                    }
+                    else if (tipoBloque == 4){
+                        this.y = ((this.y + 16) / 32) * 32; //alinear el eje y
+                        enEscalera = false;
+                        colgadoDeBarra = true;
                     }
                     else{
                         enEscalera = false;
@@ -165,6 +174,12 @@ class Guardia extends PersonajeLodeRunner{
                     this.x += 2;
                     if (tipoBloque == 3){
                         enEscalera = true;
+                        colgadoDeBarra = false;
+                    }
+                    else if (tipoBloque == 4){
+                        this.y = ((this.y + 16) / 32) * 32; //alinear el eje y
+                        colgadoDeBarra = true;
+                        enEscalera = false;
                     }
                     else{
                         enEscalera = false;
@@ -214,7 +229,7 @@ class Guardia extends PersonajeLodeRunner{
                 if (this.direccion == 2) {
                     // Para subir: verificar que no haya techo sólido
                     int filaArriba = (this.y - 2) / 32;
-                    if (escenario.obtenerTipoBloqueEn(filaArriba, colCentro) == 1) {
+                    if (escenario.obtenerTipoBloqueEn(filaArriba, colCentro) == 1 || escenario.obtenerTipoBloqueEn(filaArriba, colCentro) == 0) {
                         this.direccion = nuevaDireccion;
                     }
                 } else {
@@ -287,7 +302,7 @@ class Heroe extends PersonajeLodeRunner{
         int filaAbajo = (this.y + this.alto) / 32;
         int bloquePies = escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro);
 
-        if (bloquePies == 0) {
+        if (bloquePies == 0 || bloquePies == 4) {
             hayPiso = false; // Hay aire, nos caemos
         } else {
             hayPiso = true; // Hay piso (ladrillo, escalera, etc.)
@@ -342,6 +357,12 @@ class Heroe extends PersonajeLodeRunner{
                     this.x -= 4;
                     if (tipoBloque == 3){
                         enEscalera = true;
+                        colgadoDeBarra = false;
+                    }
+                    else if (tipoBloque == 4){
+                        this.y = ((this.y + 16) / 32) * 32; //alinear el eje y
+                        colgadoDeBarra = true;
+                        enEscalera = false;
                     }
                     else{
                         enEscalera = false;
@@ -359,6 +380,12 @@ class Heroe extends PersonajeLodeRunner{
                     this.x += 4;
                     if (tipoBloque == 3){
                         enEscalera = true;
+                        colgadoDeBarra = false;
+                    }
+                    else if (tipoBloque == 4){
+                        enEscalera = false;
+                        colgadoDeBarra = true;
+                        this.y = ((this.y + 16) / 32) * 32; // alinear el eje y
                     }
                     else{
                         enEscalera = false;
