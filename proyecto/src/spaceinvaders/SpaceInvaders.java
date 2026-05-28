@@ -33,24 +33,30 @@ public class SpaceInvaders extends Videojuego {
         super("Space Invaders", ANCHO_PANTALLA, ALTO_PANTALLA);
     }
 
-    private void inicializarNivel(){
-        buffer = new BufferedImage(ANCHO_PANTALLA, ALTO_PANTALLA, BufferedImage.TYPE_INT_ARGB);
-        nivel = new Nivel(nivelActual);
+    private void inicializarNivel() {
+        nivel    = new Nivel(nivelActual);
         nivel.cargar();
 
-        canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 80, 32, 32, 3);
-
+        // 1. Primero crear formacion y escudos
         formacion = new FormacionAlien(4, 8, 0.5f);
-
-        nodriza = new NaveNodriza(nivel);
-        escudos = new ArrayList<>();
-        int numEscudos = 4;
-        for(int i=0; i<numEscudos; i++) {
+        escudos   = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
             escudos.add(new Escudo(150 + i * 150, ALTO_PANTALLA - 150));
         }
-        formacion.setEscudos(escudos);
+
+        // 2. Después crear el canon
+        canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 80, 32, 32, 3);
+
+        // 3. Setear todo al canon DESPUÉS de crearlo
+        canon.setFormacion(formacion);  // ← esto debe estar
         canon.setEscudos(escudos);
         canon.setJuego(this);
+
+        // 4. Setear escudos a la formacion
+        formacion.setEscudos(escudos);
+
+        nodriza = new NaveNodriza(nivel);
+        buffer  = new BufferedImage(ANCHO_PANTALLA, ALTO_PANTALLA, BufferedImage.TYPE_INT_ARGB);
     }
 
     @Override
@@ -155,13 +161,9 @@ public class SpaceInvaders extends Videojuego {
 
     public void siguienteNivel() {
         nivelActual++;
-        int vidasActuales = canon.obtenerVidas()+1; // recompensa con una vida extra
-        int vidaMaxima = 5;
-        if(vidasActuales > vidaMaxima) vidasActuales = vidaMaxima; // límite de vidas
-
-        inicializarNivel(); //entidades con mas velocidad
-        canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 80, 32, 32, vidasActuales);
-        canon.setEscudos(escudos);
+        int vidasActuales = Math.min(canon.obtenerVidas() + 1, 5);
+        inicializarNivel();
+        canon.setVidas(vidasActuales);
     }
 
     public boolean verificarFinJuego() {

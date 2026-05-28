@@ -38,7 +38,7 @@ public class CanonJugador extends Jugador {
 
     public void setEscudos(List<Escudo> escudos){ this.escudos = escudos; }
     public void setJuego(SpaceInvaders juego) { this.juego = juego; } 
-    public void setFormacion(FormacionAlien formacion) { this.formacion = formacion; } 
+    public void setFormacion(FormacionAlien formacion) { this.formacion = formacion; }
 
     public void disparar() {
     if (puedeDisparar && proyectil == null) {
