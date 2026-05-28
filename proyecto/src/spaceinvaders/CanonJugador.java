@@ -9,6 +9,7 @@ public class CanonJugador extends Jugador {
     private List<Escudo> escudos; // Para detectar colisiones con los escudos
     private ProyectilCanon proyectil;
     private boolean puedeDisparar = true; // Controla si el jugador puede disparar
+    private FormacionAlien formacion; // Para acceder a los aliens y detectar colisiones
 
     public CanonJugador(int x, int y, int ancho, int alto, int vidas) {
         super(x, y, ancho, alto, vidas);
@@ -24,8 +25,9 @@ public class CanonJugador extends Jugador {
 
     public void setEscudos(List<Escudo> escudos){ this.escudos = escudos; }
     public void setJuego(SpaceInvaders juego) { this.juego = juego; } 
+    public void setFormacion(FormacionAlien formacion) { this.formacion = formacion; } 
 
-    public void disparar(FormacionAlien formacion, SpaceInvaders juego) {
+    public void disparar() {
     if (puedeDisparar && proyectil == null) {
         proyectil = new ProyectilCanon(x + ancho / 2, y, formacion, escudos, juego); // Crea un nuevo proyectil en la posición del cañón
         puedeDisparar = false;
