@@ -50,6 +50,7 @@ public class SpaceInvaders extends Videojuego {
         }
         formacion.setEscudos(escudos);
         canon.setEscudos(escudos);
+        canon.setJuego(this);
     }
 
     @Override
@@ -157,7 +158,7 @@ public class SpaceInvaders extends Videojuego {
         int vidasActuales = canon.obtenerVidas()+1; // recompensa con una vida extra
         int vidaMaxima = 5;
         if(vidasActuales > vidaMaxima) vidasActuales = vidaMaxima; // límite de vidas
-        
+
         inicializarNivel(); //entidades con mas velocidad
         canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 80, 32, 32, vidasActuales);
         canon.setEscudos(escudos);

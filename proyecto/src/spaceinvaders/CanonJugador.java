@@ -18,18 +18,16 @@ public class CanonJugador extends Jugador {
     public void mover() {
     }
 
-    public void moverDerecha() {
-        x += 5; // Mueve el cañón hacia la derecha
-    }
-    public void moverIzquierda() {
-        x -= 5; // Mueve el cañón hacia la izquierda
-    }
+    public void moverDerecha() { x += 5; } // Mueve el cañón hacia la derecha
+    public void moverIzquierda() { x -= 5; }// Mueve el cañón hacia la izquierda
 
-    public void disparar(FormacionAlien formacion) {
+    public void setEscudos(List<Escudo> escudos){ this.escudos = escudos; }
+
+    public void disparar(FormacionAlien formacion, SpaceInvaders juego) {
     if (puedeDisparar && proyectil == null) {
         proyectil = new ProyectilCanon(x + ancho / 2, y, formacion, escudos, juego); // Crea un nuevo proyectil en la posición del cañón
         puedeDisparar = false;
-        this.juego = juego;
+        juego.getNaveNodriza().incrementarDisparos(); // Incrementa el contador de disparos para la nave nodriza
     }
 }
 
@@ -60,13 +58,10 @@ public class CanonJugador extends Jugador {
         // Lógica para dibujar el cañón del jugador
     g.fillRect(x, y, ancho, alto); 
         
-        // ¡Importante! Si el proyectil existe, el cañón también tiene que mandarlo a dibujarse
+        // Si el proyectil existe, el cañón también tiene que mandarlo a dibujarse
     if (proyectil != null) {
             proyectil.dibujar(g);
         }
     }
 
-    public void setEscudos(List<Escudo> escudos){
-        this.escudos = escudos;
-    }
 }
