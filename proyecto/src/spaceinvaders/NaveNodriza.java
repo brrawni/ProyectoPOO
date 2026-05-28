@@ -50,7 +50,7 @@ public class NaveNodriza extends Enemigo {
         contadorDisparos++;
     }
 
-    private boolean esVisible() {
+    public boolean esVisible() {
         return visible;
     }
 
