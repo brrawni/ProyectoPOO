@@ -19,7 +19,7 @@ public class FormacionAlien {
     private int intervaloMovimiento = 8; // mueve cada 8 frames (ajustable para dificultad)
 
 
-    public FormacionAlien(int filas, int columnas, float velocidad) {
+    public FormacionAlien(int filas, int columnas, float velocidad, int yInicial) {
         this.velocidad = velocidad;
         this.filas = filas;
         this.columnas = columnas;
@@ -27,8 +27,11 @@ public class FormacionAlien {
         // Inicializar la formación con aliens de diferentes tipos
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
-                int tipo = (i % 3); // Alternar entre los tipos de alien
-                aliens[i][j] = new Alien(tipo, 50+(j * 40),60 +(i * 40)); // Posicionar cada alien
+                int tipo;
+                if (i == 0) tipo = Alien.PULPO;
+                else if (i == filas - 1) tipo = Alien.CALAMAR;
+                else tipo = Alien.CANGREJO;
+                aliens[i][j] = new Alien(tipo, 50+ j * 40,60 +i * 40); // Posicionar cada alien
             }
         }
     }
