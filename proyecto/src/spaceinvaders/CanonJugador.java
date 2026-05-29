@@ -24,18 +24,10 @@ public class CanonJugador extends Jugador {
 
     
     public void moverDerecha() {
-        ticksMovimiento++;
-        if (ticksMovimiento >= 5) { // Controla la velocidad de movimiento
-            x += 5; // Mueve el cañón hacia la derecha
-            ticksMovimiento = 0;
-        }
+        if (x + ancho < 800) x+=4;
     } // Mueve el cañón hacia la derecha
     public void moverIzquierda() { 
-        ticksMovimiento++;
-        if (ticksMovimiento >= 5) { // Controla la velocidad de movimiento
-            x -= 5; // Mueve el cañón hacia la izquierda
-            ticksMovimiento = 0;
-        }
+        if(x>0) x-=4;
      }// Mueve el cañón hacia la izquierda
 
     public void setEscudos(List<Escudo> escudos){ this.escudos = escudos; }

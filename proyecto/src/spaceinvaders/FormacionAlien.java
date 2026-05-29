@@ -73,9 +73,9 @@ public class FormacionAlien {
     }
 }
 
-    public void dibujarFormacion(Graphics2D g) {
+public void dibujarFormacion(Graphics2D g) {
         // Lógica para dibujar toda la formación de aliens
-        for (Alien[] fila : aliens) {
+    for (Alien[] fila : aliens) {
             for (Alien alien : fila) {
                 if (alien != null && alien.estaVivo()) {
                     alien.dibujar(g);
@@ -133,22 +133,12 @@ public class FormacionAlien {
     }
 
     public void actualizarProyectiles() {
-        // Recorremos la lista al revés para poder borrar proyectiles sin que salte error
         for (int i = proyectiles.size() - 1; i >= 0; i--) {
             ProyectilAlien p = proyectiles.get(i);
-            p.actualizar(); // Esto lo mueve y chequea si te dio a vos
+            p.actualizar(); // ya maneja colisiones internamente
 
-            //verificar que golpeo en escudo
-            for (Escudo escudo : escudos) {
-                if (p.obtenerLimites().intersects(escudo.obtenerLimites())) {
-                    escudo.recibirDano(p.obtenerX(), p.obtenerY()); // El escudo recibe daño
-                    p.desactivar(); // El proyectil se destruye
-                    break; // No hace falta seguir chequeando otros escudos
-                }
-            }
-
-             if (!p.estaActivo()) {
-                proyectiles.remove(i); // Si chocó o salió de pantalla, lo borramos
+            if (!p.estaActivo()) {
+                proyectiles.remove(i);
             }
         }
     }

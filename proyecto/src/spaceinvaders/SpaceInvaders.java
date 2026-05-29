@@ -38,7 +38,7 @@ public class SpaceInvaders extends Videojuego {
         nivel.cargar();
 
         // 1. Primero crear formacion y escudos
-        formacion = new FormacionAlien(4, 8, 0.5f);
+        formacion = new FormacionAlien(nivel.obtenerFilas(), nivel.obtenerColumnas(), nivel.obtenerVelocidadAlien());
         escudos   = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             escudos.add(new Escudo(150 + i * 150, ALTO_PANTALLA - 150));
@@ -86,7 +86,7 @@ public class SpaceInvaders extends Videojuego {
         formacion.actualizarProyectiles();
 
         //disparo aleatorio de aliens
-        if(Math.random() < 0.02){ //probabilidad de disparo de aliens (2% por frame creo)
+        if(Math.random() < nivel.obtenerProbabilidadDisparo()){ //probabilidad de disparo de aliens (2% por frame creo)
             formacion.disparoAleatorio(canon);
         }
         
