@@ -152,9 +152,6 @@ public class SpaceInvaders extends Videojuego {
             g2d.setColor(Color.RED);
             g2d.drawString("GAME OVER", ANCHO_PANTALLA / 2 - 40, ALTO_PANTALLA / 2);
         }
-        if(!enEjecucion && !rankingGuardado) {
-            mostrarPantallaRanking(g2d);
-        }
 
         // 5. Descartamos el pincel temporal
         g2d.dispose();

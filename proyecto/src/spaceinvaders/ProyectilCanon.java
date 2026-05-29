@@ -17,6 +17,7 @@ public class ProyectilCanon extends Proyectil {
         this.juego     = juego;
     }
 
+
     public void actualizar() {
         y += dy;
         if (y < 0) {
@@ -25,6 +26,7 @@ public class ProyectilCanon extends Proyectil {
         }
         verificarImpacto();
     }
+
 
     public void verificarImpacto() {
         // 1. Contra aliens
@@ -51,14 +53,7 @@ public class ProyectilCanon extends Proyectil {
 
         // 3. Contra escudos
         for (Escudo escudo : escudos) {
-<<<<<<< HEAD
-            if (obtenerLimites().intersects(escudo.obtenerLimites())) {
-                int px = x + ancho / 2;
-                int py = y + alto  / 2;
-                escudo.recibirImpacto(px, py);
-=======
             if (escudo.verificarImpactoProyectil(x, y, ancho, alto)) {
->>>>>>> d733a0d653a67f81bd6c23aa6b6c362cd677e287
                 desactivar();
                 return;
             }
