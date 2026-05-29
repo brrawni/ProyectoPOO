@@ -23,7 +23,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     private boolean mirandoIzq;
     private boolean mirandoDer;
     public LodeRunnerMain() {
-        super("Lode Runner - UNLPam Edition", 800, 600);
+        super("Lode Runner - te violare edition", 800, 600);
     }
 
     @Override

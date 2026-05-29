@@ -66,16 +66,30 @@ class Plataforma extends JFrame {
 
 // 2. El Bucle Puro (Clase abstracta de la cátedra)
 abstract class GameLoop {
-    private boolean runFlag = false;
+    protected boolean runFlag = false;
 
     public void run() {
         runFlag = true;
-        startup();
-        while(runFlag) {
+    startup();
+    long tiempoAnterior = System.currentTimeMillis();
+    
+    while (runFlag) {
+        long ahora = System.currentTimeMillis();
+        long delta = ahora - tiempoAnterior;
+        
+        if (delta >= 16) { // ~60 fps
+            tiempoAnterior = ahora;
             update();
             draw();
+        } else {
+            try {
+                Thread.sleep(1); // no quemar la CPU
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            }
         }
-        shutdown(); // [cite: 208]
+        shutdown();
     }
 
     public void stop() {
