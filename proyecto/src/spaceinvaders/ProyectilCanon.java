@@ -53,7 +53,9 @@ public class ProyectilCanon extends Proyectil {
         // 3. Contra escudos
         for (Escudo escudo : escudos) {
             if (obtenerLimites().intersects(escudo.obtenerLimites())) {
-                escudo.recibirDano(x, y);
+                int px = x + ancho / 2;
+                int py = y + alto  / 2;
+                escudo.recibirImpacto(px, py);
                 desactivar();
                 return;
             }

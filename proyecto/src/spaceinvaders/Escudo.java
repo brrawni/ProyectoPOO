@@ -1,8 +1,8 @@
 package spaceinvaders;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import motor.Entidad;
-import java.awt.Color;
 
 public class Escudo extends Entidad {
     private boolean[][] segmentos; // Matriz para representar los segmentos del escudo
@@ -83,40 +83,32 @@ Destruye el segmento golpeado y los adyacentes.
         }
     }
 
-    public boolean recibirImpacto(java.awt.Rectangle limitesProyectil) {
-        // Recorremos la matriz cuadradito por cuadradito
-        for (int fila = 0; fila < forma.length; fila++) {
-            for (int col = 0; col < forma[fila].length; col++) {
+    public boolean recibirImpacto(int px, int py) {
+    int col  = (px - x) / TAMAÑO;
+    int fila = (py - y) / TAMAÑO;
 
-                // Solo nos importan los bloques que todavía están sanos (1)
-                if (forma[fila][col] == 1) {
+    // Verificar que las coordenadas caen dentro del escudo
+    if (col < 0 || col >= COLUMNAS || fila < 0 || fila >= FILAS) {
+        return false; // fuera del escudo
+    }
 
-                    // Calculamos dónde está dibujado ESTE pequeño cuadradito en la pantalla
-                    int bloqueX = x + (col * TAMAÑO);
-                    int bloqueY = y + (fila * TAMAÑO);
-                    java.awt.Rectangle limitesBloque = new java.awt.Rectangle(bloqueX, bloqueY, TAMAÑO, TAMAÑO);
-
-                    // Verificamos si la bala tocó este cuadradito específico
-                    if (limitesProyectil.intersects(limitesBloque)) {
-
-                        // ¡Boom! Convertimos el bloque en 0 para que desaparezca
-                        forma[fila][col] = 0;
-
-                        // Opcional: Para que se sienta más como Space Invaders,
-                        // podemos hacer que la bala rompa un poquito más alrededor (efecto cráter)
-                        if (fila + 1 < forma.length) forma[fila + 1][col] = 0;
-                        if (col + 1 < forma[fila].length) forma[fila][col + 1] = 0;
-                        if (col - 1 >= 0) forma[fila][col - 1] = 0;
-
-                        // Le avisamos a la bala que impactó para que se desactive
-                        return true;
-                    }
-                }
-            }
-        }
-        // Si la bala pasó por un "agujero" (puros ceros), retorna false y sigue de largo
+    // Si el segmento ya está destruido, no hay impacto real
+    if (!segmentos[fila][col]) {
         return false;
     }
+
+    // Destruir segmentos en radio 1
+    for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+            int fi = fila + i;
+            int co = col  + j;
+            if (fi >= 0 && fi < FILAS && co >= 0 && co < COLUMNAS) {
+                segmentos[fi][co] = false;
+            }
+        }
+    }
+    return true; // hubo impacto real
+    }   
 
     @Override
     public void dibujar(Graphics2D g) {
