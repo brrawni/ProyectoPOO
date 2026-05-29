@@ -2,9 +2,7 @@
 package spaceinvaders;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.List;
-
 import motor.Proyectil;
 
 public class ProyectilAlien extends Proyectil {
@@ -27,7 +25,7 @@ public class ProyectilAlien extends Proyectil {
     public boolean detectarColision() {
         if (activo && escudos != null) {
             for (Escudo escudo : escudos) {
-                if (escudo.recibirImpacto(this.obtenerLimites())) {
+                if (escudo.recibirImpacto(x, y)) {
                     activo = false;
                     return true; // colisionó con escudo
                 }

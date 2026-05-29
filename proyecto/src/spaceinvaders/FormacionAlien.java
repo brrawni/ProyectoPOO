@@ -139,13 +139,16 @@ public class FormacionAlien {
             p.actualizar(); // Esto lo mueve y chequea si te dio a vos
 
             //verificar que golpeo en escudo
-            for (Escudo escudo : escudos) {
-                if (p.obtenerLimites().intersects(escudo.obtenerLimites())) {
-                    escudo.recibirDano(p.obtenerX(), p.obtenerY()); // El escudo recibe daño
-                    p.desactivar(); // El proyectil se destruye
-                    break; // No hace falta seguir chequeando otros escudos
-                }
+        for (Escudo escudo : escudos) {
+            if (p.estaActivo() && p.obtenerLimites().intersects(escudo.obtenerLimites())) { // Usamos el centro del proyectil, no su esquina superior izquierda
+        
+                int px = p.obtenerX() + p.obtenerAncho() / 2;
+                int py = p.obtenerY() + p.obtenerAlto()  / 2;
+                escudo.recibirImpacto(px, py);
+                p.desactivar();
+                break;
             }
+        }
 
              if (!p.estaActivo()) {
                 proyectiles.remove(i); // Si chocó o salió de pantalla, lo borramos
