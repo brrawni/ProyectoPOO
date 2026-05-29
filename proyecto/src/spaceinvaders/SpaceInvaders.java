@@ -16,6 +16,7 @@ public class SpaceInvaders extends Videojuego {
     private CanonJugador canon;
     private List<Escudo> escudos;
     private NaveNodriza nodriza;
+    private int vidasGuardadas = 3;
 
     //estado del juego
     private Nivel nivel;
@@ -33,19 +34,26 @@ public class SpaceInvaders extends Videojuego {
         super("Space Invaders", ANCHO_PANTALLA, ALTO_PANTALLA);
     }
 
+    public void siguienteNivel() {
+        nivelActual++;
+        vidasGuardadas = Math.min(canon.obtenerVidas() + 1, 5);
+        inicializarNivel();
+    }
+
     private void inicializarNivel() {
         nivel    = new Nivel(nivelActual);
         nivel.cargar();
 
+        int yInicial = 60 + (nivelActual - 1) * 20; //baja 20 px por nivel
         // 1. Primero crear formacion y escudos
-        formacion = new FormacionAlien(4, 8, 0.5f);
+        formacion = new FormacionAlien(nivel.obtenerFilas(), nivel.obtenerColumnas(), nivel.obtenerVelocidadAlien(), yInicial);
         escudos   = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             escudos.add(new Escudo(150 + i * 150, ALTO_PANTALLA - 150));
         }
 
         // 2. Después crear el canon
-        canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 80, 32, 32, 3);
+        canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 80, 32, 32, vidasGuardadas);
 
         // 3. Setear todo al canon DESPUÉS de crearlo
         canon.setFormacion(formacion);  // ← esto debe estar
@@ -86,7 +94,7 @@ public class SpaceInvaders extends Videojuego {
         formacion.actualizarProyectiles();
 
         //disparo aleatorio de aliens
-        if(Math.random() < 0.02){ //probabilidad de disparo de aliens (2% por frame creo)
+        if(Math.random() < nivel.obtenerProbabilidadDisparo()){ //probabilidad de disparo de aliens (2% por frame creo)
             formacion.disparoAleatorio(canon);
         }
         
@@ -157,13 +165,6 @@ public class SpaceInvaders extends Videojuego {
     @Override
     public void gameShutdown() {
         // Aquí puedes liberar recursos si es necesario y guardar el puntaje o estado del juego
-    }
-
-    public void siguienteNivel() {
-        nivelActual++;
-        int vidasActuales = Math.min(canon.obtenerVidas() + 1, 5);
-        inicializarNivel();
-        canon.setVida(vidasActuales);
     }
 
     public boolean verificarFinJuego() {

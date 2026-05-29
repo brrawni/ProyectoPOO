@@ -19,7 +19,7 @@ public class FormacionAlien {
     private int intervaloMovimiento = 8; // mueve cada 8 frames (ajustable para dificultad)
 
 
-    public FormacionAlien(int filas, int columnas, float velocidad) {
+    public FormacionAlien(int filas, int columnas, float velocidad, int yInicial) {
         this.velocidad = velocidad;
         this.filas = filas;
         this.columnas = columnas;
@@ -27,8 +27,11 @@ public class FormacionAlien {
         // Inicializar la formación con aliens de diferentes tipos
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
-                int tipo = (i % 3); // Alternar entre los tipos de alien
-                aliens[i][j] = new Alien(tipo, 50+(j * 40),60 +(i * 40)); // Posicionar cada alien
+                int tipo;
+                if (i == 0) tipo = Alien.PULPO;
+                else if (i == filas - 1) tipo = Alien.CALAMAR;
+                else tipo = Alien.CANGREJO;
+                aliens[i][j] = new Alien(tipo, 50+ j * 40,60 +i * 40); // Posicionar cada alien
             }
         }
     }
@@ -73,9 +76,9 @@ public class FormacionAlien {
     }
 }
 
-    public void dibujarFormacion(Graphics2D g) {
+public void dibujarFormacion(Graphics2D g) {
         // Lógica para dibujar toda la formación de aliens
-        for (Alien[] fila : aliens) {
+    for (Alien[] fila : aliens) {
             for (Alien alien : fila) {
                 if (alien != null && alien.estaVivo()) {
                     alien.dibujar(g);
@@ -133,11 +136,11 @@ public class FormacionAlien {
     }
 
     public void actualizarProyectiles() {
-        // Recorremos la lista al revés para poder borrar proyectiles sin que salte error
         for (int i = proyectiles.size() - 1; i >= 0; i--) {
             ProyectilAlien p = proyectiles.get(i);
-            p.actualizar(); // Esto lo mueve y chequea si te dio a vos
+            p.actualizar(); // ya maneja colisiones internamente
 
+<<<<<<< HEAD
             //verificar que golpeo en escudo
         for (Escudo escudo : escudos) {
             if (p.estaActivo() && p.obtenerLimites().intersects(escudo.obtenerLimites())) { // Usamos el centro del proyectil, no su esquina superior izquierda
@@ -152,6 +155,10 @@ public class FormacionAlien {
 
              if (!p.estaActivo()) {
                 proyectiles.remove(i); // Si chocó o salió de pantalla, lo borramos
+=======
+            if (!p.estaActivo()) {
+                proyectiles.remove(i);
+>>>>>>> d733a0d653a67f81bd6c23aa6b6c362cd677e287
             }
         }
     }

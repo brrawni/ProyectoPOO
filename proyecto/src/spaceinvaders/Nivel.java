@@ -1,12 +1,20 @@
 package spaceinvaders;
 
 public class Nivel {
-    private int numero;
+
+    private int   numero;
     private float velocidadAlien;
+<<<<<<< HEAD
     private int filaInicio;
     private int filas;
     private int columnas;
     private float probalidadDisparo;
+=======
+    private int   filaInicio;
+    private int   filas;
+    private int   columnas;
+    private float probabilidadDisparo;
+>>>>>>> d733a0d653a67f81bd6c23aa6b6c362cd677e287
 
     public Nivel(int numero) {
         this.numero = numero;
@@ -15,7 +23,7 @@ public class Nivel {
     /*
      Define los parámetros de cada nivel.
      A mayor nivel, más velocidad y los aliens empiezan más abajo.
-     */  
+     */
     private void configurar(int numero) {
         switch (numero) {
             case 1:
@@ -52,17 +60,12 @@ public class Nivel {
         }
     }
 
-    public void cargar(){
-        configurar(numero);
-    }
+    public void cargar() { configurar(numero); }
 
-    public int obtenerNumero() {
-        return numero;
-    }
-    public float obtenerVelocidadAlien() {
-        return velocidadAlien;
-    }
-    public int obtenerFilaInicio() {
-        return filaInicio;
-    }
+    public int   obtenerNumero()            { return numero; }
+    public float obtenerVelocidadAlien()    { return velocidadAlien; }
+    public int   obtenerFilaInicio()        { return filaInicio; }
+    public int   obtenerFilas()             { return filas; }
+    public int   obtenerColumnas()          { return columnas; }
+    public float obtenerProbabilidadDisparo(){ return probabilidadDisparo; }
 }
