@@ -5,17 +5,20 @@ import java.awt.Graphics2D;
 import motor.Enemigo;
 
 public class Alien extends Enemigo {
-    private int  direccion = 1;
+
     public static final int CALAMAR = 0;
     public static final int CANGREJO = 1;
     public static final int PULPO = 2;
+
     private int tipo;
-   
+    private float xReal; //posicion real en float
+    private int  direccion = 1;
     private int frameAnimacion;
 
     public Alien(int tipo, int x, int y) {
         super(x, y, 32, 32, 1.0f); // Tamaño y velocidad del alien
         this.tipo = tipo;
+        this.xReal = x;
     }
 
     public void bajar(int cantidad) {
@@ -32,7 +35,8 @@ public class Alien extends Enemigo {
     
     @Override
     public void mover() {
-        x += velocidad * direccion;
+        xReal += velocidad * direccion;
+        x = (int) xReal;
     }
 
     @Override
@@ -76,6 +80,6 @@ public class Alien extends Enemigo {
     @Override
     public void dibujar(Graphics2D g) {
         // Aquí puedes dibujar el alien usando g.drawImage o g.fillRect, etc.
-        g.fillRect(x, y, 40, 30); // Ejemplo de un rectángulo representando al alien
+        g.fillRect(x, y, ancho, alto); // Ejemplo de un rectángulo representando al alien
     }
 }

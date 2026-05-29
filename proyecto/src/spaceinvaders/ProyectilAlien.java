@@ -23,23 +23,29 @@ public class ProyectilAlien extends Proyectil {
 
     @Override
     public boolean detectarColision() {
+        // Contra escudos
         if (activo && escudos != null) {
             for (Escudo escudo : escudos) {
+<<<<<<< HEAD
                 if (escudo.recibirImpacto(x, y)) {
                     activo = false;
                     return true; // colisionó con escudo
+=======
+                if (escudo.verificarImpactoProyectil(x, y, ancho, alto)) { // ← este método
+                    desactivar();
+                    return true;
+>>>>>>> d733a0d653a67f81bd6c23aa6b6c362cd677e287
                 }
             }
         }
-        // verificar contra jugador
+        // Contra jugador
         if (jugador != null && obtenerLimites().intersects(jugador.obtenerLimites())) {
             jugador.perderVida();
             desactivar();
             return true;
         }
-        return false; // no colisionó con nada
+        return false;
     }
-
     
     @Override
     public void mover() {

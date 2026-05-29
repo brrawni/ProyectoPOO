@@ -5,7 +5,6 @@ import java.util.List;
 import motor.Proyectil;
 
 public class ProyectilCanon extends Proyectil {
-    
 
     private FormacionAlien formacion;
     private List<Escudo>   escudos;
@@ -24,7 +23,7 @@ public class ProyectilCanon extends Proyectil {
             desactivar();
             return;
         }
-        verificarImpacto(); // un solo punto de chequeo
+        verificarImpacto();
     }
 
     public void verificarImpacto() {
@@ -33,7 +32,7 @@ public class ProyectilCanon extends Proyectil {
             for (Alien alien : fila) {
                 if (alien != null && alien.estaVivo()
                         && obtenerLimites().intersects(alien.obtenerLimites())) {
-                    juego.sumarPuntaje(alien.obtenerPuntaje()); // suma puntos
+                    juego.sumarPuntaje(alien.obtenerPuntaje());
                     alien.morir();
                     desactivar();
                     return;
@@ -52,10 +51,14 @@ public class ProyectilCanon extends Proyectil {
 
         // 3. Contra escudos
         for (Escudo escudo : escudos) {
+<<<<<<< HEAD
             if (obtenerLimites().intersects(escudo.obtenerLimites())) {
                 int px = x + ancho / 2;
                 int py = y + alto  / 2;
                 escudo.recibirImpacto(px, py);
+=======
+            if (escudo.verificarImpactoProyectil(x, y, ancho, alto)) {
+>>>>>>> d733a0d653a67f81bd6c23aa6b6c362cd677e287
                 desactivar();
                 return;
             }
@@ -64,7 +67,7 @@ public class ProyectilCanon extends Proyectil {
 
     @Override
     public boolean detectarColision() {
-        return !estaActivo(); // si se desactivó, hubo colisión
+        return !estaActivo();
     }
 
     @Override
