@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import motor.Videojuego;
-
+import ranking.GestorRanking;
 
 
 public class SpaceInvaders extends Videojuego {
@@ -29,6 +29,10 @@ public class SpaceInvaders extends Videojuego {
     //dimensiones de pantalla
     private static final int ANCHO_PANTALLA = 800;
     private static final int ALTO_PANTALLA = 600;
+
+    //atributos para ranking
+    private GestorRanking gestorRanking = new GestorRanking();
+    private boolean rankingGuardado = false;
 
     public SpaceInvaders() {
         super("Space Invaders", ANCHO_PANTALLA, ALTO_PANTALLA);
@@ -147,6 +151,9 @@ public class SpaceInvaders extends Videojuego {
         if(!enEjecucion) {
             g2d.setColor(Color.RED);
             g2d.drawString("GAME OVER", ANCHO_PANTALLA / 2 - 40, ALTO_PANTALLA / 2);
+        }
+        if(!enEjecucion && !rankingGuardado) {
+            mostrarPantallaRanking(g2d);
         }
 
         // 5. Descartamos el pincel temporal
