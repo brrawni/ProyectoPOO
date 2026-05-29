@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import motor.Videojuego;
+import ranking.EntradaRanking;
 import ranking.GestorRanking;
-
 
 public class SpaceInvaders extends Videojuego {
     private ControlTeclado teclado;
@@ -33,6 +33,8 @@ public class SpaceInvaders extends Videojuego {
     //atributos para ranking
     private GestorRanking gestorRanking = new GestorRanking();
     private boolean rankingGuardado = false;
+    private String nombreJugador = "";
+    private boolean ingresandoNombre = false;
 
     public SpaceInvaders() {
         super("Space Invaders", ANCHO_PANTALLA, ALTO_PANTALLA);
@@ -127,38 +129,30 @@ public class SpaceInvaders extends Videojuego {
         if (buffer == null) return;
         Graphics2D g2d = buffer.createGraphics();
 
-        // 1. Dibujar fondo en el buffer
         g2d.setColor(Color.BLACK);
-        g2d.fillRect(0,0,ANCHO_PANTALLA, ALTO_PANTALLA);
+        g2d.fillRect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA);
 
-        // 2. Pintamos entidades en el buffer
         g2d.setColor(Color.WHITE);
         canon.dibujar(g2d);
         formacion.dibujarFormacion(g2d);
         nodriza.dibujar(g2d);
 
-        // 3. Los escudos
-        for(Escudo escudo : escudos) {
+        for (Escudo escudo : escudos) {
             escudo.dibujar(g2d);
         }
 
-        // 4. HUD
         g2d.setColor(Color.WHITE);
         g2d.drawString("Puntaje: " + puntaje, 20, 20);
-        g2d.drawString("Vidas: " + canon.obtenerVidas(), ANCHO_PANTALLA - 100, 20);
-        g2d.drawString("Nivel: " + nivelActual, ANCHO_PANTALLA / 2 - 30, 20);
+        g2d.drawString("Vidas: "   + canon.obtenerVidas(), ANCHO_PANTALLA - 100, 20);
+        g2d.drawString("Nivel: "   + nivelActual, ANCHO_PANTALLA / 2 - 30, 20);
 
-        if(!enEjecucion) {
-            g2d.setColor(Color.RED);
-            g2d.drawString("GAME OVER", ANCHO_PANTALLA / 2 - 40, ALTO_PANTALLA / 2);
+    // Game over se dibuja ANTES del dispose
+        if (!enEjecucion) {
+            dibujarGameOver(g2d);
         }
 
-        // 5. Descartamos el pincel temporal
         g2d.dispose();
-
-        // 6. ¡Pegamos la imagen terminada en la pantalla de una sola vez!
         g.drawImage(buffer, 0, 0, null);
-
     }
 
     public NaveNodriza getNaveNodriza()  { return nodriza; }
@@ -175,5 +169,52 @@ public class SpaceInvaders extends Videojuego {
         return canon.obtenerVidas() <= 0 || formacion.llegoAlSuelo();
     }
 
+    private void dibujarGameOver(Graphics2D g2d) {
+        g2d.setColor(new Color(0, 0, 0, 180));
+        g2d.fillRect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA);
 
+        g2d.setFont(new Font("Arial", Font.BOLD, 40));
+        g2d.setColor(Color.RED);
+        g2d.drawString("GAME OVER", ANCHO_PANTALLA/2 - 100, 150);
+
+        if (!rankingGuardado) {
+            g2d.setFont(new Font("Arial", Font.PLAIN, 20));
+            g2d.setColor(Color.WHITE);
+            g2d.drawString("Ingresá tu nombre:", ANCHO_PANTALLA/2 - 100, 220);
+            g2d.drawString(teclado.getTextoIngresado() + "|", ANCHO_PANTALLA/2 - 100, 250);
+            g2d.drawString("Puntaje: " + puntaje + "  Nivel: " + nivelActual, ANCHO_PANTALLA/2 - 100, 290);
+            g2d.setColor(Color.YELLOW);
+            g2d.drawString("Presioná ENTER para guardar", ANCHO_PANTALLA/2 - 100, 330);
+
+            if (teclado.isEnterPresionado() && !teclado.getTextoIngresado().isEmpty()) {
+                gestorRanking.agregarEntrada(
+                    new EntradaRanking(teclado.getTextoIngresado(), nivelActual, puntaje)
+                );
+                rankingGuardado = true;
+                teclado.resetEntrada();
+            }
+        } else {
+            dibujarRanking(g2d);
+        }
+    }
+
+    private void dibujarRanking(Graphics2D g2d) {
+    g2d.setFont(new Font("Arial", Font.BOLD, 24));
+    g2d.setColor(Color.YELLOW);
+    g2d.drawString("TOP 10", ANCHO_PANTALLA/2 - 40, 180);
+
+    g2d.setFont(new Font("Arial", Font.PLAIN, 16));
+    List<EntradaRanking> top = gestorRanking.obtenerTop10();
+
+    for (int i = 0; i < top.size(); i++) {
+            EntradaRanking e = top.get(i);
+            String linea = (i+1) + ". " + e.getNombre() +
+                       "   Pts: " + e.getPuntaje() +
+                       "   Niv: " + e.getNivel() +
+                       "   "      + e.getFecha();
+            g2d.setColor(i == 0 ? Color.YELLOW : Color.WHITE);
+            g2d.drawString(linea, ANCHO_PANTALLA/2 - 180, 220 + i * 25);
+            }
+        }
 }
+
