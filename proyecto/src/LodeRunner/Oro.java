@@ -46,7 +46,7 @@ public class Oro extends Entidad{
             this.guardiaQueLoLleva = guardia;
             recolectadoPorGuardia = true;
         }
-        else if (heroe != null && detectarColision(heroe)){
+        else if (heroe != null && detectarColision(heroe) && !recolectadoPorGuardia){
             recolectadoPorHeroe = true;
         }
     }
@@ -62,5 +62,8 @@ public class Oro extends Entidad{
     public void serSoltado() {
         this.recolectadoPorGuardia = false;
         this.guardiaQueLoLleva = null;
+    }
+    public boolean isRecolectadoPorHeroe(){
+        return recolectadoPorHeroe;
     }
 }
