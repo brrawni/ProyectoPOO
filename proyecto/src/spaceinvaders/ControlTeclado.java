@@ -12,8 +12,27 @@ public class ControlTeclado extends KeyAdapter {
     private boolean derecha   = false;
     private boolean disparo   = false;
 
+    //agregar para ingreso de nombre
+    private StringBuilder textoIngresado = new StringBuilder();
+    private boolean enterPresionado = false;
+
     @Override
     public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                enterPresionado = true;
+                return;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                if (textoIngresado.length() > 0)
+                    textoIngresado.deleteCharAt(textoIngresado.length() - 1);
+                    return;
+            }
+    // Solo letras y números
+        char c = e.getKeyChar();
+        if (Character.isLetterOrDigit(c) && textoIngresado.length() < 10) {
+            textoIngresado.append(c);
+        }
+
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:  izquierda = true;  break;
             case KeyEvent.VK_RIGHT: derecha   = true;  break;
@@ -31,9 +50,16 @@ public class ControlTeclado extends KeyAdapter {
     }
 
     // El gameloop llama esto cada frame
-    public void procesarEntrada(CanonJugador canon, FormacionAlien formacion) {
+    public void procesarEntrada(CanonJugador canon) {
         if (izquierda) canon.moverIzquierda();
         if (derecha)   canon.moverDerecha();
-        if (disparo)   canon.disparar(formacion); // Pasamos la lista de escudos para que el proyectil pueda detectar colisiones
+        if (disparo)   canon.disparar(); // Pasamos la lista de escudos para que el proyectil pueda detectar colisiones
+    }
+
+    public String getTextoIngresado() { return textoIngresado.toString(); }
+    public boolean isEnterPresionado() { return enterPresionado; }
+    public void resetEntrada() {
+        textoIngresado = new StringBuilder();
+        enterPresionado = false;
     }
 }

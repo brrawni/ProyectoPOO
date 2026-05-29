@@ -35,10 +35,13 @@ public class NaveNodriza extends Enemigo {
         mover();
     }
 
-    public int calcularPuntos(int disparosJugador) {
-        int[] tablaPuntos = {100, 50, 150, 100, 300, 100, 100, 50, 300, 100, 100, 150};
-        int indice = disparosJugador % tablaPuntos.length; // Usa el número de disparos para determinar el puntaje
-        return tablaPuntos[indice]; // Retorna el puntaje correspondiente al número de disparos
+    public int calcularPuntos(int disparos) {
+        if (disparos == 23 || (disparos > 23 && (disparos - 23) % 15 == 0)) {
+            return 300;
+        }
+        // resto de disparos según tabla original
+        int[] tabla = {100, 50, 150, 100, 100, 50, 100, 300, 100, 100, 150, 50};
+        return tabla[disparos % tabla.length];
     }
 
     @Override
@@ -50,7 +53,7 @@ public class NaveNodriza extends Enemigo {
         contadorDisparos++;
     }
 
-    private boolean esVisible() {
+    public boolean esVisible() {
         return visible;
     }
 
