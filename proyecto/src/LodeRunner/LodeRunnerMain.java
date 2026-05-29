@@ -15,13 +15,14 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     private BufferedImage buffer;
     //Imagen para cancelar parpadeos
     private int lingotesRestantes;
-    private Timer cronometro;
+    private Timer temporizador;
     private Escenario escenario;
     private Heroe heroe;
     private ArrayList<Guardia> guardias;
     private ArrayList<Oro> lingotes;
     private boolean mirandoIzq;
     private boolean mirandoDer;
+
     public LodeRunnerMain() {
         super("Lode Runner - te violare edition", 800, 600);
     }
@@ -29,24 +30,29 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     @Override
     public void gameStartup() {
         buffer = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
-
+        enEjecucion = true;
         canvas.addKeyListener(this);
         canvas.setFocusable(true);
         canvas.requestFocus();
         canvas.requestFocusInWindow();
-
+        nivelActual = 1;
         iniciarNivel();
     }
     public void iniciarNivel(){
         // Acá instanciás tu Escenario, tu Héroe y tus Guardianes
-        escenario = new Escenario(32, 32, 1); // Ejemplo de creación del escenario
-        heroe = new Heroe(1*32, 1*32, 32, 32,5, escenario); // Ejemplo de creación del héroe
+        escenario = new Escenario(32, 32, nivelActual); // Ejemplo de creación del escenario
+        heroe = new Heroe(32, 32, 32, 32,5, escenario); // Ejemplo de creación del héroe
         guardias = new ArrayList<>();
         lingotes = new ArrayList<>();
-        cronometro = new Timer();
+        temporizador = new Timer();
         // 1. Spawneo inteligente de Guardias
+        guardias.clear(); //para no sobrecargar la memoria ram
         int guardiasCreados = 0;
-        while (guardiasCreados < 2) {
+        int limiteGuardias = 0;
+        for (int i = 0; i < nivelActual; i++){
+            limiteGuardias += 2;
+        }
+        while (guardiasCreados < limiteGuardias) {
             int colRand = (int)(Math.random() * 14); // Columnas de 0 a 13
             int filaRand = (int)(Math.random() * 8); // Filas de 0 a 7 (evitamos el fondo)
 
@@ -71,7 +77,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
             int bloqueActual = escenario.obtenerTipoBloqueEn(filaRand, columnaRand);
             int bloqueDeAbajo = escenario.obtenerTipoBloqueEn(filaRand + 1, columnaRand);
 
-            // Regla de oro: El casillero actual debe ser Aire (0) y el de abajo Ladrillo (1)
+            //El casillero actual debe ser Aire (0) y el de abajo Ladrillo (1)
             if (bloqueActual == 0 && bloqueDeAbajo == 1) {
                 lingotes.add(new Oro(columnaRand * 32, filaRand * 32, 16, 16));
                 orosCreados++;
@@ -127,6 +133,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         }
 
         if (escenario.obtenerTipoBloqueEn((heroe.getY() + heroe.getAlto() / 2) / 32, (heroe.getX() + heroe.getAncho() / 2) / 32) == 1){
+            //si el heroe queda atrapado en un pozo y este se cierra, pierde una vida y se reinicia el nivel
             heroe.perderVida();
             reiniciarNivel();
         }
@@ -144,6 +151,21 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
 
         lingotes.removeIf(o -> o.isRecolectadoPorHeroe());
         lingotesRestantes = lingotes.size();
+        if (lingotesRestantes == 0){
+            escenario.setEscaleraSalidaActiva(true);
+            escenario.activarEscalera(nivelActual);
+            if (heroe.getY() <= 0){ //el heroe cruzo la escalera
+                heroe.incrementarVida(); //Si el heroe completa el nivel, se le otorga una vida extra
+                nivelActual++; //siguiente nivel
+                escenario.setEscaleraSalidaActiva(false);
+                iniciarNivel();
+            }
+        }
+        //si el heroe pierde todas sus vidas, se lo cojen parado
+        if (heroe.getVidas() == 0){
+            enEjecucion = false;
+        }
+
         try {
             Thread.sleep(32);
         } catch (InterruptedException e) {
@@ -182,7 +204,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         // Código de cierre
     }
     public void iniciarCronometro() {
-        cronometro.scheduleAtFixedRate(new TimerTask() {
+        temporizador.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 // Lógica para actualizar el cronómetro cada segundo
@@ -222,7 +244,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     public void keyReleased(KeyEvent e){
         switch(e.getKeyCode()){
             case KeyEvent.VK_UP:
-                heroe.setDireccion(-1);
+                heroe.setDireccion(-1); //para que el heroe no "patine" cuando se mueve
                 break;
             case KeyEvent.VK_DOWN:
                 heroe.setDireccion(-1);

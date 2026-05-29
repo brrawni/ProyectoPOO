@@ -193,7 +193,6 @@ class Guardia extends PersonajeLodeRunner{
                 if (enEscalera){
                     this.x = ((this.x + 16)/32)*32; //para que no desfase de la escalera
                     this.y -= 2;
-
                 }
                 break;
             case 3:
@@ -457,7 +456,7 @@ class Heroe extends PersonajeLodeRunner{
                 if (enEscalera || colgadoDeBarra) {
                     this.x = ((this.x + 16) / 32) * 32; // Alineación
 
-                    // PROTECCIÓN ANTI-ENTIERRO
+                    // para que el heroe no se entierre cuando baja una escalera
                     int filaSuelo = (this.y + this.alto + 2) / 32;
                     int colSuelo = this.x / 32;
                     int bloqueAbajo = escenario.obtenerTipoBloqueEn(filaSuelo, colSuelo);
@@ -488,6 +487,8 @@ class Heroe extends PersonajeLodeRunner{
     public void perderVida(){
         vidas--;
     }
+    public int getVidas(){ return vidas; }
+    public void incrementarVida(){ vidas++; }
     public void setDireccion(int direccion){
         super.direccion = direccion;
     }
