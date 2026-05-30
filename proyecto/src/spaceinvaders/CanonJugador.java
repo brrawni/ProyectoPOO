@@ -30,20 +30,22 @@ public class CanonJugador extends Jugador {
         if(x>0) x-=4;
      }// Mueve el cañón hacia la izquierda
 
+    // Setters para inyectar dependencias
     public void setEscudos(List<Escudo> escudos){ this.escudos = escudos; }
     public void setJuego(SpaceInvaders juego) { this.juego = juego; } 
     public void setFormacion(FormacionAlien formacion) { this.formacion = formacion; }
     public void setVida(int vida) { this.vida = vida; }
 
-
+    // Método para disparar un proyectil
     public void disparar() {
     if (puedeDisparar && proyectil == null) {
         proyectil = new ProyectilCanon(x + ancho / 2, y, formacion, escudos, juego); // Crea un nuevo proyectil en la posición del cañón
         puedeDisparar = false;
         juego.getNaveNodriza().incrementarDisparos(); // Incrementa el contador de disparos para la nave nodriza
+        }
     }
-}
 
+    // Método para ser llamado cuando el proyectil es destruido (ya sea por colisión o por salir de la pantalla)
     public void proyectilDestruido() {
         proyectil = null; // El proyectil ha sido destruido
         puedeDisparar = true; // El jugador puede disparar nuevamente

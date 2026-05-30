@@ -23,6 +23,7 @@ public class EntradaRanking {
         this.fecha         = fecha;
     }
 
+    // Getters
     public String    getNombre()  { return nombreJugador; }
     public int       getNivel()   { return nivel; }
     public int       getPuntaje() { return puntaje; }
