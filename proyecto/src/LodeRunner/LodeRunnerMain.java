@@ -14,6 +14,7 @@ import java.util.TimerTask;
 public class LodeRunnerMain extends Videojuego implements KeyListener{
     private BufferedImage buffer;
     //Imagen para cancelar parpadeos
+    private ConfiguracionLR config;
     private int lingotesRestantes;
     private Timer temporizador;
     private Escenario escenario;
@@ -21,11 +22,15 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     private ArrayList<Guardia> guardias;
     private ArrayList<Oro> lingotes;
     private int vidasHeroe;
-    private boolean mirandoIzq;
+    private boolean mirandoIzq, cPresionada, enterPresionado;
     private boolean mirandoDer;
+    public enum EstadoJuego{MENU_PRINCIPAL, JUGANDO, GAME_OVER, VICTORIA}
+    private EstadoJuego estadoJuego;
 
-    public LodeRunnerMain() {
+    public LodeRunnerMain(ConfiguracionLR config) {
         super("Lode Runner - te violare edition", 800, 600);
+        this.config = config;
+        estadoJuego = EstadoJuego.MENU_PRINCIPAL;
     }
 
     @Override
@@ -38,7 +43,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         canvas.requestFocusInWindow();
         nivelActual = 1;
         vidasHeroe = 5;
-        iniciarNivel();
+        config.cargar();
     }
     public void iniciarNivel(){
         // Acá instanciás tu Escenario, tu Héroe y tus Guardianes
@@ -90,128 +95,173 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     public void gameUpdate(double delta) {
         if (!enEjecucion)
             return;
-        // AL PRINCIPIO DEL UPDATE
-        boolean heroeArriba = false;
-        escenario.actualizarPozos();
-        // Este for es para verificar si el heroe esta pisando la cabeza de un guardia
-        for (Guardia g : guardias) {
-            boolean alineadosEnX = Math.abs(heroe.getX() - g.getX()) < 32;
-            boolean tocandoCabeza = (heroe.getY() + heroe.getAlto() >= g.getY()) &&
-                    (heroe.getY() + heroe.getAlto() <= g.getY() + 4);
-            if (alineadosEnX && tocandoCabeza) {
-                heroeArriba = true; // No usamos break para que siga revisando a los demás
-            }
-        }
-        // Le pasamos el estado al héroe de entrada
-        heroe.setArribaDeGuardia(heroeArriba);
-        //logica de persecucion
-        for (Guardia g : guardias){
-            g.perseguir(heroe);
-            g.mover();
+        switch(estadoJuego){
+            case MENU_PRINCIPAL:
+                if (cPresionada){
+                    cPresionada = false;
+                    VentanaConfiguracion ventana = new VentanaConfiguracion(config, super.frame);
+                    ventana.setVisible(true);
+                }
+                String teclaParaJugar = config.getTeclaIniciar();
+                boolean quiereJugar = false;
+                if (teclaParaJugar.equals("ENTER") && enterPresionado){
+                    quiereJugar = true;
+                }
+                if (quiereJugar){
+                    estadoJuego = EstadoJuego.JUGANDO;
+                    iniciarNivel();
+                }
+                break;
+            case JUGANDO:
+                boolean heroeArriba = false;
+                escenario.actualizarPozos();
+                // Este for es para verificar si el heroe esta pisando la cabeza de un guardia
+                for (Guardia g : guardias) {
+                    boolean alineadosEnX = Math.abs(heroe.getX() - g.getX()) < 32;
+                    boolean tocandoCabeza = (heroe.getY() + heroe.getAlto() >= g.getY()) &&
+                            (heroe.getY() + heroe.getAlto() <= g.getY() + 4);
+                    if (alineadosEnX && tocandoCabeza) {
+                        heroeArriba = true; // No usamos break para que siga revisando a los demás
+                    }
+                }
+                // Le pasamos el estado al héroe de entrada
+                heroe.setArribaDeGuardia(heroeArriba);
+                //logica de persecucion
+                for (Guardia g : guardias){
+                    g.perseguir(heroe);
+                    g.mover();
 
-            // Si lo toca, y NO le está pisando la cabeza, el héroe muere
-            if (g.detectarColision(heroe)){
-                if (!heroe.isArribaDeGuardia()){
+                    // Si lo toca, y NO le está pisando la cabeza, el héroe muere
+                    if (g.detectarColision(heroe)){
+                        if (!heroe.isArribaDeGuardia()){
+                            vidasHeroe--;
+                            reiniciarNivel();
+                        }
+                    }
+                    // Chequeo de pozo y paredes
+                    int filaCentro = (g.getY() + g.getAlto() / 2) / 32;
+                    int colCentro = (g.getX() + g.getAncho() / 2) / 32;
+                    int bloqueCuerpo = escenario.obtenerTipoBloqueEn(filaCentro, colCentro);
+
+                    // 1ro: Si el bloque es un 1 sólido, significa que el pozo se cerró (o se bugeó en la pared). Reaparece.
+                    if (bloqueCuerpo == 1) {
+                        puntaje += 150;
+                        g.reaparecer();
+                    }
+                    // 2do: Si no se cerró, pero está en un pozo activo
+                    else if (g.estaEnPozo()){
+                        Oro oroRobado = g.getOroGuardado();
+
+                        if (oroRobado != null) {
+                            oroRobado.setX(g.getX());
+                            oroRobado.setY(g.getY() - 16);
+                            g.soltarOro();
+                        }
+                    }
+                }
+
+                if (escenario.obtenerTipoBloqueEn((heroe.getY() + heroe.getAlto() / 2) / 32, (heroe.getX() + heroe.getAncho() / 2) / 32) == 1){
+                    //si el heroe queda atrapado en un pozo y este se cierra, pierde una vida y se reinicia el nivel
                     vidasHeroe--;
                     reiniciarNivel();
                 }
-            }
-            // Chequeo de pozo y paredes
-            int filaCentro = (g.getY() + g.getAlto() / 2) / 32;
-            int colCentro = (g.getX() + g.getAncho() / 2) / 32;
-            int bloqueCuerpo = escenario.obtenerTipoBloqueEn(filaCentro, colCentro);
+                heroe.mover();
 
-            // 1ro: Si el bloque es un 1 sólido, significa que el pozo se cerró (o se bugeó en la pared). Reaparece.
-            if (bloqueCuerpo == 1) {
-                puntaje += 150;
-                g.reaparecer();
-            }
-            // 2do: Si no se cerró, pero está en un pozo activo
-            else if (g.estaEnPozo()){
-                Oro oroRobado = g.getOroGuardado();
+                for (Oro o : lingotes){
+                    // Los guardias intentan robar la plata que esté tirada
+                    for(Guardia g : guardias){
+                        g.robarOro(o);
+                    }
 
-                if (oroRobado != null) {
-                    oroRobado.setX(g.getX());
-                    oroRobado.setY(g.getY() - 16);
-                    g.soltarOro();
+                    o.mover(); // Si el oro está en manos de un guardia, lo sigue. Si no, se queda quieto.
+                    heroe.recolectarOro(o);
+                    if (o.isRecolectadoPorHeroe())
+                        puntaje += Oro.obtenerValor();
                 }
-            }
-        }
 
-        if (escenario.obtenerTipoBloqueEn((heroe.getY() + heroe.getAlto() / 2) / 32, (heroe.getX() + heroe.getAncho() / 2) / 32) == 1){
-            //si el heroe queda atrapado en un pozo y este se cierra, pierde una vida y se reinicia el nivel
-            vidasHeroe--;
-            reiniciarNivel();
-        }
-        heroe.mover();
+                lingotes.removeIf(o -> o.isRecolectadoPorHeroe());
+                lingotesRestantes = lingotes.size();
+                if (lingotesRestantes == 0){
+                    escenario.setEscaleraSalidaActiva(true);
+                    escenario.activarEscalera(nivelActual);
+                    if (heroe.getY() <= 0){ //el heroe cruzo la escalera
+                        puntaje += 200;
+                        vidasHeroe++; //Si el heroe completa el nivel, se le otorga una vida extra
+                        nivelActual++; //siguiente nivel
+                        escenario.setEscaleraSalidaActiva(false);
+                        iniciarNivel();
+                    }
+                }
+                //si el heroe pierde todas sus vidas, se lo cojen parado
+                if (vidasHeroe == 0){
+                    enEjecucion = false;
+                }
 
-        for (Oro o : lingotes){
-            // Los guardias intentan robar la plata que esté tirada
-            for(Guardia g : guardias){
-                g.robarOro(o);
-            }
+                try {
+                    Thread.sleep(32);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+        // AL PRINCIPIO DEL UPDATE
 
-            o.mover(); // Si el oro está en manos de un guardia, lo sigue. Si no, se queda quieto.
-            heroe.recolectarOro(o);
-            if (o.isRecolectadoPorHeroe())
-                puntaje += Oro.obtenerValor();
-        }
-
-        lingotes.removeIf(o -> o.isRecolectadoPorHeroe());
-        lingotesRestantes = lingotes.size();
-        if (lingotesRestantes == 0){
-            escenario.setEscaleraSalidaActiva(true);
-            escenario.activarEscalera(nivelActual);
-            if (heroe.getY() <= 0){ //el heroe cruzo la escalera
-                puntaje += 200;
-                vidasHeroe++; //Si el heroe completa el nivel, se le otorga una vida extra
-                nivelActual++; //siguiente nivel
-                escenario.setEscaleraSalidaActiva(false);
-                iniciarNivel();
-            }
-        }
-        //si el heroe pierde todas sus vidas, se lo cojen parado
-        if (vidasHeroe == 0){
-            enEjecucion = false;
-        }
-
-        try {
-            Thread.sleep(32);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void gameDraw(Graphics2D g) {
         if (buffer == null)
             return;
-        // 1. Limpiamos la pantalla entera pintándola de negro
         Graphics2D g2 = buffer.createGraphics();
-        g2.setColor(Color.BLACK);
-        g2.fillRect(0, 0, 800, 600); // Ajustá al ancho y alto real de la ventana
-        // Dibujamos guardias en azul
-        escenario.dibujar(g2);
-        g2.setColor(Color.RED); //Heroe de rojo
-        heroe.dibujar(g2);
-        for (Guardia guardia : guardias){
-            g2.setColor(Color.BLUE);
-            guardia.dibujar(g2);
+        switch (estadoJuego){
+            case MENU_PRINCIPAL:
+                // 1. Pintamos el fondo de negro
+                g2.setColor(Color.BLACK);
+                g2.fillRect(0, 0, 800, 600);
+
+                // 2. Título del juego
+                g2.setColor(Color.YELLOW);
+                g2.setFont(new Font("Arial", Font.BOLD, 50));
+                g2.drawString("LODE RUNNER", 200, 200);
+
+                // 3. Textos de instrucciones
+                g2.setColor(Color.WHITE);
+                g2.setFont(new Font("Arial", Font.PLAIN, 20));
+
+                // Le preguntamos al ConfigManager qué tecla guardó el usuario para iniciar
+                // (Asegurate de tener este método get en tu ConfigManager)
+                String teclaParaJugar = config.getTeclaIniciar();
+
+                // Dibujamos las dos instrucciones en pantalla, una abajo de la otra
+                g2.drawString("Presiona " + teclaParaJugar.toUpperCase() + " para JUGAR", 250, 400);
+                g2.drawString("Presiona C para CONFIGURACIÓN", 230, 450);
+                break;
+            case JUGANDO:
+                // 1. Limpiamos la pantalla entera pintándola de negro
+                g2.setColor(Color.BLACK);
+                g2.fillRect(0, 0, 800, 600); // Ajustá al ancho y alto real de la ventana
+                // Dibujamos guardias en azul
+                escenario.dibujar(g2);
+                g2.setColor(Color.RED); //Heroe de rojo
+                heroe.dibujar(g2);
+                for (Guardia guardia : guardias){
+                    g2.setColor(Color.BLUE);
+                    guardia.dibujar(g2);
+                }
+                for (Oro o : lingotes){
+                    g2.setColor(Color.YELLOW);
+                    o.dibujar(g2);
+                }
+                if (!enEjecucion){
+                    finDeJuego(g2);
+                }
+                g2.setColor(Color.yellow);
+                g2.drawString("Puntaje: " + puntaje, 20, 580);
+                g2.drawString("Vidas: "   + vidasHeroe, 800 - 100, 580);
+                g2.drawString("Nivel: "   + nivelActual, 800 / 2 - 30, 580);
+                break;
         }
-        for (Oro o : lingotes){
-            g2.setColor(Color.YELLOW);
-            o.dibujar(g2);
-        }
-        if (!enEjecucion){
-            finDeJuego(g2);
-        }
-        g2.setColor(Color.yellow);
-        g2.drawString("Puntaje: " + puntaje, 20, 20);
-        g2.drawString("Vidas: "   + vidasHeroe, 800 - 100, 20);
-        g2.drawString("Nivel: "   + nivelActual, 800 / 2 - 30, 20);
-        //lo descartamos
         g2.dispose();
-        //pegamos la imagen en la pantalla para que no haya parpadeos
         g.drawImage(buffer, 0, 0, null);
     }
 
@@ -240,6 +290,12 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     }
     public void keyPressed(KeyEvent e){
         switch(e.getKeyCode()){
+            case KeyEvent.VK_C:
+                cPresionada = true;
+                break;
+            case KeyEvent.VK_ENTER:
+                enterPresionado = true;
+                break;
             case KeyEvent.VK_SPACE:
                 if (mirandoIzq) //heroe esta mirando a la izquierda
                     heroe.cavarIzquierda();
@@ -267,6 +323,12 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     }
     public void keyReleased(KeyEvent e){
         switch(e.getKeyCode()){
+            case KeyEvent.VK_C:
+                cPresionada = false;
+                break;
+            case KeyEvent.VK_ENTER:
+                enterPresionado = false;
+                break;
             case KeyEvent.VK_UP:
                 heroe.setDireccion(-1); //para que el heroe no "patine" cuando se mueve
                 break;

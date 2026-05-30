@@ -1,9 +1,11 @@
+import LodeRunner.ConfiguracionLR;
 import spaceinvaders.SpaceInvaders;
 import LodeRunner.LodeRunnerMain;
 
 public class Main {
     public static void main(String[] args) {
-        LodeRunnerMain juego = new LodeRunnerMain();
+        ConfiguracionLR config = new ConfiguracionLR();
+        LodeRunnerMain juego = new LodeRunnerMain(config);
         juego.run();
         //SpaceInvaders juego = new SpaceInvaders();
         //juego.run();

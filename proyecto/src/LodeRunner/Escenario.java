@@ -26,8 +26,9 @@ public class Escenario{
         this.sprites = new HashMap<>();
         try{
             BufferedImage hojaSprites = ImageIO.read(new File("proyecto/resources/escaleras.png"));
-            ladrillo = ImageIO.read(new File("proyecto/resources/BrickFireRed.png"));
+            BufferedImage hojaSpritesLadrillos = ImageIO.read(new File("proyecto/resources/ladrillos.png"));
             escalera = hojaSprites.getSubimage(0,0,32,32);
+            ladrillo = hojaSpritesLadrillos.getSubimage(2*32, 5*32, 32, 32);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -53,7 +54,7 @@ public class Escenario{
                         g.drawImage(ladrillo, x, y, null);
                         break;
                     case 3: // Escalera
-                        g.setColor(Color.BLUE); //Azul para la escalera
+                        g.setColor(new Color(139, 69, 19)); //Marron para la escalera
                         g.fillRect(x + 4, y, 4, alto_bloque);
                         g.fillRect(x + ancho_bloque - 8, y, 4, alto_bloque);
                         // Un peldaño en el medio
