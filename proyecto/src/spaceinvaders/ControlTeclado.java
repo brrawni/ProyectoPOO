@@ -27,6 +27,7 @@ public class ControlTeclado extends KeyAdapter {
                     textoIngresado.deleteCharAt(textoIngresado.length() - 1);
                     return;
             }
+
     // Solo letras y números
         char c = e.getKeyChar();
         if (Character.isLetterOrDigit(c) && textoIngresado.length() < 10) {
@@ -40,6 +41,7 @@ public class ControlTeclado extends KeyAdapter {
         }
     }
 
+    // Cuando se suelta una tecla, actualizamos el estado
     @Override
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
@@ -56,6 +58,7 @@ public class ControlTeclado extends KeyAdapter {
         if (disparo)   canon.disparar(); // Pasamos la lista de escudos para que el proyectil pueda detectar colisiones
     }
 
+    // Setters para inyectar dependencias
     public String getTextoIngresado() { return textoIngresado.toString(); }
     public boolean isEnterPresionado() { return enterPresionado; }
     public void resetEntrada() {

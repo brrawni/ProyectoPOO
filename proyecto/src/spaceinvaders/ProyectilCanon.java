@@ -17,7 +17,7 @@ public class ProyectilCanon extends Proyectil {
         this.juego     = juego;
     }
 
-
+    // El gameloop llama esto cada frame
     public void actualizar() {
         y += dy;
         if (y < 0) {
@@ -29,7 +29,7 @@ public class ProyectilCanon extends Proyectil {
 
 
     public void verificarImpacto() {
-        // 1. Contra aliens
+        //contra aliens
         for (Alien[] fila : formacion.getAliens()) {
             for (Alien alien : fila) {
                 if (alien != null && alien.estaVivo()
@@ -42,7 +42,7 @@ public class ProyectilCanon extends Proyectil {
             }
         }
 
-        // 2. Contra nave nodriza
+        //contra nave nodriza
         NaveNodriza nave = juego.getNaveNodriza();
         if (nave.esVisible() && obtenerLimites().intersects(nave.obtenerLimites())) {
             juego.sumarPuntaje(nave.calcularPuntos(juego.getContadorDisparos()));
@@ -51,7 +51,7 @@ public class ProyectilCanon extends Proyectil {
             return;
         }
 
-        // 3. Contra escudos
+        //contra escudos
         for (Escudo escudo : escudos) {
             if (escudo.verificarImpactoProyectil(x, y, ancho, alto)) {
                 desactivar();
@@ -60,6 +60,7 @@ public class ProyectilCanon extends Proyectil {
         }
     }
 
+    // Métodos de la interfaz de entidad
     @Override
     public boolean detectarColision() {
         return !estaActivo();
