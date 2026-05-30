@@ -16,6 +16,8 @@ public class GestorRanking {
         cargar();
     }
 
+
+    // Agrega una nueva entrada al ranking, ordena y guarda el archivo
     public void agregarEntrada(EntradaRanking entrada) {
         entradas.add(entrada);
         entradas.sort(Comparator.comparingInt(EntradaRanking::getPuntaje).reversed());
@@ -25,10 +27,12 @@ public class GestorRanking {
         guardar();
     }
 
+    // Devuelve la lista de las mejores 10 entradas del ranking
     public List<EntradaRanking> obtenerTop10() {
         return entradas;
     }
 
+    // Carga el ranking desde el archivo, si existe
     public void cargar() {
         entradas.clear();
         File archivo = new File(RUTA);
@@ -51,6 +55,7 @@ public class GestorRanking {
             System.out.println("No se pudo cargar el ranking: " + e.getMessage());
         }
     }
+
 
     public void guardar() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(RUTA))) {
