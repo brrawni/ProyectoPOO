@@ -6,7 +6,7 @@ import java.awt.*;
 
 
 public class Oro extends Entidad{
-    private static final int valor = 250;
+    private static final int valor = 50;
     private boolean recolectadoPorGuardia;
     private boolean recolectadoPorHeroe;
     private Guardia guardiaQueLoLleva;

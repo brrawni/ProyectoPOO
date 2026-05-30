@@ -1,6 +1,10 @@
 package LodeRunner;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class Escenario{
@@ -11,6 +15,8 @@ public class Escenario{
     private int numeroNivel;
     private boolean escaleraSalidaActiva;
     private HashMap<Integer, Image> sprites;
+    private BufferedImage escalera;
+    private BufferedImage ladrillo;
     
     public Escenario(int ancho_bloque, int alto_bloque, int numeroNivel){
         this.ancho_bloque = ancho_bloque;
@@ -18,6 +24,13 @@ public class Escenario{
         this.numeroNivel = numeroNivel;
         this.mapaPozosTemporales = new HashMap<>();
         this.sprites = new HashMap<>();
+        try{
+            BufferedImage hojaSprites = ImageIO.read(new File("proyecto/resources/escaleras.png"));
+            ladrillo = ImageIO.read(new File("proyecto/resources/BrickFireRed.png"));
+            escalera = hojaSprites.getSubimage(0,0,32,32);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         cargarNivel(numeroNivel);
     }
     public void dibujar(Graphics2D g){
@@ -33,11 +46,12 @@ public class Escenario{
                         // No dibujar nada
                         break;
                     case 1: // Ladrillo Común
-                        g.setColor(new Color(139, 69, 19)); // Color marrón para el ladrillo
+                        /*g.setColor(new Color(139, 69, 19)); // Color marrón para el ladrillo
                         g.fillRect(x, y, ancho_bloque, alto_bloque);
                         g.setColor(Color.BLACK); // Borde estético para distinguir bloques
-                        g.drawRect(x, y, ancho_bloque, alto_bloque);
-                        break;  
+                        g.drawRect(x, y, ancho_bloque, alto_bloque);*/
+                        g.drawImage(ladrillo, x, y, null);
+                        break;
                     case 3: // Escalera
                         g.setColor(Color.BLUE); //Azul para la escalera
                         g.fillRect(x + 4, y, 4, alto_bloque);
