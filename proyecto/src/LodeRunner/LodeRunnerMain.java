@@ -20,6 +20,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     private Heroe heroe;
     private ArrayList<Guardia> guardias;
     private ArrayList<Oro> lingotes;
+    private int vidasHeroe;
     private boolean mirandoIzq;
     private boolean mirandoDer;
 
@@ -36,12 +37,13 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         canvas.requestFocus();
         canvas.requestFocusInWindow();
         nivelActual = 1;
+        vidasHeroe = 5;
         iniciarNivel();
     }
     public void iniciarNivel(){
         // Acá instanciás tu Escenario, tu Héroe y tus Guardianes
         escenario = new Escenario(32, 32, nivelActual); // Ejemplo de creación del escenario
-        heroe = new Heroe(32, 32, 32, 32,5, escenario); // Ejemplo de creación del héroe
+        heroe = new Heroe(32, 32, 32, 32, vidasHeroe, escenario); // Ejemplo de creación del héroe
         guardias = new ArrayList<>();
         lingotes = new ArrayList<>();
         temporizador = new Timer();
@@ -86,10 +88,12 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     }
     @Override
     public void gameUpdate(double delta) {
+        if (!enEjecucion)
+            return;
         // AL PRINCIPIO DEL UPDATE
         boolean heroeArriba = false;
         escenario.actualizarPozos();
-
+        // Este for es para verificar si el heroe esta pisando la cabeza de un guardia
         for (Guardia g : guardias) {
             boolean alineadosEnX = Math.abs(heroe.getX() - g.getX()) < 32;
             boolean tocandoCabeza = (heroe.getY() + heroe.getAlto() >= g.getY()) &&
@@ -100,17 +104,18 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         }
         // Le pasamos el estado al héroe de entrada
         heroe.setArribaDeGuardia(heroeArriba);
-
-
+        //logica de persecucion
         for (Guardia g : guardias){
             g.perseguir(heroe);
             g.mover();
 
             // Si lo toca, y NO le está pisando la cabeza, el héroe muere
             if (g.detectarColision(heroe)){
-                reiniciarNivel();
+                if (!heroe.isArribaDeGuardia()){
+                    vidasHeroe--;
+                    reiniciarNivel();
+                }
             }
-
             // Chequeo de pozo y paredes
             int filaCentro = (g.getY() + g.getAlto() / 2) / 32;
             int colCentro = (g.getX() + g.getAncho() / 2) / 32;
@@ -118,6 +123,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
 
             // 1ro: Si el bloque es un 1 sólido, significa que el pozo se cerró (o se bugeó en la pared). Reaparece.
             if (bloqueCuerpo == 1) {
+                puntaje += 150;
                 g.reaparecer();
             }
             // 2do: Si no se cerró, pero está en un pozo activo
@@ -134,7 +140,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
 
         if (escenario.obtenerTipoBloqueEn((heroe.getY() + heroe.getAlto() / 2) / 32, (heroe.getX() + heroe.getAncho() / 2) / 32) == 1){
             //si el heroe queda atrapado en un pozo y este se cierra, pierde una vida y se reinicia el nivel
-            heroe.perderVida();
+            vidasHeroe--;
             reiniciarNivel();
         }
         heroe.mover();
@@ -147,6 +153,8 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
 
             o.mover(); // Si el oro está en manos de un guardia, lo sigue. Si no, se queda quieto.
             heroe.recolectarOro(o);
+            if (o.isRecolectadoPorHeroe())
+                puntaje += Oro.obtenerValor();
         }
 
         lingotes.removeIf(o -> o.isRecolectadoPorHeroe());
@@ -155,14 +163,15 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
             escenario.setEscaleraSalidaActiva(true);
             escenario.activarEscalera(nivelActual);
             if (heroe.getY() <= 0){ //el heroe cruzo la escalera
-                heroe.incrementarVida(); //Si el heroe completa el nivel, se le otorga una vida extra
+                puntaje += 200;
+                vidasHeroe++; //Si el heroe completa el nivel, se le otorga una vida extra
                 nivelActual++; //siguiente nivel
                 escenario.setEscaleraSalidaActiva(false);
                 iniciarNivel();
             }
         }
         //si el heroe pierde todas sus vidas, se lo cojen parado
-        if (heroe.getVidas() == 0){
+        if (vidasHeroe == 0){
             enEjecucion = false;
         }
 
@@ -193,6 +202,13 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
             g2.setColor(Color.YELLOW);
             o.dibujar(g2);
         }
+        if (!enEjecucion){
+            finDeJuego(g2);
+        }
+        g2.setColor(Color.yellow);
+        g2.drawString("Puntaje: " + puntaje, 20, 20);
+        g2.drawString("Vidas: "   + vidasHeroe, 800 - 100, 20);
+        g2.drawString("Nivel: "   + nivelActual, 800 / 2 - 30, 20);
         //lo descartamos
         g2.dispose();
         //pegamos la imagen en la pantalla para que no haya parpadeos
@@ -203,7 +219,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     public void gameShutdown() {
         // Código de cierre
     }
-    public void iniciarCronometro() {
+    public void iniciarTemporizador() {
         temporizador.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -213,6 +229,14 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     }
     public void reiniciarNivel(){
         iniciarNivel();
+    }
+    public void finDeJuego(Graphics2D g){
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, 800, 600);
+        //fuente
+        g.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        g.setColor(Color.yellow);
+        g.drawString("Game Over", 300, 150);
     }
     public void keyPressed(KeyEvent e){
         switch(e.getKeyCode()){
