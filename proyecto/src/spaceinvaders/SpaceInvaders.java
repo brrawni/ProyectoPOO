@@ -84,6 +84,7 @@ public class SpaceInvaders extends Videojuego {
         canvas.setFocusable(true);
         canvas.requestFocus();
         canvas.requestFocusInWindow();
+        frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
     }
 
     @Override
