@@ -3,6 +3,7 @@ package spaceinvaders;
 
 import java.awt.Graphics2D;
 import motor.Enemigo;
+import motor.GestorImagenes;
 
 public class Alien extends Enemigo {
 
@@ -79,7 +80,37 @@ public class Alien extends Enemigo {
 
     @Override
     public void dibujar(Graphics2D g) {
-        // Aquí puedes dibujar el alien usando g.drawImage o g.fillRect, etc.
-        g.fillRect(x, y, ancho, alto); // Ejemplo de un rectángulo representando al alien
+        GestorImagenes gestor = GestorImagenes.getInstance();
+        String nombreSprite;
+        Color color;
+        switch (tipo) {
+            case CALAMAR:
+                nombreSprite = "calamar";
+                color = Color.GREEN;
+                break;
+            case CANGREJO:
+                nombreSprite = "cangrejo";
+                color = Color.RED;
+                break;
+            case PULPO:
+                nombreSprite = "pulpo";
+                color = Color.MAGENTA;
+                break;
+            default:
+                nombreSprite = "calamar";
+                color = Color.WHITE;
+        }
+        int frame = obtenerFrameAnimacion();
+        String ruta = "/img/spaceinvaders/" + nombreSprite + "_" + frame + ".png";
+
+        BufferedImage img = gestor.cargar(ruta);
+        img = gestor.colorear(img, color);
+
+        if (img != null) {
+            g.drawImage(img, x, y, ancho, alto, null);
+        } else {
+            g.setColor(color);
+            g.fillRect(x, y, ancho, alto);
+        }
     }
 }
