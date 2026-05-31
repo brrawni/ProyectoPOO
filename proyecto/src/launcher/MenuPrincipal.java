@@ -166,7 +166,7 @@ public class MenuPrincipal extends Videojuego {
         // Footer
         g2d.setFont(new Font("Arial", Font.PLAIN, 12));
         g2d.setColor(new Color(80, 80, 80));
-        g2d.drawString("© 2025 ProyectoPOO", ANCHO/2 - 60, ALTO - 20);
+        g2d.drawString("© 2026 ProyectoPOO", ANCHO/2 - 60, ALTO - 20);
 
         g2d.dispose();
         g.drawImage(buffer, 0, 0, null);
