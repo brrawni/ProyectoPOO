@@ -1,5 +1,8 @@
 package spaceinvaders;
 
+import spaceinvaders.GestorImagenes;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
 import motor.Enemigo;
 
@@ -69,9 +72,23 @@ public class NaveNodriza extends Enemigo {
 
     @Override
     public void dibujar(Graphics2D g) {
-        if (visible && vivo) {
-            // Lógica para dibujar la nave nodriza
-            g.fillRect(x, y, ancho, alto); // Ejemplo de un rectángulo representando a la nave nodriza
+        if (!visible || !vivo) return;
+
+        GestorImagenes gestor = GestorImagenes.getInstance();
+        String ruta       = "/img/spaceinvaders/navenodriza.png";
+        String claveCache = ruta + "_" + Color.RED.getRGB();
+
+        BufferedImage img = gestor.cargarDeCache(claveCache);
+        if (img == null) {
+            img = gestor.colorear(gestor.cargar(ruta), Color.RED);
+            if (img != null) gestor.guardarEnCache(claveCache, img);
+        }
+
+        if (img != null) {
+            g.drawImage(img, x, y, ancho, alto, null);
+        } else {
+            g.setColor(Color.RED);
+            g.fillRect(x, y, ancho, alto);
         }
     }
 }
