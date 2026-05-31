@@ -3,7 +3,8 @@ package spaceinvaders;
 
 import java.awt.Graphics2D;
 import motor.Enemigo;
-import motor.GestorImagenes;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 public class Alien extends Enemigo {
 
@@ -48,13 +49,13 @@ public class Alien extends Enemigo {
     public void actualizar() {
         // Lógica para actualizar la animación del alien
         frameAnimacion++;
-        if (frameAnimacion >= 30) { // Cambia de frame cada 30 actualizaciones
+        if (frameAnimacion >= 8) { // Cambia de frame cada 30 actualizaciones
             frameAnimacion = 0;
         }
     }
 
     public int obtenerFrameAnimacion() {
-        return frameAnimacion < 15 ? 0 : 1; // Retorna 0 o 1 para alternar entre dos frames
+        return frameAnimacion < 4 ? 0 : 1; // Retorna 0 o 1 para alternar entre dos frames
     }
 
     @Override
@@ -81,36 +82,48 @@ public class Alien extends Enemigo {
     @Override
     public void dibujar(Graphics2D g) {
         GestorImagenes gestor = GestorImagenes.getInstance();
+
         String nombreSprite;
-        Color color;
+        Color  color;
         switch (tipo) {
             case CALAMAR:
                 nombreSprite = "calamar";
-                color = Color.GREEN;
+                color        = Color.GREEN;
                 break;
             case CANGREJO:
                 nombreSprite = "cangrejo";
-                color = Color.RED;
+                color        = Color.RED;
                 break;
             case PULPO:
                 nombreSprite = "pulpo";
-                color = Color.MAGENTA;
+                color        = Color.MAGENTA;
                 break;
             default:
                 nombreSprite = "calamar";
-                color = Color.WHITE;
+                color        = Color.WHITE;
         }
-        int frame = obtenerFrameAnimacion();
-        String ruta = "/img/spaceinvaders/" + nombreSprite + "_" + frame + ".png";
 
-        BufferedImage img = gestor.cargar(ruta);
-        img = gestor.colorear(img, color);
+        int    frame      = obtenerFrameAnimacion();
+        String ruta       = "/img/spaceinvaders/" + nombreSprite + "_" + frame + ".png";
+        String claveCache = ruta + "_" + color.getRGB();
 
-        if (img != null) {
-            g.drawImage(img, x, y, ancho, alto, null);
+        // Intentar cargar desde cache coloreado
+        BufferedImage imgColoreada = gestor.cargarDeCache(claveCache);
+
+        if (imgColoreada == null) {
+            BufferedImage img = gestor.cargar(ruta);
+            imgColoreada = gestor.colorear(img, color);
+            if (imgColoreada != null) {
+                gestor.guardarEnCache(claveCache, imgColoreada);
+            }
+        }
+
+        if (imgColoreada != null) {
+            g.drawImage(imgColoreada, x, y, ancho, alto, null);
         } else {
             g.setColor(color);
             g.fillRect(x, y, ancho, alto);
         }
     }
+
 }
