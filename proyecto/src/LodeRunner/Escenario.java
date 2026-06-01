@@ -47,18 +47,10 @@ public class Escenario{
                         // No dibujar nada
                         break;
                     case 1: // Ladrillo Común
-                        /*g.setColor(new Color(139, 69, 19)); // Color marrón para el ladrillo
-                        g.fillRect(x, y, ancho_bloque, alto_bloque);
-                        g.setColor(Color.BLACK); // Borde estético para distinguir bloques
-                        g.drawRect(x, y, ancho_bloque, alto_bloque);*/
                         g.drawImage(ladrillo, x, y, null);
                         break;
                     case 3: // Escalera
-                        g.setColor(new Color(139, 69, 19)); //Marron para la escalera
-                        g.fillRect(x + 4, y, 4, alto_bloque);
-                        g.fillRect(x + ancho_bloque - 8, y, 4, alto_bloque);
-                        // Un peldaño en el medio
-                        g.fillRect(x + 4, y + (alto_bloque / 2) - 2, ancho_bloque - 8, 4);
+                        g.drawImage(escalera, x-16, y-16, 64, 64, null); //esto es para que no se vea borroso
                         break;
                     case 4: // Barra/Soga
                         g.setColor(Color.WHITE);
@@ -122,10 +114,10 @@ public class Escenario{
                     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 1
                     {1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0}, // 2: Pasillo estrecho
                     {0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 3, 0}, // 3
-                    {0, 0, 0, 3, 1, 1, 3, 0, 1, 3, 0, 0, 0, 0, 1, 3, 1, 1, 1, 3, 0, 1, 0, 3, 0}, // 4
-                    {0, 0, 0, 3, 0, 0, 3, 0, 1, 3, 0, 0, 0, 0, 1, 3, 0, 0, 0, 3, 0, 1, 0, 3, 0}, // 5
-                    {0, 0, 0, 3, 0, 0, 3, 0, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 3, 0, 1, 0, 3, 0}, // 6
-                    {0, 0, 0, 3, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 1, 0, 3, 0}, // 7
+                    {0, 0, 3, 1, 1, 1, 3, 0, 1, 3, 0, 0, 0, 0, 1, 3, 1, 1, 1, 3, 0, 1, 0, 3, 0}, // 4
+                    {0, 0, 3, 0, 0, 0, 3, 0, 1, 3, 0, 0, 0, 0, 1, 3, 0, 0, 0, 3, 0, 1, 0, 3, 0}, // 5
+                    {0, 0, 3, 0, 0, 0, 3, 0, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 3, 0, 1, 0, 3, 0}, // 6
+                    {0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 1, 0, 3, 0}, // 7
                     {1, 1, 1, 1, 3, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1}, // 8: PISO GRUESO (Capa 1)
                     {1, 1, 1, 1, 3, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1}, // 9: PISO GRUESO (Capa 2)
                     {1, 1, 1, 1, 3, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1}, // 10: PISO GRUESO (Capa 3 - Obliga a cavar en diagonal)
