@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class GestorRecursos {
+public final class GestorRecursos {
     private HashMap<String, BufferedImage> originalHeroe;
     private HashMap<String, BufferedImage> imgGuardia;
 
@@ -14,8 +14,8 @@ public class GestorRecursos {
         imgGuardia = new HashMap<>();
         originalHeroe = new HashMap<>();
         try{
-            BufferedImage hojaSprites = ImageIO.read(getClass().getResourceAsStream("/resources/img/loderunner/personajes.png"));
-            for (int i = 0; i < 3; i++){
+            BufferedImage hojaSprites = ImageIO.read(getClass().getResourceAsStream("/img/loderunner/personajes.png"));
+            for (int i = 0; i < 4; i++){
                 //animaciones guardia corriendo
                 imgGuardia.put("corriendo" + (i + 1), hojaSprites.getSubimage(16*i, 3*16, 16, 16));
                 //animaciones guardia escalera
@@ -31,5 +31,8 @@ public class GestorRecursos {
     }
     public void cargarSkin(String nombreSkin){
 
+    }
+    public HashMap getImgGuardia(){
+        return imgGuardia;
     }
 }

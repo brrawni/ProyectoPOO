@@ -275,7 +275,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 g2.setColor(Color.RED); //Heroe de rojo
                 heroe.dibujar(g2);
                 for (Guardia guardia : guardias){
-                    g2.setColor(Color.BLUE);
+                    guardia.actualizarAnimacion();
                     guardia.dibujar(g2);
                 }
                 for (Oro o : lingotes){
