@@ -1,6 +1,8 @@
 package LodeRunner;
 
 import motor.Videojuego;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -27,8 +29,9 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     public enum EstadoJuego{MENU_PRINCIPAL, JUGANDO, GAME_OVER, VICTORIA}
     private EstadoJuego estadoJuego;
 
+
     public LodeRunnerMain(ConfiguracionLR config) {
-        super("Lode Runner - te violare edition", 800, 600);
+        super("Lode Runner - UNLPam edition", 800, 600);
         this.config = config;
         estadoJuego = EstadoJuego.MENU_PRINCIPAL;
     }
@@ -110,6 +113,17 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 if (quiereJugar){
                     estadoJuego = EstadoJuego.JUGANDO;
                     iniciarNivel();
+                }
+                if (config.isPantallaCompleta()){
+                    super.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize(); //esto nos ayuda a obtener la resolucion de la pantalla en la que se eejcuta el juego
+
+                    canvas.setSize(pantalla);
+                    canvas.setPreferredSize(pantalla);
+                }else{
+                    frame.setSize(800, 600);
+                    canvas.setSize(800, 600);
+                    frame.setLocationRelativeTo(null);
                 }
                 break;
             case JUGANDO:
@@ -212,7 +226,23 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     public void gameDraw(Graphics2D g) {
         if (buffer == null)
             return;
+        int windowWidth = frame.getContentPane().getWidth();
+        int windowHeight = frame.getContentPane().getHeight();
         Graphics2D g2 = buffer.createGraphics();
+// mantener aspect ratio
+        double scaleX = (double) windowWidth / 800;
+        double scaleY = (double) windowHeight / 600;
+        double scale = Math.min(scaleX, scaleY);
+
+        int newWidth = (int)(800 * scale);
+        int newHeight = (int)(600 * scale);
+
+// centrar
+        int x = (windowWidth - newWidth) / 2;
+        int y = (windowHeight - newHeight) / 2;
+
+// 🔥 clave para pixel art:
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         switch (estadoJuego){
             case MENU_PRINCIPAL:
                 // 1. Pintamos el fondo de negro
@@ -262,7 +292,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 break;
         }
         g2.dispose();
-        g.drawImage(buffer, 0, 0, null);
+        g.drawImage(buffer, x, y, newWidth, newHeight, null);
     }
 
     @Override
