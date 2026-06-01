@@ -25,8 +25,8 @@ public class Escenario{
         this.mapaPozosTemporales = new HashMap<>();
         this.sprites = new HashMap<>();
         try{
-            BufferedImage hojaSprites = ImageIO.read(new File("proyecto/resources/escaleras.png"));
-            BufferedImage hojaSpritesLadrillos = ImageIO.read(new File("proyecto/resources/ladrillos.png"));
+            BufferedImage hojaSprites = ImageIO.read(getClass().getResourceAsStream("/img/loderunner/escaleras.png"));
+            BufferedImage hojaSpritesLadrillos = ImageIO.read(getClass().getResourceAsStream("/img/loderunner/ladrillos.png"));
             escalera = hojaSprites.getSubimage(0,0,32,32);
             ladrillo = hojaSpritesLadrillos.getSubimage(2*32, 5*32, 32, 32);
         } catch (IOException e) {
