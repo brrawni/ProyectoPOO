@@ -3,6 +3,7 @@ package LodeRunner;
 import motor.Entidad;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public abstract class PersonajeLodeRunner extends Entidad{
@@ -41,6 +42,11 @@ class Guardia extends PersonajeLodeRunner{
     private Oro oroGuardado;
     private boolean persiguiendo;
     private boolean heroeArriba;
+    //"reloj" para frenar la animacion
+    private int contadorTicks = 0;
+    private int frameActual = 1;
+    private final int VELOCIDAD_ANIMACION = 10;
+    private String estadoActual = "corriendo";
 
     public Guardia(int x, int y, int ancho, int alto, Escenario escenario){
         super(x, y, ancho, alto, escenario);
@@ -85,8 +91,32 @@ class Guardia extends PersonajeLodeRunner{
     }
     @Override
     public void dibujar(Graphics2D g){
-        g.setColor(Color.BLUE);
-        g.fillRect(this.x, this.y, this.ancho, this.alto);
+        String claveAnimacion = estadoActual + frameActual;
+        GestorRecursos gestor = new GestorRecursos();
+        BufferedImage imagenActual = (BufferedImage) gestor.getImgGuardia().get(claveAnimacion);
+
+        if (imagenActual != null){
+            if (estadoActual.equals("corriendo") && direccion == 0){ //dibujamos la imagen mirando a la izquierda
+                g.drawImage(imagenActual, x, y, 32, 32, null);
+            }
+            else if (estadoActual.equals("corriendo") && direccion == 1){
+                g.drawImage(imagenActual, x, y, -32, 32, null);
+            }
+            if (estadoActual.equals("barra") && direccion == 0){
+                g.drawImage(imagenActual, x, y, 32, 32, null);
+            }
+            else if (estadoActual.equals("barra") && direccion == 1){
+                g.drawImage(imagenActual, x, y, -32, 32, null);
+            }
+            else if (estadoActual.equals("escalera")){
+                g.drawImage(imagenActual, x, y, 32, 32, null);
+            }
+            else if (estadoActual.equals("cayendo")){
+                g.drawImage(imagenActual, x, y, 32, 32, null);
+            }
+        }else{
+            System.out.println("El sistema no encontro la imagen de: " + claveAnimacion);
+        }
     }
     public void perseguir(Heroe heroe){
         double base = (heroe.getX() + heroe.getAncho()/2) - (this.x + this.ancho/2);
@@ -129,9 +159,22 @@ class Guardia extends PersonajeLodeRunner{
             moverAleatoriamente();
         }
     }
+    //Metodo para actualizar la animacion del guardia
+    public void actualizarAnimacion(){
+        //sumamos 1 al contador de ticks por cada tick que pase
+        contadorTicks++;
+        if (contadorTicks >= VELOCIDAD_ANIMACION){
+            contadorTicks = 0;
+            frameActual++;
+        }
+        if (frameActual > 4) //tenemos 4 frames por animacion
+            frameActual = 1;
+    }
+
     public void mover(){
         boolean tienePiso = detectarColision();
         if (!tienePiso && !enEscalera && !colgadoDeBarra){
+            estadoActual = "cayendo";
             aplicarGravedad();
             return;
         }
@@ -156,14 +199,16 @@ class Guardia extends PersonajeLodeRunner{
                         this.y = ((this.y + 16) / 32) * 32; //alinear el eje y
                         enEscalera = false;
                         colgadoDeBarra = true;
+                        estadoActual = "barra";
                     }
                     else{
+                        estadoActual = "corriendo";
                         enEscalera = false;
                         colgadoDeBarra = false;
                     }
                 }
                 else{
-                    direccion = 1; //cambiar de direccion a la derecha
+                    direccion = 1;//cambiar de direccion a la derecha
                 }
                 break;
             case 1:
@@ -179,8 +224,10 @@ class Guardia extends PersonajeLodeRunner{
                         this.y = ((this.y + 16) / 32) * 32; //alinear el eje y
                         colgadoDeBarra = true;
                         enEscalera = false;
+                        estadoActual = "barra";
                     }
                     else{
+                        estadoActual = "corriendo";
                         enEscalera = false;
                         colgadoDeBarra = false;
                     }
@@ -191,12 +238,14 @@ class Guardia extends PersonajeLodeRunner{
                 break;
             case 2:
                 if (enEscalera){
+                    estadoActual = "escalera";
                     this.x = ((this.x + 16)/32)*32; //para que no desfase de la escalera
                     this.y -= 2;
                 }
                 break;
             case 3:
-                if (enEscalera || colgadoDeBarra){
+                if (enEscalera){
+                    estadoActual = "escalera";
                     this.x = ((this.x + 16)/32)*32;
                     this.y += 2;
                     int filaPies = (this.y + this.alto - 1) / 32;
@@ -210,6 +259,7 @@ class Guardia extends PersonajeLodeRunner{
                     }
                 }
                 else{
+                    estadoActual = "cayendo";
                     aplicarGravedad();
                 }
                 break;
