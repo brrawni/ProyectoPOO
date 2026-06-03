@@ -17,6 +17,7 @@ public abstract class PersonajeLodeRunner extends Entidad{
         super.visible = true;
         this.escenario = escenario;
     }
+    public abstract void mover();
     public void aplicarGravedad(){
         this.x = ((this.x + 16)/32)*32;
         this.y += 4; // Cae por gravedad
@@ -345,7 +346,7 @@ class Heroe extends PersonajeLodeRunner{
     private boolean arribaDeGuardia;
     private int contadorTicks = 0;
     private int frameActual = 1;
-    private final int VELOCIDAD_ANIMACION = 1;
+    private final int VELOCIDAD_ANIMACION = 2;
     private String estadoActual = "corriendo";
     public String skin;
     private boolean estaQuieto = false;
@@ -421,8 +422,14 @@ class Heroe extends PersonajeLodeRunner{
             contadorTicks = 0;
             frameActual++;
         }
-        if (frameActual > 4 || estaQuieto) //tenemos 4 frames por animacion
+        if (frameActual > 4 || estaQuieto){
+            //tenemos 4 frames por animacion
+            if (!enEscalera && !colgadoDeBarra && !estadoActual.equals("cayendo") && estaQuieto){
+                estadoActual = "idle";
+            }
             frameActual = 1;
+        }
+
     }
     public void cavarIzquierda(){
         int columnaCentro = (this.x + this.ancho / 2) / 32;
