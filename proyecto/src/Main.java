@@ -11,6 +11,6 @@ public class Main {
         juego.run();
         //SpaceInvaders juego = new SpaceInvaders();
         //juego.run();
-        //new MenuPrincipal().run();
+       // new MenuPrincipal().run();
     }
 }
