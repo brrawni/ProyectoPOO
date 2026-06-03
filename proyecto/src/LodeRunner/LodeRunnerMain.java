@@ -8,26 +8,27 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-
 //Cada sprite mide 16x16
 
 public class LodeRunnerMain extends Videojuego implements KeyListener{
-    private BufferedImage buffer;
     //Imagen para cancelar parpadeos
+    private BufferedImage buffer;
+
+    //componentes del juego
     private ConfiguracionLR config;
-    private int lingotesRestantes;
-    private Timer temporizador;
     private Escenario escenario;
     private Heroe heroe;
     private ArrayList<Guardia> guardias;
     private ArrayList<Oro> lingotes;
     private int vidasHeroe;
+    //variables de control
     private boolean mirandoIzq, cPresionada, enterPresionado;
     private boolean mirandoDer;
     public enum EstadoJuego{MENU_PRINCIPAL, JUGANDO, GAME_OVER, VICTORIA}
     private EstadoJuego estadoJuego;
+    private int lingotesRestantes;
+    private int temporizador = 300; //lo iniciamos en 5 minutos
+    private int frames = 0;
 
 
     public LodeRunnerMain(ConfiguracionLR config) {
@@ -44,7 +45,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         canvas.setFocusable(true);
         canvas.requestFocus();
         canvas.requestFocusInWindow();
-        nivelActual = 3;
+        nivelActual = 1;
         vidasHeroe = 5;
         config.cargar();
     }
@@ -54,7 +55,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         heroe = new Heroe(32, 32, 32, 32, vidasHeroe, escenario); // Ejemplo de creación del héroe
         guardias = new ArrayList<>();
         lingotes = new ArrayList<>();
-        temporizador = new Timer();
         // 1. Spawneo inteligente de Guardias
         guardias.clear(); //para no sobrecargar la memoria ram
         int guardiasCreados = 0;
@@ -128,6 +128,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 break;
             case JUGANDO:
                 boolean heroeArriba = false;
+                heroe.skin = "original";
                 escenario.actualizarPozos();
                 // Este for es para verificar si el heroe esta pisando la cabeza de un guardia
                 for (Guardia g : guardias) {
@@ -272,7 +273,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 g2.fillRect(0, 0, 800, 600); // Ajustá al ancho y alto real de la ventana
                 // Dibujamos guardias en azul
                 escenario.dibujar(g2);
-                g2.setColor(Color.RED); //Heroe de rojo
+                heroe.actualizarAnimacion();
                 heroe.dibujar(g2);
                 for (Guardia guardia : guardias){
                     guardia.actualizarAnimacion();
@@ -298,14 +299,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     @Override
     public void gameShutdown() {
         // Código de cierre
-    }
-    public void iniciarTemporizador() {
-        temporizador.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                // Lógica para actualizar el cronómetro cada segundo
-            }
-        }, 0, 1000);
     }
     public void reiniciarNivel(){
         iniciarNivel();
