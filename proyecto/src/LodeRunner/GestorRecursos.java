@@ -9,6 +9,7 @@ import java.util.HashMap;
 public final class GestorRecursos {
     private HashMap<String, BufferedImage> originalHeroe;
     private HashMap<String, BufferedImage> imgGuardia;
+    private static GestorRecursos gestorRecursos = new GestorRecursos();
 
     public GestorRecursos(){
         imgGuardia = new HashMap<>();
@@ -35,4 +36,5 @@ public final class GestorRecursos {
     public HashMap getImgGuardia(){
         return imgGuardia;
     }
+    public static GestorRecursos getInstance(){ return gestorRecursos; }
 }

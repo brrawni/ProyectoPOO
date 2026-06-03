@@ -44,7 +44,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         canvas.setFocusable(true);
         canvas.requestFocus();
         canvas.requestFocusInWindow();
-        nivelActual = 1;
+        nivelActual = 3;
         vidasHeroe = 5;
         config.cargar();
     }
