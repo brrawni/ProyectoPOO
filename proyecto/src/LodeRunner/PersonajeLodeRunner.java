@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
+import static java.lang.Math.abs;
+
 public abstract class PersonajeLodeRunner extends Entidad{
     protected boolean enEscalera = false;
     protected boolean colgadoDeBarra = false;
@@ -115,33 +117,99 @@ class Guardia extends PersonajeLodeRunner{
         double altura = (heroe.getY() + heroe.getAlto()/2) - (this.y + this.alto/2);
         double hipotenusa = Math.sqrt(Math.pow(base, 2.0) + Math.pow(altura, 2.0));
         if (hipotenusa < 32*7){ //El rango de vision de los guardias esta definido en 10 bloques, y cada bloque mide 32 pixeles de largo y ancho
-            if (base > 0)
-                this.direccion = 1; //heroe a la derecha
-            else if (base < 0)
-                this.direccion = 0; //heroe a la izquierda
+            // Verificamos si el guardia está perfectamente alineado con la grilla vertical
+            //recordatorio: arreglar esta parte para que el guardia no deje de subir/bajar la escalera hasta que toque el suelo o el piso
+            if (this.y % 32 != 0) {
+                // Lo obligamos a que siga subiendo (o bajando) hasta que sus pies toquen la superficie.
+                if (this.y > heroe.getY()) {
+                    this.direccion = 2; // Lo forzamos a terminar de subir
+                } else {
+                    this.direccion = 3; // Lo forzamos a terminar de bajar
+                }
+            }
+            else{
+                if (base > 0)
+                    this.direccion = 1; // Derecha
+                else if (base < 0)
+                    this.direccion = 0; // Izquierda
+            }
             if (this.y > heroe.getY()){
+                int colEscaleraObjetivo = -1;
                 int filaCuerpo = (this.y + this.alto / 2) / 32;
                 int colCentro = (this.x + this.ancho / 2) / 32;
-                if (escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro) == 3){ //si encuentra soga o escalera, sube
-                    this.direccion = 2; //heroe esta arriba
+                //bucle para buscar la escalera mas cercana al heroe si esta arriba
+                for (int i = 0; i < 25; i++){
+                    int colIzq = (heroe.getX() + heroe.getAncho() / 2) / 32 - i;
+                    int colDer = (heroe.getX() + heroe.getAncho() / 2) / 32 + i;
+                    // Verificamos izquierda (y que no se salga de la pantalla)
+                    if (colIzq >= 0 && escenario.obtenerTipoBloqueEn(filaCuerpo, colIzq) == 3) {
+                        colEscaleraObjetivo = colIzq;
+                        break; // Cortamos el bucle para que no sobreescriba la otra variable booleana
+                    }
+                    // Verificamos derecha (y que no se salga de la pantalla)
+                    if (colDer < 25 && escenario.obtenerTipoBloqueEn(filaCuerpo, colDer) == 3) {
+                        colEscaleraObjetivo = colDer;
+                        break;
+                    }
+                }
+                if (colEscaleraObjetivo != -1) {
+
+                    // Si el guardia ya está parado exactamente en la escalera elegida, la sube.
+                    if (colCentro == colEscaleraObjetivo && escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro) == 3) {
+                        this.direccion = 2; // Arriba
+                    }
+                    // Si la escalera objetivo está a la izquierda del guardia, camina a la izquierda.
+                    else if (colEscaleraObjetivo < colCentro && escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro) != 3 && this.y % 32 == 0) {
+                        this.direccion = 0;
+                    }
+                    // Si la escalera objetivo está a la derecha del guardia, camina a la derecha.
+                    else if (colEscaleraObjetivo > colCentro && escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro) != 3 && this.y % 32 == 0) {
+                        this.direccion = 1;
+                    }
                 }
             }
             else if (this.y < heroe.getY()){
+                int colEscaleraObjetivo = -1;
                 // Le damos "ojos" a la IA para mirar los pies
                 int filaPies = (this.y + this.alto) / 32;
                 int colCentro = (this.x + this.ancho / 2) / 32;
-                int bloqueAbajo = escenario.obtenerTipoBloqueEn(filaPies, colCentro);
-                int bloqueEnPies = escenario.obtenerTipoBloqueEn(filaPies + 1, colCentro);
-                // Solo le da la orden de bajar (3) si NO hay un ladrillo.
-                // Si hay un ladrillo sólido (1), esto da falso.
-                // Al dar falso, el guardia mantiene la dirección horizontal (0 o 1) y sigue de largo.
-                if (bloqueEnPies == 3 || bloqueAbajo == 3) {
-                    this.direccion = 3;
-                    //return; //este return sirve para que en cada frame no se "Pise" la direccion actual del guardia
+                for (int i = 0; i < 25; i++){
+                    int colIzq = (heroe.getX() + heroe.getAncho() / 2) / 32 - i;
+                    int colDer = (heroe.getX() + heroe.getAncho() / 2) / 32 + i;
+                    // Verificamos izquierda (y que no se salga de la pantalla)
+                    if (colIzq >= 0 && escenario.obtenerTipoBloqueEn(filaPies, colIzq) == 3) {
+                        colEscaleraObjetivo = colIzq;
+                        break; // Cortamos el bucle para que no sobreescriba la otra variable booleana
+                    }
+                    // Verificamos derecha (y que no se salga de la pantalla)
+                    if (colDer < 25 && escenario.obtenerTipoBloqueEn(filaPies, colDer) == 3) {
+                        colEscaleraObjetivo = colDer;
+                        break;
+                    }
                 }
-                else if (colgadoDeBarra && Math.abs(base) <= 16 && bloqueAbajo != 1) {
-                    this.direccion = 3; // Le mandamos la orden de bajar
+                if (colEscaleraObjetivo != -1){
+                    // Si la escalera objetivo está a la izquierda del guardia, camina a la izquierda.
+                    if (colEscaleraObjetivo < colCentro && escenario.obtenerTipoBloqueEn(filaPies, colCentro) != 3 && this.y % 32 == 0) {
+                        this.direccion = 0;
+                    }
+                    // Si la escalera objetivo está a la derecha del guardia, camina a la derecha.
+                    else if (colEscaleraObjetivo > colCentro && escenario.obtenerTipoBloqueEn(filaPies, colCentro) != 3 && this.y % 32 == 0) {
+                        this.direccion = 1;
+                    }
+                    int bloqueAbajo = escenario.obtenerTipoBloqueEn(filaPies, colCentro);
+                    int bloqueEnPies = escenario.obtenerTipoBloqueEn(filaPies + 1, colCentro);
+                    // Solo le da la orden de bajar (3) si NO hay un ladrillo.
+                    // Si hay un ladrillo sólido (1), esto da falso.
+                    // Al dar falso, el guardia mantiene la dirección horizontal (0 o 1) y sigue de largo.
+                    if (bloqueEnPies == 3 || bloqueAbajo == 3) {
+                        this.direccion = 3;
+                        //return; //este return sirve para que en cada frame no se "Pise" la direccion actual del guardia
+                    }
+                    else if (colgadoDeBarra && abs(base) <= 16 && bloqueAbajo != 1) {
+                        this.direccion = 3; // Le mandamos la orden de bajar
+                    }
                 }
+
             }
             if (detectarColision(heroe)){
                 if (!heroe.isArribaDeGuardia())
