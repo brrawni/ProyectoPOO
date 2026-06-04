@@ -3,13 +3,14 @@ package spaceinvaders;
 
 import java.awt.Graphics2D;
 import motor.Enemigo;
-import motor.GestorImagenes;
+
 
 public class Alien extends Enemigo {
 
     public static final int CALAMAR = 0;
     public static final int CANGREJO = 1;
     public static final int PULPO = 2;
+
 
     private int tipo;
     private float xReal; //posicion real en float
