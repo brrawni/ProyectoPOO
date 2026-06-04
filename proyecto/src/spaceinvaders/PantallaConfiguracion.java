@@ -33,6 +33,9 @@ public class PantallaConfiguracion extends Videojuego {
     private Boton btnSonido;
     private Boton btnTeclaIzq, btnTeclaDer, btnTeclaDisparo;
 
+    //botones inferiores
+    private Boton btnGuardar, btnVolver, btnReset;
+
     public PantallaConfiguracion() {
         super("Configuracion Space Invaders", ANCHO, ALTO);
     }
@@ -106,7 +109,7 @@ public class PantallaConfiguracion extends Videojuego {
                 }
             }
         });
-        
+
         canvas.setFocusable(true);
         canvas.requestFocus();
     }
