@@ -16,7 +16,7 @@ public class MenuSpaceInvaders extends Videojuego {
 
     private int[][] estrellas; // Para el fondo animado de estrellas
 
-    private boolean lanzandoJuego = false; // Para evitar clicks múltiples
+    private int siguientePantalla = 0; // 0=salir, 1=jugar, 2=configuracion
 
     public MenuSpaceInvaders() {
         super("Space Invaders", ANCHO, ALTO);
@@ -77,18 +77,18 @@ public class MenuSpaceInvaders extends Videojuego {
             if (botones[i].contienePunto(mx, my)) {
                 switch (i) {
                     case 0: // Jugar
-                        lanzandoJuego = true;
+                        siguientePantalla = 1;
                         stop();
                         break;
                     case 1: // Configuracion
-                        lanzandoJuego = true;
+                        siguientePantalla = 2;
                         stop();
                         break;
                     case 2: // Ranking — próximamente
                         System.out.println("Ranking SI");
                         break;
                     case 3: // Volver al launcher
-                        lanzandoJuego = false;
+                        siguientePantalla = 0;
                         stop();
                         break;
                 }
@@ -132,8 +132,10 @@ public class MenuSpaceInvaders extends Videojuego {
 
     @Override
     public void gameShutdown() { 
-        if (lanzandoJuego) {
+        if (siguientePantalla == 1) {
             new SpaceInvaders().run(); // Volver al menú de Space Invaders después de cerrar el juego
+        } else if (siguientePantalla == 2) {
+            new PantallaConfiguracion().run(); // Ir a configuración
         }
     }
 }
