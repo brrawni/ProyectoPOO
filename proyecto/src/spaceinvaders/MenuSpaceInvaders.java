@@ -14,6 +14,8 @@ public class MenuSpaceInvaders extends Videojuego {
     private BufferedImage buffer;
     private Boton[]       botones;
 
+    private int[][] estrellas; // Para el fondo animado de estrellas
+
     public MenuSpaceInvaders() {
         super("Space Invaders", ANCHO, ALTO);
     }
@@ -105,8 +107,22 @@ public class MenuSpaceInvaders extends Videojuego {
 
         g2d.dispose();
         g.drawImage(buffer, 0, 0, null);
+
+        for (int[] e : estrellas) {
+            int brillo = 100 + (int)(Math.random() * 155);
+            g2d.setColor(new Color(brillo, brillo, brillo));
+            g2d.fillRect(e[0], e[1], e[2], e[2]);
+        }
     }
 
     @Override
     public void gameShutdown() { }
+
+    // Generar estrellas aleatorias
+    estrellas = new int[80][3]; // x, y, tamaño
+    for (int i = 0; i < estrellas.length; i++) {
+    estrellas[i][0] = (int)(Math.random() * ANCHO);
+    estrellas[i][1] = (int)(Math.random() * ALTO);
+    estrellas[i][2] = Math.random() < 0.3 ? 2 : 1;
+    }
 }

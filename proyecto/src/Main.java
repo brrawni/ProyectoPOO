@@ -1,5 +1,5 @@
 import LodeRunner.ConfiguracionLR;
-import launcher.MenuPrincipal;
+import spaceinvaders.MenuSpaceInvaders;
 import spaceinvaders.SpaceInvaders;
 import LodeRunner.LodeRunnerMain;
 
