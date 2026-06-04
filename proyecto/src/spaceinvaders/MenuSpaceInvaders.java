@@ -79,8 +79,6 @@ public class MenuSpaceInvaders extends Videojuego {
                     case 0: // Jugar
                         lanzandoJuego = true;
                         stop();
-                        frame.dispose();
-                        new SpaceInvaders().run();
                         break;
                     case 1: // Configuracion — próximamente
                         System.out.println("Config SI");
@@ -91,7 +89,6 @@ public class MenuSpaceInvaders extends Videojuego {
                     case 3: // Volver al launcher
                         lanzandoJuego = false;
                         stop();
-                        frame.dispose();
                         break;
                 }
                 return;
@@ -134,7 +131,7 @@ public class MenuSpaceInvaders extends Videojuego {
 
     @Override
     public void gameShutdown() { 
-        if (!lanzandoJuego) {
+        if (lanzandoJuego) {
             new SpaceInvaders().run(); // Volver al menú de Space Invaders después de cerrar el juego
         }
     }
