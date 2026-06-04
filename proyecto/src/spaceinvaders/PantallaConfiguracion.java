@@ -209,4 +209,9 @@ public class PantallaConfiguracion extends Videojuego {
         //mostrar buffer
         g.drawImage(buffer, 0, 0, null);
     }
+    
+    @Override
+    public void gameShutdown() {
+        new MenuSpaceInvaders().run(); // Volver al menú de Space Invaders después de cerrar la configuración
+    }
 }
