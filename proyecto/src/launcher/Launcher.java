@@ -2,9 +2,8 @@ package launcher;
 
 import LodeRunner.ConfiguracionLR;
 import LodeRunner.LodeRunnerMain;
-
+import Pong.MenuPong;
 import javax.swing.*;
-import java.awt.*;
 
 public class Launcher extends JFrame {
 
@@ -18,28 +17,33 @@ public class Launcher extends JFrame {
     }
 
     public void lanzarJuego(String juego) {
-    setVisible(false);
-    switch (juego) {
-        case "spaceinvaders":
-            spaceinvaders.MenuSpaceInvaders menu = new spaceinvaders.MenuSpaceInvaders();
+        setVisible(false);
+        switch (juego) {
+            case "spaceinvaders":
+                spaceinvaders.MenuSpaceInvaders menu = new spaceinvaders.MenuSpaceInvaders();
+                // Cuando el menú de Space Invaders termine, volver al launcher
+                menu.frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent e) {
+                        SwingUtilities.invokeLater(() -> setVisible(true));
+                    }
+                });
+                menu.run();
+                break;
 
-            // Cuando el menú termine, volver al launcher
-            menu.frame.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosed(java.awt.event.WindowEvent e) {
-                    SwingUtilities.invokeLater(() -> setVisible(true));
-                }
-            });
-            menu.run();
-            break;
-        case "loderunner":
-            LodeRunnerMain lodeRunnerMain = new LodeRunnerMain(new ConfiguracionLR());
-            SwingUtilities.invokeLater(() -> setVisible(true));
-            lodeRunnerMain.run();
-            break;
-        case "pong":
-            SwingUtilities.invokeLater(() -> setVisible(true));
-            break;
+            case "loderunner":
+                LodeRunnerMain lodeRunnerMain = new LodeRunnerMain(new ConfiguracionLR());
+                SwingUtilities.invokeLater(() -> setVisible(true));
+                lodeRunnerMain.run();
+                break;
+
+            case "pong":
+                // MenuPong maneja su propio JFrame y Timer; lo mostramos y listo.
+                // Cuando el usuario vuelva o cierre, MenuPong se encarga de
+                // llamar launcher.setVisible(true) por su cuenta.
+                MenuPong menuPong = new MenuPong(this);
+                menuPong.setVisible(true);
+                break;
+        }
     }
-}
 }
