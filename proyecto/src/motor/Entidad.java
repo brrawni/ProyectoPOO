@@ -106,12 +106,8 @@ abstract class GameLoop {
 abstract class JGame extends GameLoop {
     protected JFrame frame;
     protected JPanel canvas;
-    protected KeyListener keyboard;
-    protected MouseListener mouse;
-    protected MouseWheelListener mouseWheel;
 
     public JGame(String title, int ancho, int alto) {
-        // Inicialización básica del entorno visual de Java Swing
         frame = new JFrame(title);
         canvas = new JPanel();
         canvas.setPreferredSize(new Dimension(ancho, alto));
@@ -119,48 +115,73 @@ abstract class JGame extends GameLoop {
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-
         readPropertiesFile();
+    }
+
+    // ← Sobreescribimos run() para ejecutar en hilo separado
+    @Override
+    public void run() {
+        Thread hiloJuego = new Thread(() -> {
+            runFlag = true;
+            startup();
+            long tiempoAnterior = System.currentTimeMillis();
+
+            while (runFlag) {
+                long ahora = System.currentTimeMillis();
+                long delta = ahora - tiempoAnterior;
+
+                if (delta >= 16) {
+                    tiempoAnterior = ahora;
+                    update();
+                    draw();
+                } else {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+            shutdown();
+        });
+        hiloJuego.start();
     }
 
     @Override
     public void startup() {
-        frame.setVisible(true); // Hacemos visible la ventana al arrancar
-        gameStartup(); // [cite: 221]
+        SwingUtilities.invokeLater(() -> frame.setVisible(true));
+        gameStartup();
     }
 
     @Override
     public void update() {
-        // Simulación didáctica de delta: en un motor real aca calculás el tiempo real por frame
         double delta = 1.0 / 60.0;
-        gameUpdate(delta); // Le pasamos el delta a la lógica del juego [cite: 227]
+        gameUpdate(delta);
     }
 
     @Override
     public void draw() {
-        // Obtenemos el gráfico del lienzo de Swing de forma segura
         Graphics2D g = (Graphics2D) canvas.getGraphics();
         if (g != null) {
-            Graphics2D g2d = (Graphics2D) g;
-            gameDraw(g2d); // Llamamos al dibujo pasándole el objeto gráfico
-            g.dispose();   // Liberamos los recursos del sistema operativo
+            gameDraw(g);
+            g.dispose();
         }
     }
 
     @Override
     public void shutdown() {
-        frame.setVisible(false);
-        frame.dispose();
+        SwingUtilities.invokeLater(() -> {
+            frame.setVisible(false);
+            frame.dispose();
+        });
         gameShutdown();
     }
 
-    public abstract void gameStartup(); // [cite: 235]
-    public abstract void gameUpdate(double delta); //
-    public abstract void gameDraw(Graphics2D g); //
-    public abstract void gameShutdown(); // [cite: 238]
+    public abstract void gameStartup();
+    public abstract void gameUpdate(double delta);
+    public abstract void gameDraw(Graphics2D g);
+    public abstract void gameShutdown();
 
-    protected void readPropertiesFile() {
-        //Busca leer el archivo jgame.properties
-    }
+    protected void readPropertiesFile() { }
 }
 
