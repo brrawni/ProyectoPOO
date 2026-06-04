@@ -24,6 +24,15 @@ public class MenuSpaceInvaders extends Videojuego {
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
 
+        // Inicializar estrellas para el fondo
+        estrellas = new int[80][3];
+        for (int i = 0; i < estrellas.length; i++) {
+            estrellas[i][0] = (int)(Math.random() * ANCHO);
+            estrellas[i][1] = (int)(Math.random() * ALTO);
+            estrellas[i][2] = Math.random() < 0.3 ? 2 : 1;
+        }
+
+
         int bAncho    = 260;
         int bAlto     = 50;
         int bX        = 400 - bAncho / 2;
@@ -56,11 +65,7 @@ public class MenuSpaceInvaders extends Videojuego {
         canvas.setFocusable(true);
         canvas.requestFocus();
 
-        for (int[] e : estrellas) {
-            int brillo = 100 + (int)(Math.random() * 155);
-            g2d.setColor(new Color(brillo, brillo, brillo));
-            g2d.fillRect(e[0], e[1], e[2], e[2]);
-        }
+        
     }
 
 
@@ -98,27 +103,29 @@ public class MenuSpaceInvaders extends Videojuego {
         if (buffer == null) return;
         Graphics2D g2d = buffer.createGraphics();
 
+        //fondo negro
         g2d.setColor(Color.BLACK);
         g2d.fillRect(0, 0, ANCHO, ALTO);
 
-        // Título
+        //titlo
         g2d.setFont(new Font("Arial", Font.BOLD, 48));
         g2d.setColor(Color.WHITE);
         String titulo = "SPACE INVADERS";
         FontMetrics fm = g2d.getFontMetrics();
         g2d.drawString(titulo, 400 - fm.stringWidth(titulo)/2, 150);
 
-        // Botones
+        //botones
         for (Boton b : botones) b.dibujar(g2d);
 
-        g2d.dispose();
-        g.drawImage(buffer, 0, 0, null);
-
+        //animacion de estrellas
         for (int[] e : estrellas) {
             int brillo = 100 + (int)(Math.random() * 155);
             g2d.setColor(new Color(brillo, brillo, brillo));
             g2d.fillRect(e[0], e[1], e[2], e[2]);
         }
+        //dispose y mostrar
+        g2d.dispose();
+        g.drawImage(buffer, 0, 0, null);
     }
 
     @Override
