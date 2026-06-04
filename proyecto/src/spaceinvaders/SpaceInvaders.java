@@ -164,7 +164,8 @@ public class SpaceInvaders extends Videojuego {
 
     @Override
     public void gameShutdown() {
-        // Aquí puedes liberar recursos si es necesario y guardar el puntaje o estado del juego
+        // Aquí podrías guardar el ranking o realizar cualquier limpieza necesaria
+        new MenuSpaceInvaders().run(); // Volver al menú de Space Invaders después de cerrar el juego
     }
 
     public boolean verificarFinJuego() {
