@@ -3,6 +3,7 @@ package LodeRunner;
 import motor.Entidad;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public abstract class PersonajeLodeRunner extends Entidad{
@@ -16,6 +17,7 @@ public abstract class PersonajeLodeRunner extends Entidad{
         super.visible = true;
         this.escenario = escenario;
     }
+    public abstract void mover();
     public void aplicarGravedad(){
         this.x = ((this.x + 16)/32)*32;
         this.y += 4; // Cae por gravedad
@@ -41,6 +43,11 @@ class Guardia extends PersonajeLodeRunner{
     private Oro oroGuardado;
     private boolean persiguiendo;
     private boolean heroeArriba;
+    //"reloj" para frenar la animacion
+    private int contadorTicks = 0;
+    private int frameActual = 1;
+    private final int VELOCIDAD_ANIMACION = 3;
+    private String estadoActual = "corriendo";
 
     public Guardia(int x, int y, int ancho, int alto, Escenario escenario){
         super(x, y, ancho, alto, escenario);
@@ -85,8 +92,23 @@ class Guardia extends PersonajeLodeRunner{
     }
     @Override
     public void dibujar(Graphics2D g){
-        g.setColor(Color.BLUE);
-        g.fillRect(this.x, this.y, this.ancho, this.alto);
+        String claveAnimacion = estadoActual + frameActual;
+        GestorRecursos gestor = GestorRecursos.getInstance();
+        BufferedImage imagenActual = (BufferedImage) gestor.getImgGuardia().get(claveAnimacion);
+        int drawX = x;
+        if (imagenActual != null){
+            int width = this.ancho;
+            int heigth = this.alto;
+            if ((estadoActual.equals("corriendo") || estadoActual.equals("barra")) && direccion == 0)
+                width = this.ancho;
+            if ((estadoActual.equals("corriendo") || estadoActual.equals("barra")) && direccion == 1){ //dibujamos la imagen mirando a la izquierda
+                width = -this.ancho;
+                drawX = x + this.ancho;
+            }
+            g.drawImage(imagenActual, drawX, y, width, heigth, null);
+        }else{
+            System.out.println("El sistema no encontro la imagen de: " + claveAnimacion);
+        }
     }
     public void perseguir(Heroe heroe){
         double base = (heroe.getX() + heroe.getAncho()/2) - (this.x + this.ancho/2);
@@ -98,9 +120,10 @@ class Guardia extends PersonajeLodeRunner{
             else if (base < 0)
                 this.direccion = 0; //heroe a la izquierda
             if (this.y > heroe.getY()){
-                if (enEscalera){ //si encuentra soga o escalera, sube
+                int filaCuerpo = (this.y + this.alto / 2) / 32;
+                int colCentro = (this.x + this.ancho / 2) / 32;
+                if (escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro) == 3){ //si encuentra soga o escalera, sube
                     this.direccion = 2; //heroe esta arriba
-
                 }
             }
             else if (this.y < heroe.getY()){
@@ -129,9 +152,22 @@ class Guardia extends PersonajeLodeRunner{
             moverAleatoriamente();
         }
     }
+    //Metodo para actualizar la animacion del guardia
+    public void actualizarAnimacion(){
+        //sumamos 1 al contador de ticks por cada tick que pase
+        contadorTicks++;
+        if (contadorTicks >= VELOCIDAD_ANIMACION){
+            contadorTicks = 0;
+            frameActual++;
+        }
+        if (frameActual > 4) //tenemos 4 frames por animacion
+            frameActual = 1;
+    }
+
     public void mover(){
         boolean tienePiso = detectarColision();
         if (!tienePiso && !enEscalera && !colgadoDeBarra){
+            estadoActual = "cayendo";
             aplicarGravedad();
             return;
         }
@@ -147,42 +183,32 @@ class Guardia extends PersonajeLodeRunner{
                 columnaIzquierda = (this.x - 2) / 32; //anticipamos el siguiente paso del guardia
                 tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaIzquierda);
                 if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
-                    this.x -= 2;
-                    if (tipoBloque == 3){
-                        enEscalera = true;
-                        colgadoDeBarra = false;
-                    }
-                    else if (tipoBloque == 4){
+                    this.x -= 3;
+                    if (tipoBloque == 4){
                         this.y = ((this.y + 16) / 32) * 32; //alinear el eje y
-                        enEscalera = false;
                         colgadoDeBarra = true;
+                        estadoActual = "barra";
                     }
                     else{
-                        enEscalera = false;
-                        colgadoDeBarra = false;
+                        estadoActual = "corriendo";
                     }
                 }
                 else{
-                    direccion = 1; //cambiar de direccion a la derecha
+                    direccion = 1;//cambiar de direccion a la derecha
                 }
                 break;
             case 1:
                 columnaDerecha = (this.x + this.ancho + 2) / 32; //anticipamos el siguiente paso del guardia
                 tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaDerecha);
                 if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
-                    this.x += 2;
-                    if (tipoBloque == 3){
-                        enEscalera = true;
-                        colgadoDeBarra = false;
-                    }
-                    else if (tipoBloque == 4){
+                    this.x += 3;
+                    if (tipoBloque == 4){
                         this.y = ((this.y + 16) / 32) * 32; //alinear el eje y
                         colgadoDeBarra = true;
-                        enEscalera = false;
+                        estadoActual = "barra";
                     }
                     else{
-                        enEscalera = false;
-                        colgadoDeBarra = false;
+                        estadoActual = "corriendo";
                     }
                 }
                 else{
@@ -191,12 +217,14 @@ class Guardia extends PersonajeLodeRunner{
                 break;
             case 2:
                 if (enEscalera){
+                    estadoActual = "escalera";
                     this.x = ((this.x + 16)/32)*32; //para que no desfase de la escalera
                     this.y -= 2;
                 }
                 break;
             case 3:
-                if (enEscalera || colgadoDeBarra){
+                if (enEscalera){
+                    estadoActual = "escalera";
                     this.x = ((this.x + 16)/32)*32;
                     this.y += 2;
                     int filaPies = (this.y + this.alto - 1) / 32;
@@ -210,6 +238,7 @@ class Guardia extends PersonajeLodeRunner{
                     }
                 }
                 else{
+                    estadoActual = "cayendo";
                     aplicarGravedad();
                 }
                 break;
@@ -272,7 +301,7 @@ class Guardia extends PersonajeLodeRunner{
             // Asumiendo tu mapa grande de 25x16
             int colRand = (int)(Math.random() * 25);
 
-            // Buscamos hasta la fila 14, para que al revisar "filaRand + 1" (el piso) no nos salgamos del mapa
+            // Buscamos hasta la fila 14, para que al revisar filaRand + 1 (el piso) no nos salgamos del mapa
             int filaRand = (int)(Math.random() * 15);
 
             // Al medir 32x32, solo nos importan 2 bloques: el cuerpo y el piso
@@ -282,7 +311,7 @@ class Guardia extends PersonajeLodeRunner{
             // Regla: Cuerpo en el aire (0) y apoyado en un ladrillo (1) o escalera (3)
             if (bloqueCuerpo == 0 && (bloquePiso == 1 || bloquePiso == 3)) {
 
-                // ¡Encontramos el lugar perfecto! Lo teletransportamos.
+                //Lo teletransportamos.
                 this.x = colRand * 32;
                 this.y = filaRand * 32;
 
@@ -315,6 +344,12 @@ class Guardia extends PersonajeLodeRunner{
 class Heroe extends PersonajeLodeRunner{
     private int vidas;
     private boolean arribaDeGuardia;
+    private int contadorTicks = 0;
+    private int frameActual = 1;
+    private final int VELOCIDAD_ANIMACION = 2;
+    private String estadoActual = "corriendo";
+    public String skin;
+    private boolean estaQuieto = false;
 
     public Heroe(int x, int y, int ancho, int alto, int vidas , Escenario escenario){
         super(x, y, ancho, alto, escenario);
@@ -360,8 +395,40 @@ class Heroe extends PersonajeLodeRunner{
 
     @Override
     public void dibujar(Graphics2D g){
-        g.setColor(Color.RED);
-        g.fillRect(this.x, this.y, this.ancho, this.alto);
+        String claveAnimacion = estadoActual + frameActual + "_" + skin;
+        GestorRecursos gestor = GestorRecursos.getInstance();
+        BufferedImage imagenActual = (BufferedImage) gestor.getImgHeroe().get(claveAnimacion);
+        gestor.cargarSkin(skin);
+        if (imagenActual != null){
+            int width = this.ancho;
+            int heigth = this.alto;
+            int drawX = x;
+            if ((estadoActual.equals("corriendo") || estadoActual.equals("barra")) && direccion == 0)
+                width = this.ancho;
+            if ((estadoActual.equals("corriendo") || estadoActual.equals("barra")) && direccion == 1){ //dibujamos la imagen mirando a la izquierda
+                width = -this.ancho;
+                drawX = x + this.ancho;
+            }
+            g.drawImage(imagenActual, drawX, y, width, heigth, null);
+        }else{
+            System.out.println("El sistema no encontro la imagen de: " + claveAnimacion);
+        }
+    }
+    //Metodo para actualizar la animacion del heroe
+    public void actualizarAnimacion(){
+        //sumamos 1 al contador de ticks por cada tick que pase
+        contadorTicks++;
+        if (contadorTicks >= VELOCIDAD_ANIMACION){
+            contadorTicks = 0;
+            frameActual++;
+        }
+        if (frameActual > 4 || estaQuieto){
+            //tenemos 4 frames por animacion
+            if (!enEscalera && !colgadoDeBarra && !estadoActual.equals("cayendo") && estaQuieto){
+                estadoActual = "idle";
+            }
+            frameActual = 1;
+        }
 
     }
     public void cavarIzquierda(){
@@ -381,6 +448,7 @@ class Heroe extends PersonajeLodeRunner{
 
         boolean tienePiso = detectarColision();
         if (!tienePiso && !enEscalera && !colgadoDeBarra){
+            estadoActual = "cayendo";
             aplicarGravedad();
             return;
         }
@@ -389,10 +457,11 @@ class Heroe extends PersonajeLodeRunner{
             this.y = (filaSuelo * 32) - this.alto; // Aterrizaje perfecto
         }
         int columnaIzquierda, columnaDerecha, tipoBloque;
-        int filaCentro = (this.y + this.alto/2) / 32; //si el centro de gravedad del guardia choca contra un bloque
+        int filaCentro = (this.y + this.alto/2) / 32; //si el centro de gravedad del heroe choca contra un bloque
 
         switch (direccion){
             case 0:
+                estaQuieto = false;
                 columnaIzquierda = (this.x - 2) / 32; //anticipamos el siguiente paso del guardia
                 tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaIzquierda);
                 if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
@@ -403,10 +472,12 @@ class Heroe extends PersonajeLodeRunner{
                     }
                     else if (tipoBloque == 4){
                         this.y = ((this.y + 16) / 32) * 32; //alinear el eje y
+                        estadoActual = "barra";
                         colgadoDeBarra = true;
                         enEscalera = false;
                     }
                     else{
+                        estadoActual = "corriendo";
                         enEscalera = false;
                         colgadoDeBarra = false;
                     }
@@ -416,6 +487,7 @@ class Heroe extends PersonajeLodeRunner{
                 }
                 break;
             case 1:
+                estaQuieto = false;
                 columnaDerecha = (this.x + this.ancho + 2) / 32; //anticipamos el siguiente paso del guardia
                 tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaDerecha);
                 if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
@@ -425,11 +497,13 @@ class Heroe extends PersonajeLodeRunner{
                         colgadoDeBarra = false;
                     }
                     else if (tipoBloque == 4){
+                        estadoActual = "barra";
                         enEscalera = false;
                         colgadoDeBarra = true;
                         this.y = ((this.y + 16) / 32) * 32; // alinear el eje y
                     }
                     else{
+                        estadoActual = "corriendo";
                         enEscalera = false;
                         colgadoDeBarra = false;
                     }
@@ -439,7 +513,9 @@ class Heroe extends PersonajeLodeRunner{
                 }
                 break;
             case 2:
+                estaQuieto = false;
                 if (enEscalera){
+                    estadoActual = "escalera";
                     this.x = ((this.x + 16)/32)*32; //para que no desfase de la escalera
                     // PROTECCIÓN DE TECHO (CASCO)
                     int filaCabeza = (this.y - 2) / 32;
@@ -453,7 +529,9 @@ class Heroe extends PersonajeLodeRunner{
                 }
                 break;
             case 3:
-                if (enEscalera || colgadoDeBarra) {
+                estaQuieto = false;
+                if (enEscalera) {
+                    estadoActual = "escalera";
                     this.x = ((this.x + 16) / 32) * 32; // Alineación
 
                     // para que el heroe no se entierre cuando baja una escalera
@@ -465,10 +543,13 @@ class Heroe extends PersonajeLodeRunner{
                         this.y += 2; // Si no hay ladrillo, sigue bajando
                     }
                 }
-                else
+                else{
+                    estadoActual = "cayendo";
                     aplicarGravedad();
+                }
                 break;
             default:
+                estaQuieto = true;
                 break;
         }
     }

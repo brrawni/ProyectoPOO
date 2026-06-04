@@ -44,6 +44,7 @@ public class FormacionAlien {
         for (Alien[] fila : aliens) {
             for (Alien alien : fila) {
                 if (alien != null && alien.estaVivo()) {
+                    alien.actualizar();
                     alien.setVelocidad(velocidad * multiplicadorVelocidad);
                     alien.setDireccion(direccion);
                     alien.mover();
