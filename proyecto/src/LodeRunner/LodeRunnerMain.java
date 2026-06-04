@@ -1,34 +1,40 @@
 package LodeRunner;
 
 import motor.Videojuego;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-
 //Cada sprite mide 16x16
 
 public class LodeRunnerMain extends Videojuego implements KeyListener{
-    private BufferedImage buffer;
     //Imagen para cancelar parpadeos
+    private BufferedImage buffer;
+
+    //componentes del juego
     private ConfiguracionLR config;
-    private int lingotesRestantes;
-    private Timer temporizador;
     private Escenario escenario;
     private Heroe heroe;
     private ArrayList<Guardia> guardias;
     private ArrayList<Oro> lingotes;
     private int vidasHeroe;
+    //variables de control
     private boolean mirandoIzq, cPresionada, enterPresionado;
     private boolean mirandoDer;
     public enum EstadoJuego{MENU_PRINCIPAL, JUGANDO, GAME_OVER, VICTORIA}
     private EstadoJuego estadoJuego;
+    private int lingotesRestantes;
+    //temporizador
+    private int temporizador; //lo iniciamos en 5 minutos
+    private int frames = 0;
+    private int puntajePorMin = 300;
+
 
     public LodeRunnerMain(ConfiguracionLR config) {
-        super("Lode Runner - te violare edition", 800, 600);
+        super("Lode Runner - UNLPam edition", 800, 600);
         this.config = config;
         estadoJuego = EstadoJuego.MENU_PRINCIPAL;
     }
@@ -46,12 +52,12 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         config.cargar();
     }
     public void iniciarNivel(){
-        // Acá instanciás tu Escenario, tu Héroe y tus Guardianes
         escenario = new Escenario(32, 32, nivelActual); // Ejemplo de creación del escenario
         heroe = new Heroe(32, 32, 32, 32, vidasHeroe, escenario); // Ejemplo de creación del héroe
         guardias = new ArrayList<>();
         lingotes = new ArrayList<>();
-        temporizador = new Timer();
+        //iniciar temporizador
+        temporizador = 180;
         // 1. Spawneo inteligente de Guardias
         guardias.clear(); //para no sobrecargar la memoria ram
         int guardiasCreados = 0;
@@ -93,8 +99,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     }
     @Override
     public void gameUpdate(double delta) {
-        if (!enEjecucion)
-            return;
         switch(estadoJuego){
             case MENU_PRINCIPAL:
                 if (cPresionada){
@@ -108,12 +112,35 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                     quiereJugar = true;
                 }
                 if (quiereJugar){
+                    enEjecucion = true;
                     estadoJuego = EstadoJuego.JUGANDO;
                     iniciarNivel();
                 }
+                if (config.isPantallaCompleta()){
+                    super.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize(); //esto nos ayuda a obtener la resolucion de la pantalla en la que se eejcuta el juego
+
+                    canvas.setSize(pantalla);
+                    canvas.setPreferredSize(pantalla);
+                }else{
+                    frame.setSize(800, 600);
+                    canvas.setSize(800, 600);
+                    frame.setLocationRelativeTo(null);
+                }
                 break;
             case JUGANDO:
+                if (!enEjecucion)
+                    return;
+                frames++;
+                if (frames == 30){ // 35 frames son aproximadamente un segundo
+                    frames = 0;
+                    temporizador--;
+                    if (temporizador % 60 == 0){ //ya transcurrio un minuto
+                        puntajePorMin -= 100; //se descuentan 100 puntos del puntaje por minutos (500) por cada minuto transcurrido
+                    }
+                }
                 boolean heroeArriba = false;
+                heroe.skin = config.getSkin();
                 escenario.actualizarPozos();
                 // Este for es para verificar si el heroe esta pisando la cabeza de un guardia
                 for (Guardia g : guardias) {
@@ -186,13 +213,14 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                     escenario.activarEscalera(nivelActual);
                     if (heroe.getY() <= 0){ //el heroe cruzo la escalera
                         puntaje += 200;
+                        puntaje += puntajePorMin;
                         vidasHeroe++; //Si el heroe completa el nivel, se le otorga una vida extra
                         nivelActual++; //siguiente nivel
                         escenario.setEscaleraSalidaActiva(false);
                         iniciarNivel();
                     }
                 }
-                //si el heroe pierde todas sus vidas, se lo cojen parado
+                //si el heroe pierde todas sus vidas, game over
                 if (vidasHeroe == 0){
                     enEjecucion = false;
                 }
@@ -212,7 +240,23 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     public void gameDraw(Graphics2D g) {
         if (buffer == null)
             return;
+        int windowWidth = frame.getContentPane().getWidth();
+        int windowHeight = frame.getContentPane().getHeight();
         Graphics2D g2 = buffer.createGraphics();
+// mantener aspect ratio
+        double scaleX = (double) windowWidth / 800;
+        double scaleY = (double) windowHeight / 600;
+        double scale = Math.min(scaleX, scaleY);
+
+        int newWidth = (int)(800 * scale);
+        int newHeight = (int)(600 * scale);
+
+// centrar
+        int x = (windowWidth - newWidth) / 2;
+        int y = (windowHeight - newHeight) / 2;
+
+// 🔥 clave para pixel art:
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         switch (estadoJuego){
             case MENU_PRINCIPAL:
                 // 1. Pintamos el fondo de negro
@@ -229,7 +273,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 g2.setFont(new Font("Arial", Font.PLAIN, 20));
 
                 // Le preguntamos al ConfigManager qué tecla guardó el usuario para iniciar
-                // (Asegurate de tener este método get en tu ConfigManager)
                 String teclaParaJugar = config.getTeclaIniciar();
 
                 // Dibujamos las dos instrucciones en pantalla, una abajo de la otra
@@ -242,40 +285,33 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 g2.fillRect(0, 0, 800, 600); // Ajustá al ancho y alto real de la ventana
                 // Dibujamos guardias en azul
                 escenario.dibujar(g2);
-                g2.setColor(Color.RED); //Heroe de rojo
+                heroe.actualizarAnimacion();
                 heroe.dibujar(g2);
                 for (Guardia guardia : guardias){
-                    g2.setColor(Color.BLUE);
+                    guardia.actualizarAnimacion();
                     guardia.dibujar(g2);
                 }
                 for (Oro o : lingotes){
                     g2.setColor(Color.YELLOW);
                     o.dibujar(g2);
                 }
-                if (!enEjecucion){
-                    finDeJuego(g2);
-                }
                 g2.setColor(Color.yellow);
                 g2.drawString("Puntaje: " + puntaje, 20, 580);
-                g2.drawString("Vidas: "   + vidasHeroe, 800 - 100, 580);
                 g2.drawString("Nivel: "   + nivelActual, 800 / 2 - 30, 580);
+                g2.drawString("Tiempo: "  + temporizador, 535, 580);
+                g2.drawString("Vidas: "   + vidasHeroe, 800 - 100, 580);
                 break;
         }
+        if (!enEjecucion){
+            finDeJuego(g2);
+        }
         g2.dispose();
-        g.drawImage(buffer, 0, 0, null);
+        g.drawImage(buffer, x, y, newWidth, newHeight, null);
     }
 
     @Override
     public void gameShutdown() {
         // Código de cierre
-    }
-    public void iniciarTemporizador() {
-        temporizador.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                // Lógica para actualizar el cronómetro cada segundo
-            }
-        }, 0, 1000);
     }
     public void reiniciarNivel(){
         iniciarNivel();
@@ -287,6 +323,9 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         g.setFont(new Font("Times New Roman", Font.BOLD, 40));
         g.setColor(Color.yellow);
         g.drawString("Game Over", 300, 150);
+        g.drawString("Presione ENTER para ir al menu principal", 300, 100);
+        if (enterPresionado)
+            estadoJuego = EstadoJuego.MENU_PRINCIPAL;
     }
     public void keyPressed(KeyEvent e){
         switch(e.getKeyCode()){

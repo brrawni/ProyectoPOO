@@ -21,13 +21,18 @@ public class GestorImagenes {
     public BufferedImage cargar(String ruta) {
         if (cache.containsKey(ruta)) return cache.get(ruta);
         try {
-            BufferedImage img = ImageIO.read(
-                getClass().getResourceAsStream(ruta)
+            java.io.File file = new java.io.File(
+                    System.getProperty("user.dir") + "/proyecto/resources" + ruta
             );
-            cache.put(ruta, img);
-            return img;
-        } catch (Exception e) {
+            if (file.exists()) {
+                BufferedImage img = ImageIO.read(file);
+                cache.put(ruta, img);
+                return img;
+            }
             System.out.println("No se pudo cargar: " + ruta);
+            return null;
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
             return null;
         }
     }
@@ -52,5 +57,12 @@ public class GestorImagenes {
             }
         }
         return resultado;
+    }
+    public BufferedImage cargarDeCache(String clave) {
+        return cache.get(clave);
+    }
+
+    public void guardarEnCache(String clave, BufferedImage img) {
+        cache.put(clave, img);
     }
 }
