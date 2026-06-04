@@ -92,15 +92,15 @@ public class PantallaConfiguracion extends Videojuego {
                 switch (esperandoTecla) {
                     case "izquierda":
                         teclaIzquierda = codigo;
-                        btnTeclaIzq.setTexto("Izquierda: " + KeyEvent.getKeyText(codigo));
+                        btnTeclaIzq = new Boton(300, 350, 200, 40, "Izquierda: " + KeyEvent.getKeyText(codigo));
                         break;
                     case "derecha":
                         teclaDerecha = codigo;
-                        btnTeclaDer.setTexto("Derecha: " + KeyEvent.getKeyText(codigo));
+                        btnTeclaDer = new Boton(300, 410, 200, 40, "Derecha: " + KeyEvent.getKeyText(codigo));
                         break;
                     case "disparo":
                         teclaDisparo = codigo;
-                        btnTeclaDisparo.setTexto("Disparo: " + KeyEvent.getKeyText(codigo));
+                        btnTeclaDisparo = new Boton(300, 470, 200, 40, "Disparo: " + KeyEvent.getKeyText(codigo));
                         break;
                 }
                 esperandoTecla = null; // Dejar de esperar después de asignar
