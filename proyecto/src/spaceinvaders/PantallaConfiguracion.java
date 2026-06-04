@@ -86,27 +86,24 @@ public class PantallaConfiguracion extends Videojuego {
         canvas.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (esperandoTecla != null) {
-                    int codigo = e.getKeyCode();
-                    switch (esperandoTecla) {
-                        case "izq":
-                            teclaIzquierda = codigo;
-                            btnTeclaIzq = new Boton(430, 330, 120, 32,
-                                KeyEvent.getKeyText(codigo));
-                            break;
-                        case "der":
-                            teclaDerecha = codigo;
-                            btnTeclaDer = new Boton(430, 375, 120, 32,
-                                KeyEvent.getKeyText(codigo));
-                            break;
-                        case "disp":
-                            teclaDisparo = codigo;
-                            btnTeclaDisp = new Boton(430, 420, 120, 32,
-                                KeyEvent.getKeyText(codigo));
-                            break;
-                    }
-                    esperandoTecla = null;
+                if (esperandoTecla == null) return;
+
+                int codigo = e.getKeyCode();
+                switch (esperandoTecla) {
+                    case "izquierda":
+                        teclaIzquierda = codigo;
+                        btnTeclaIzq.setTexto("Izquierda: " + KeyEvent.getKeyText(codigo));
+                        break;
+                    case "derecha":
+                        teclaDerecha = codigo;
+                        btnTeclaDer.setTexto("Derecha: " + KeyEvent.getKeyText(codigo));
+                        break;
+                    case "disparo":
+                        teclaDisparo = codigo;
+                        btnTeclaDisparo.setTexto("Disparo: " + KeyEvent.getKeyText(codigo));
+                        break;
                 }
+                esperandoTecla = null; // Dejar de esperar después de asignar
             }
         });
 
