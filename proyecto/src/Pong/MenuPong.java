@@ -41,8 +41,6 @@ public class MenuPong extends JFrame {
         timer.start();
     }
 
-    // ── Ventana ────────────────────────────────────────────────────────────
-
     private void configurarVentana() {
         setSize(ANCHO, ALTO);
         setResizable(false);
@@ -63,7 +61,6 @@ public class MenuPong extends JFrame {
         add(canvas);
         pack();
 
-        // Cerrar manualmente → volver al launcher
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -104,29 +101,19 @@ public class MenuPong extends JFrame {
         });
     }
 
-    // ── Clicks ─────────────────────────────────────────────────────────────
-
     private void manejarClick(int mx, int my) {
         for (int i = 0; i < botones.length; i++) {
             if (!botones[i].contienePunto(mx, my)) continue;
             switch (i) {
                 case 0: lanzarPong(2); break;
                 case 1: lanzarPong(1); break;
-                case 2:
-                    new VentanaConfiguracionPong(config, this).setVisible(true);
-                    break;
-                case 3:
-                    new VentanaRankingPong(gestorRanking, this).setVisible(true);
-                    break;
-                case 4:
-                    dispose(); // windowClosed → launcher.setVisible(true)
-                    break;
+                case 2: new VentanaConfiguracionPong(config, this).setVisible(true); break;
+                case 3: new VentanaRankingPong(gestorRanking, this).setVisible(true); break;
+                case 4: dispose(); break;
             }
             return;
         }
     }
-
-    // ── Lanzar juego ───────────────────────────────────────────────────────
 
     private void lanzarPong(int modoJuego) {
         setVisible(false);
@@ -135,16 +122,9 @@ public class MenuPong extends JFrame {
         Pong pong = new Pong();
         pong.setPuntuacionMaxima(config.getPuntuacionMaxima());
         pong.setModoJuego(modoJuego);
+        // Pong maneja internamente el redimensionado del canvas en gameStartup()
+        pong.setPantallaCompleta(config.isPantallaCompleta());
 
-        // setUndecorated() requiere que el frame NO sea displayable todavía,
-        // pero JGame ya llamó pack() en su constructor → ya es displayable.
-        // Usamos solo setExtendedState que funciona en cualquier momento.
-        if (config.isPantallaCompleta()) {
-            pong.frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-        }
-
-        // Registrar ANTES de run(): cuando Pong termine, JGame llama
-        // frame.dispose() → dispara windowClosed → volvemos al menú.
         pong.frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -155,11 +135,8 @@ public class MenuPong extends JFrame {
             }
         });
 
-        // JGame.run() lanza su Thread interno y retorna inmediatamente.
         pong.run();
     }
-
-    // ── Render ─────────────────────────────────────────────────────────────
 
     private void renderizar(Graphics2D g) {
         Graphics2D bg = buffer.createGraphics();
