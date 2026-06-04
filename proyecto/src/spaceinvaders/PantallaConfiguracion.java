@@ -84,29 +84,29 @@ public class PantallaConfiguracion extends Videojuego {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (esperandoTecla != null) {
-                    int nuevaTecla = e.getKeyCode();
-                    if (nuevaTecla == KeyEvent.VK_ESCAPE) {
-                        esperandoTecla = null;
-                        return;
-                    }
+                    int codigo = e.getKeyCode();
                     switch (esperandoTecla) {
-                        case "izquierda":
-                            teclaIzquierda = nuevaTecla;
-                            btnTeclaIzq.setTexto("Izquierda: " + KeyEvent.getKeyText(teclaIzquierda));
+                        case "izq":
+                            teclaIzquierda = codigo;
+                            btnTeclaIzq = new Boton(430, 330, 120, 32,
+                                KeyEvent.getKeyText(codigo));
                             break;
-                        case "derecha":
-                            teclaDerecha = nuevaTecla;
-                            btnTeclaDer.setTexto("Derecha: " + KeyEvent.getKeyText(teclaDerecha));
+                        case "der":
+                            teclaDerecha = codigo;
+                            btnTeclaDer = new Boton(430, 375, 120, 32,
+                                KeyEvent.getKeyText(codigo));
                             break;
-                        case "disparo":
-                            teclaDisparo = nuevaTecla;
-                            btnTeclaDisparo.setTexto("Disparo: " + KeyEvent.getKeyText(teclaDisparo));
+                        case "disp":
+                            teclaDisparo = codigo;
+                            btnTeclaDisp = new Boton(430, 420, 120, 32,
+                                KeyEvent.getKeyText(codigo));
                             break;
                     }
                     esperandoTecla = null;
                 }
             }
         });
+        
         canvas.setFocusable(true);
         canvas.requestFocus();
     }
