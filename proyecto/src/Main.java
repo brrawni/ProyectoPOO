@@ -1,16 +1,13 @@
-import LodeRunner.ConfiguracionLR;
-import spaceinvaders.MenuSpaceInvaders;
-import spaceinvaders.SpaceInvaders;
-import LodeRunner.LodeRunnerMain;
+import launcher.Launcher;
+import javax.swing.SwingUtilities;
 
 
 public class Main {
     public static void main(String[] args) {
-        //ConfiguracionLR config = new ConfiguracionLR();
-        //LodeRunnerMain juego = new LodeRunnerMain(config);
-        //juego.run();
-        //SpaceInvaders juego = new SpaceInvaders();
-        //juego.run();
-       new MenuSpaceInvaders().run();
+        // Iniciar el launcher en el hilo de la interfaz gráfica (daba errores)
+        SwingUtilities.invokeLater(() -> {
+            Launcher launcher = new Launcher();
+            launcher.setVisible(true);
+        });
     }
 }
