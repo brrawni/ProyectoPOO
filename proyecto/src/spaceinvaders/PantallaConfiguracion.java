@@ -123,7 +123,7 @@ public class PantallaConfiguracion extends Videojuego {
         //sonido
         if(btnSonido.contienePunto(x, y)) {
             sonidoActivado = !sonidoActivado;
-            btnSonido.setTexto("Sonido: " + (sonidoActivado ? "ACTIVADO" : "DESACTIVADO"));
+            btnSonido = new Boton(300, 250, 200, 40, "Sonido: " + (sonidoActivado ? "ACTIVADO" : "DESACTIVADO"));
         }
         //teclas
         if(btnTeclaIzq.contienePunto(x, y)) {
