@@ -118,8 +118,7 @@ class Guardia extends PersonajeLodeRunner{
         double hipotenusa = Math.sqrt(Math.pow(base, 2.0) + Math.pow(altura, 2.0));
         if (hipotenusa < 32*7){ //El rango de vision de los guardias esta definido en 10 bloques, y cada bloque mide 32 pixeles de largo y ancho
             // Verificamos si el guardia está perfectamente alineado con la grilla vertical
-            //recordatorio: arreglar esta parte para que el guardia no deje de subir/bajar la escalera hasta que toque el suelo o el piso
-            if (this.y % 32 != 0) {
+            if (this.y % 32 != 0 && !colgadoDeBarra) {
                 // Lo obligamos a que siga subiendo (o bajando) hasta que sus pies toquen la superficie.
                 if (this.y > heroe.getY()) {
                     this.direccion = 2; // Lo forzamos a terminar de subir
@@ -155,7 +154,10 @@ class Guardia extends PersonajeLodeRunner{
                 if (colEscaleraObjetivo != -1) {
 
                     // Si el guardia ya está parado exactamente en la escalera elegida, la sube.
-                    if (colCentro == colEscaleraObjetivo && escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro) == 3) {
+                    if ((colCentro == colEscaleraObjetivo ||
+                            escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro + 1) == 1 ||
+                            escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro - 1) == 1) &&
+                            escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro) == 3) {
                         this.direccion = 2; // Arriba
                     }
                     // Si la escalera objetivo está a la izquierda del guardia, camina a la izquierda.

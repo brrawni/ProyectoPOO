@@ -47,7 +47,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         canvas.setFocusable(true);
         canvas.requestFocus();
         canvas.requestFocusInWindow();
-        nivelActual = 3;
+        nivelActual = 1;
         vidasHeroe = 5;
         config.cargar();
     }
@@ -108,7 +108,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 }
                 String teclaParaJugar = config.getTeclaIniciar();
                 boolean quiereJugar = false;
-                if (teclaParaJugar.equals("ENTER") && enterPresionado){
+                if (teclaParaJugar.equals("ENTER") && enterPresionado ){
                     quiereJugar = true;
                 }
                 if (quiereJugar){
