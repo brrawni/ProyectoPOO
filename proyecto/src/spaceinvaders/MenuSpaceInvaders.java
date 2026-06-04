@@ -80,8 +80,9 @@ public class MenuSpaceInvaders extends Videojuego {
                         lanzandoJuego = true;
                         stop();
                         break;
-                    case 1: // Configuracion — próximamente
-                        System.out.println("Config SI");
+                    case 1: // Configuracion
+                        lanzandoJuego = true;
+                        stop();
                         break;
                     case 2: // Ranking — próximamente
                         System.out.println("Ranking SI");
