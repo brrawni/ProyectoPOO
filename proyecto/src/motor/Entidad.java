@@ -104,7 +104,7 @@ abstract class GameLoop {
 
 // 3. JGame: Agrega la ventana, el lienzo y los periféricos de entrada
 abstract class JGame extends GameLoop {
-    protected JFrame frame;
+    public JFrame frame; //error de package, lo dejo público para evitarlo
     protected JPanel canvas;
 
     public JGame(String title, int ancho, int alto) {
@@ -118,7 +118,7 @@ abstract class JGame extends GameLoop {
         readPropertiesFile();
     }
 
-    // ← Sobreescribimos run() para ejecutar en hilo separado
+    //sobreescribimos run() para ejecutar en hilo separado
     @Override
     public void run() {
         Thread hiloJuego = new Thread(() -> {

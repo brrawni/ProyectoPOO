@@ -18,8 +18,8 @@ public class Launcher extends JFrame {
     setVisible(false);
     switch (juego) {
         case "spaceinvaders":
-            spaceinvaders.MenuSpaceInvaders menu = 
-                new spaceinvaders.MenuSpaceInvaders();
+            spaceinvaders.MenuSpaceInvaders menu = new spaceinvaders.MenuSpaceInvaders();
+
             // Cuando el menú termine, volver al launcher
             menu.frame.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
