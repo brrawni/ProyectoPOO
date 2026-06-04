@@ -1,5 +1,8 @@
 package launcher;
 
+import LodeRunner.ConfiguracionLR;
+import LodeRunner.LodeRunnerMain;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -30,7 +33,9 @@ public class Launcher extends JFrame {
             menu.run();
             break;
         case "loderunner":
+            LodeRunnerMain lodeRunnerMain = new LodeRunnerMain(new ConfiguracionLR());
             SwingUtilities.invokeLater(() -> setVisible(true));
+            lodeRunnerMain.run();
             break;
         case "pong":
             SwingUtilities.invokeLater(() -> setVisible(true));

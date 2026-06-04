@@ -1,6 +1,6 @@
+
 import launcher.Launcher;
 import javax.swing.SwingUtilities;
-
 
 public class Main {
     public static void main(String[] args) {
@@ -9,5 +9,6 @@ public class Main {
             Launcher launcher = new Launcher();
             launcher.setVisible(true);
         });
+
     }
 }
