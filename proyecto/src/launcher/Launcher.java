@@ -20,15 +20,7 @@ public class Launcher extends JFrame {
         setVisible(false);
         switch (juego) {
             case "spaceinvaders":
-                spaceinvaders.MenuSpaceInvaders menu = new spaceinvaders.MenuSpaceInvaders();
-                // Cuando el menú de Space Invaders termine, volver al launcher
-                menu.frame.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosed(java.awt.event.WindowEvent e) {
-                        SwingUtilities.invokeLater(() -> setVisible(true));
-                    }
-                });
-                menu.run();
+                new spaceinvaders.MenuSpaceInvaders(this).run();
                 break;
 
             case "loderunner":

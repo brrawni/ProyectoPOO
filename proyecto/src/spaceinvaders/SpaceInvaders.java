@@ -8,11 +8,13 @@ import javax.swing.JFrame;
 import motor.Videojuego;
 import ranking.EntradaRanking;
 import ranking.GestorRanking;
+import launcher.Launcher;
 
 
 public class SpaceInvaders extends Videojuego {
     private ControlTeclado teclado;
     private BufferedImage buffer;
+    private Launcher launcher;
     //entidades principales del juego
     private FormacionAlien formacion;
     private CanonJugador canon;
@@ -38,8 +40,9 @@ public class SpaceInvaders extends Videojuego {
     private String nombreJugador = "";
     private boolean ingresandoNombre = false;
 
-    public SpaceInvaders() {
+    public SpaceInvaders(Launcher launcher) {
         super("Space Invaders", ANCHO_PANTALLA, ALTO_PANTALLA);
+        this.launcher = launcher;
     }
 
     public void siguienteNivel() {
@@ -90,18 +93,6 @@ public class SpaceInvaders extends Videojuego {
         teclado = new ControlTeclado(teclaIzq, teclaDer, teclaDisp);
         canvas.addKeyListener(teclado);
 
-        //logica pantalla completa
-        frame.dispose();
-
-        if(config.isPantallaCompleta()) {
-            frame.setUndecorated(true);
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        } else {
-            frame.setUndecorated(false);
-            frame.setSize(ANCHO_PANTALLA, ALTO_PANTALLA);
-            frame.setLocationRelativeTo(null);
-        }
-        frame.setVisible(true);
 
         canvas.addKeyListener(teclado);
         canvas.setFocusable(true);
@@ -188,7 +179,7 @@ public class SpaceInvaders extends Videojuego {
     @Override
     public void gameShutdown() {
         // Aquí podrías guardar el ranking o realizar cualquier limpieza necesaria
-        new MenuSpaceInvaders().run(); // Volver al menú de Space Invaders después de cerrar el juego
+        new MenuSpaceInvaders(launcher).run(); // Volver al menú de Space Invaders después de cerrar el juego
     }
 
     public boolean verificarFinJuego() {
