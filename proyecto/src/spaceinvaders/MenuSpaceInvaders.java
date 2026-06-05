@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import launcher.Boton;
 import javax.swing.JFrame;
+import launcher.Launcher;
 
 public class MenuSpaceInvaders extends Videojuego {
 
@@ -18,6 +19,7 @@ public class MenuSpaceInvaders extends Videojuego {
     private int[][] estrellas; // Para el fondo animado de estrellas
 
     private int siguientePantalla = 0; // 0=salir, 1=jugar, 2=configuracion
+    private Launcher launcher;
 
     public MenuSpaceInvaders() {
         super("Space Invaders", ANCHO, ALTO);
@@ -152,10 +154,18 @@ public class MenuSpaceInvaders extends Videojuego {
 
     @Override
     public void gameShutdown() { 
-        if (siguientePantalla == 1) {
-            new SpaceInvaders().run(); // Volver al menú de Space Invaders después de cerrar el juego
-        } else if (siguientePantalla == 2) {
-            new PantallaConfiguracion().run(); // Ir a configuración
+        switch (siguientePantalla) {
+            case 0: // Volver al launcher
+                javax.swing.SwingUtilities.invokeLater(
+                    () -> launcher.setVisible(true)
+                );
+                break;
+            case 1: // Jugar
+                new SpaceInvaders(launcher).run();
+                break;
+            case 2: // Configuración
+                new PantallaConfiguracion(launcher).run();
+                break;
         }
     }
 }
