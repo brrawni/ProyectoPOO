@@ -75,9 +75,9 @@ public class ProyectilCanon extends Proyectil {
     public void dibujar(Graphics2D g2d) {
         String skinElegida = GestorConfiguracionSpaceInvaders.getInstance().getSkinProyectil();
         
-        String rutaImagen = "/nave_original.png"; // Por defecto
+        String rutaImagen = "/resources/img/spaceinvaders/nave_original.png"; // Por defecto
         if ("alternativo".equals(skinElegida)) {
-            rutaImagen = "/nave_alternativa.png";
+            rutaImagen = "/resources/img/spaceinvaders/nave_alternativa.png";
         }
 
         BufferedImage imagen = GestorImagenes.getInstance().cargar(rutaImagen);
