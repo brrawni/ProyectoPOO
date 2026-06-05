@@ -78,8 +78,16 @@ public class SpaceInvaders extends Videojuego {
     public void gameStartup() {
         inicializarNivel();
 
-        //registrar control de teclado
-        teclado = new ControlTeclado();
+        //leemos la configuracion una vez al iniciar
+        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
+        int teclaIzq = config.getTeclaIzquierda();
+        int teclaDer = config.getTeclaDerecha();
+        int teclaDisp = config.getTeclaDisparo();
+
+        //registramos el control de teclado con las teclas personalizadas
+        teclado = new ControlTeclado(teclaIzq, teclaDer, teclaDisp);
+        canvas.addKeyListener(teclado);
+
         canvas.addKeyListener(teclado);
         canvas.setFocusable(true);
         canvas.requestFocus();

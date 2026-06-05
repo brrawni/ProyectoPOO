@@ -76,7 +76,7 @@ public class CanonJugador extends Jugador {
         
         String rutaImagen = "/img/spaceinvaders/nave_original.png"; // Por defecto
         if ("alternativo".equals(skinElegida)) {
-            rutaImagen = "/img/spaceinvaders/nave_alternativa.png";
+            rutaImagen = "/img/spaceinvaders/nave_alternativo.png";
         }
 
         BufferedImage imagen = GestorImagenes.getInstance().cargar(rutaImagen);
@@ -90,7 +90,7 @@ public class CanonJugador extends Jugador {
         
         // Si el proyectil existe, el cañón también tiene que mandarlo a dibujarse
     if (proyectil != null) {
-            proyectil.dibujar(g);
+            proyectil.dibujar(g2d);
         }
     }
 
