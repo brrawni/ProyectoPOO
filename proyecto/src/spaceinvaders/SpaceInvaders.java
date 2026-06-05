@@ -92,7 +92,6 @@ public class SpaceInvaders extends Videojuego {
 
         //logica pantalla completa
         frame.dispose();
-        GraphicsDevice monitor = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
         if(config.isPantallaCompleta()) {
             frame.setUndecorated(true);
