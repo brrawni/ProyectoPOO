@@ -1,6 +1,7 @@
 // ProyectilAlien.java
 package spaceinvaders;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.List;
 import motor.Proyectil;
@@ -9,8 +10,8 @@ public class ProyectilAlien extends Proyectil {
     private List<Escudo> escudos;
     private CanonJugador jugador;
 
-    public ProyectilAlien(int x, int y, CanonJugador jugador, List<Escudo> escudos) {
-        super(x, y, 5, 10, 0, 5.0f);
+    public ProyectilAlien(int x, int y, CanonJugador jugador, List<Escudo> escudos, float velocidadY) {
+        super(x, y, 5, 10, 0, velocidadY);
         this.jugador = jugador;
         this.escudos = escudos;
     }
@@ -49,7 +50,13 @@ public class ProyectilAlien extends Proyectil {
     @Override
     public void dibujar(Graphics2D g) {
         if (estaActivo()) {
-            g.fillRect(x, y, ancho, alto);
+            if ("alternativa".equals(GestorConfiguracionSpaceInvaders.getInstance().getSkinProyectil())) {
+                g.setColor(Color.MAGENTA);
+                g.fillOval(x, y, ancho, alto);
+            } else {
+                g.setColor(Color.RED);
+                g.fillRect(x, y, ancho, alto);
+            }
         }
     }
 }

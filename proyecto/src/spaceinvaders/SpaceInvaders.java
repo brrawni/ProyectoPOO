@@ -65,7 +65,7 @@ public class SpaceInvaders extends Videojuego {
 
         int yInicial = 60 + (nivelActual - 1) * 20; //baja 20 px por nivel
         // 1. Primero crear formacion y escudos
-        formacion = new FormacionAlien(nivel.obtenerFilas(), nivel.obtenerColumnas(), nivel.obtenerVelocidadAlien(), yInicial);
+        formacion = new FormacionAlien(nivel.obtenerFilas(), nivel.obtenerColumnas(), nivel.obtenerVelocidadAlien(), yInicial, nivel.obtenerVelocidadProyectil());
         escudos   = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             escudos.add(new Escudo(150 + i * 150, ALTO_PANTALLA - 150));

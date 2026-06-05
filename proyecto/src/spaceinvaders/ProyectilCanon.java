@@ -74,8 +74,13 @@ public class ProyectilCanon extends Proyectil {
     @Override
     public void dibujar(Graphics2D g2d) {
         if (estaActivo()) {
-            g2d.setColor(Color.WHITE);
-            g2d.fillRect(x, y, ancho, alto);
+            if ("alternativa".equals(GestorConfiguracionSpaceInvaders.getInstance().getSkinProyectil())) {
+                g2d.setColor(Color.CYAN);
+                g2d.fillOval(x, y, ancho, alto);
+            } else {
+                g2d.setColor(Color.WHITE);
+                g2d.fillRect(x, y, ancho, alto);
+            }
         }
     }
 }

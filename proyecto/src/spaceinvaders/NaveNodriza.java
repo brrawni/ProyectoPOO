@@ -75,15 +75,10 @@ public class NaveNodriza extends Enemigo {
         if (!visible || !vivo) return;
 
         GestorImagenes gestor = GestorImagenes.getInstance();
-        String ruta       = "/img/spaceinvaders/navenodriza.png";
-        String claveCache = ruta + "_" + Color.RED.getRGB();
+        String skin = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
+        String ruta = "/img/spaceinvaders/" + ("alternativa".equals(skin) ? "nodriza_alternativa.png" : "navenodriza.png");
 
-        BufferedImage img = gestor.cargarDeCache(claveCache);
-        if (img == null) {
-            img = gestor.colorear(gestor.cargar(ruta), Color.RED);
-            if (img != null) gestor.guardarEnCache(claveCache, img);
-        }
-
+        BufferedImage img = gestor.cargar(ruta);
         if (img != null) {
             g.drawImage(img, x, y, ancho, alto, null);
         } else {
