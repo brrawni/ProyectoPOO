@@ -91,7 +91,6 @@ public class SpaceInvaders extends Videojuego {
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO_PANTALLA, ALTO_PANTALLA, BufferedImage.TYPE_INT_ARGB);
     
-        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
 
         if (config.isPantallaCompleta()) {
             javax.swing.SwingUtilities.invokeLater(() -> {
