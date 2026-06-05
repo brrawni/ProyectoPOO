@@ -1,7 +1,7 @@
 package launcher;
 
-import LodeRunner.ConfiguracionLR;
-import LodeRunner.LodeRunnerMain;
+import LodeRunner.GestorPantallas;
+import LodeRunner.LodeRunnerMenu;
 import Pong.MenuPong;
 import javax.swing.*;
 
@@ -32,11 +32,15 @@ public class Launcher extends JFrame {
                 break;
 
             case "loderunner":
-                LodeRunnerMain lodeRunnerMain = new LodeRunnerMain(new ConfiguracionLR());
-                SwingUtilities.invokeLater(() -> setVisible(true));
-                lodeRunnerMain.run();
+                LodeRunnerMenu menuLR = new LodeRunnerMenu();
+                menuLR.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent e) {
+                        SwingUtilities.invokeLater(() -> setVisible(true));
+                    }
+                });
+                menuLR.setVisible(true);
                 break;
-
             case "pong":
                 // MenuPong maneja su propio JFrame y Timer; lo mostramos y listo.
                 // Cuando el usuario vuelva o cierre, MenuPong se encarga de

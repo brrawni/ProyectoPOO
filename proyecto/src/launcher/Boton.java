@@ -46,4 +46,5 @@ public class Boton {
 
     public void setHover(boolean hover) { this.hover = hover; }
     public String getTexto()            { return texto; }
+    public void setTexto(String texto) { this.texto = texto; }
 }

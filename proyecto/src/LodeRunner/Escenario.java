@@ -12,22 +12,20 @@ public class Escenario{
     private int[][] matrizMundo;
     private HashMap<Point, Long> mapaPozosTemporales;
     private int alto_bloque;
-    private int numeroNivel;
     private boolean escaleraSalidaActiva;
-    private HashMap<Integer, Image> sprites;
+
     private BufferedImage escalera;
     private BufferedImage ladrillo;
     
     public Escenario(int ancho_bloque, int alto_bloque, int numeroNivel){
         this.ancho_bloque = ancho_bloque;
         this.alto_bloque = alto_bloque;
-        this.numeroNivel = numeroNivel;
         this.mapaPozosTemporales = new HashMap<>();
-        this.sprites = new HashMap<>();
         try{
-            BufferedImage hojaSprites = ImageIO.read(getClass().getResourceAsStream("/img/loderunner/escaleras.png"));
+            //Cargamos las imagenes correspondientes a los ladrillos y escaleras.
+            BufferedImage hojaSpritesEscalera = ImageIO.read(getClass().getResourceAsStream("/img/loderunner/escaleras.png"));
             BufferedImage hojaSpritesLadrillos = ImageIO.read(getClass().getResourceAsStream("/img/loderunner/ladrillos.png"));
-            escalera = hojaSprites.getSubimage(0,0,32,32);
+            escalera = hojaSpritesEscalera.getSubimage(0,0,32,32);
             ladrillo = hojaSpritesLadrillos.getSubimage(2*32, 5*32, 32, 32);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -35,6 +33,7 @@ public class Escenario{
         cargarNivel(numeroNivel);
     }
     public void dibujar(Graphics2D g){
+        //recorremos la "matriz mundo"
         for (int fila = 0; fila < matrizMundo.length; fila++) {
             for (int columna = 0; columna < matrizMundo[fila].length; columna++) {
 
@@ -64,7 +63,6 @@ public class Escenario{
         }
     }
     public void cargarNivel(int numeroNivel) {
-        this.numeroNivel = numeroNivel;
         this.escaleraSalidaActiva = false;
         // Lógica para cargar la matrizMundo y los sprites según el número de nivel
         // 0 = Aire, 1 = Ladrillo Común, 3 = Escalera, 4 = Barra/Soga
@@ -118,9 +116,9 @@ public class Escenario{
                     {0, 0, 3, 0, 0, 0, 3, 0, 1, 3, 0, 0, 0, 0, 1, 3, 0, 0, 0, 3, 0, 1, 0, 3, 0}, // 5
                     {0, 0, 3, 0, 0, 0, 3, 0, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 3, 0, 1, 0, 3, 0}, // 6
                     {0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 1, 0, 3, 0}, // 7
-                    {1, 1, 1, 1, 3, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1}, // 8: PISO GRUESO (Capa 1)
-                    {1, 1, 1, 1, 3, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1}, // 9: PISO GRUESO (Capa 2)
-                    {1, 1, 1, 1, 3, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1}, // 10: PISO GRUESO (Capa 3 - Obliga a cavar en diagonal)
+                    {1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1}, // 8: PISO GRUESO (Capa 1)
+                    {1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1}, // 9: PISO GRUESO (Capa 2)
+                    {1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1}, // 10: PISO GRUESO (Capa 3 - Obliga a cavar en diagonal)
                     {0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3, 0}, // 11
                     {0, 4, 4, 4, 3, 0, 0, 0, 0, 3, 4, 4, 4, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3, 0}, // 12
                     {0, 0, 0, 0, 3, 1, 1, 1, 0, 3, 0, 0, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3, 0}, // 13
