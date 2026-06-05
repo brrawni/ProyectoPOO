@@ -21,8 +21,9 @@ public class MenuSpaceInvaders extends Videojuego {
     private int siguientePantalla = 0; // 0=salir, 1=jugar, 2=configuracion
     private Launcher launcher;
 
-    public MenuSpaceInvaders() {
+    public MenuSpaceInvaders(Launcher launcher) {
         super("Space Invaders", ANCHO, ALTO);
+        this.launcher = launcher;
     }
 
     @Override
