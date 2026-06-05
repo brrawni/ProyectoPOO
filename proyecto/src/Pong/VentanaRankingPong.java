@@ -112,7 +112,7 @@ public class VentanaRankingPong extends JDialog {
                     JOptionPane.YES_NO_OPTION
             );
             if (confirmacion == JOptionPane.YES_OPTION) {
-                gestorRanking.limpiar();
+                //gestorRanking.limpiar();
                 dispose(); // Cerrar ventana
             }
         });

@@ -4,9 +4,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFrame;
 import motor.Videojuego;
 import ranking.EntradaRanking;
 import ranking.GestorRanking;
+
 
 public class SpaceInvaders extends Videojuego {
     private ControlTeclado teclado;
@@ -78,8 +80,29 @@ public class SpaceInvaders extends Videojuego {
     public void gameStartup() {
         inicializarNivel();
 
-        //registrar control de teclado
-        teclado = new ControlTeclado();
+        //leemos la configuracion una vez al iniciar
+        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
+        int teclaIzq = config.getTeclaIzquierda();
+        int teclaDer = config.getTeclaDerecha();
+        int teclaDisp = config.getTeclaDisparo();
+
+        //registramos el control de teclado con las teclas personalizadas
+        teclado = new ControlTeclado(teclaIzq, teclaDer, teclaDisp);
+        canvas.addKeyListener(teclado);
+
+        //logica pantalla completa
+        frame.dispose();
+
+        if(config.isPantallaCompleta()) {
+            frame.setUndecorated(true);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        } else {
+            frame.setUndecorated(false);
+            frame.setSize(ANCHO_PANTALLA, ALTO_PANTALLA);
+            frame.setLocationRelativeTo(null);
+        }
+        frame.setVisible(true);
+
         canvas.addKeyListener(teclado);
         canvas.setFocusable(true);
         canvas.requestFocus();
@@ -154,7 +177,7 @@ public class SpaceInvaders extends Videojuego {
         }
 
         g2d.dispose();
-        g.drawImage(buffer, 0, 0, null);
+        g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
     }
 
     public NaveNodriza getNaveNodriza()  { return nodriza; }

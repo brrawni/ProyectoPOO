@@ -3,6 +3,8 @@ package spaceinvaders;
 import java.awt.Graphics2D;
 import java.util.List;
 import motor.Jugador;
+import java.awt.image.BufferedImage;
+import java.awt.Color;
 
 public class CanonJugador extends Jugador {
     private SpaceInvaders juego; // Referencia al juego para acceder a la formación de aliens
@@ -69,13 +71,26 @@ public class CanonJugador extends Jugador {
     
 
     @Override
-    public void dibujar(Graphics2D g) {
-        // Lógica para dibujar el cañón del jugador
-    g.fillRect(x, y, ancho, alto); 
+    public void dibujar(Graphics2D g2d) {
+        String skinElegida = GestorConfiguracionSpaceInvaders.getInstance().getSkinNave();
+        
+        String rutaImagen = "/img/spaceinvaders/nave_original.png"; // Por defecto
+        if ("alternativa".equals(skinElegida)) {
+            rutaImagen = "/img/spaceinvaders/nave_alternativa.png";
+        }
+
+        BufferedImage imagen = GestorImagenes.getInstance().cargar(rutaImagen);
+
+        if (imagen != null) {
+            g2d.drawImage(imagen, x, y, ancho, alto, null);
+        } else {
+            g2d.setColor(Color.GREEN);
+            g2d.fillRect(x, y, ancho, alto);
+        } 
         
         // Si el proyectil existe, el cañón también tiene que mandarlo a dibujarse
     if (proyectil != null) {
-            proyectil.dibujar(g);
+            proyectil.dibujar(g2d);
         }
     }
 
