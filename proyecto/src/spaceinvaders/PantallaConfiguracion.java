@@ -259,6 +259,6 @@ public class PantallaConfiguracion extends Videojuego {
     
     @Override
     public void gameShutdown() {
-        new MenuSpaceInvaders().run();
+        new MenuSpaceInvaders(launcher).run();
     }
 }
