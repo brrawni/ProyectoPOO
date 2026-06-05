@@ -39,15 +39,18 @@ public class ControlTeclado extends KeyAdapter {
             return;
         }
 
-        char c = e.getKeyChar();
-        if (Character.isLetterOrDigit(c) && textoIngresado.length() < 10) {
-            textoIngresado.append(c);
-        }
-
         // Cambiamos el switch por if para poder usar nuestras variables
         if (e.getKeyCode() == teclaIzq) izquierda = true;
         if (e.getKeyCode() == teclaDer) derecha = true;
         if (e.getKeyCode() == teclaDisparo) disparo = true;
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        char c = e.getKeyChar();
+        if (Character.isLetterOrDigit(c) && textoIngresado.length() < 10) {
+            textoIngresado.append(c);
+        }
     }
 
     @Override
