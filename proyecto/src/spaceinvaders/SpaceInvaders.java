@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFrame;
 import motor.Videojuego;
 import ranking.EntradaRanking;
 import ranking.GestorRanking;
