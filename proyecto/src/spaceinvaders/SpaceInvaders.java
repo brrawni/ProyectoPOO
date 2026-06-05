@@ -51,6 +51,7 @@ public class SpaceInvaders extends Videojuego {
     public void siguienteNivel() {
         nivelActual++;
         vidasGuardadas = Math.min(canon.obtenerVidas() + 1, 5);
+        canon = null; // Recrear canon con vidas regeneradas
         inicializarNivel();
     }
 
@@ -68,7 +69,13 @@ public class SpaceInvaders extends Videojuego {
 
         // Limpiar escudos completamente destruidos antes de pasar al siguiente nivel
         if (nivelActual > 1) {
-            escudos.removeIf(Escudo::estaDestruido);
+            List<Escudo> escudosIntactos = new ArrayList<>();
+            for (Escudo escudo : escudos) {
+                if (!escudo.estaDestruido()) {
+                    escudosIntactos.add(escudo);
+                }
+            }
+            escudos = escudosIntactos;
         }
 
         int yInicial = 60 + (nivelActual - 1) * 20; //baja 20 px por nivel
