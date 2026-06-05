@@ -98,7 +98,7 @@ public class PantallaConfiguracion extends Videojuego {
         indiceMusica    = ("remix".equals(config.getPistaMusical())) ? 1 : 0;
         indiceSkinNave  = ("alternativo".equals(config.getSkinNave())) ? 1 : 0;
         indiceSkinInv   = ("alternativo".equals(config.getSkinInvasores())) ? 1 : 0;
-        indiceSkinProy  = ("alternativo".equals(config.getSkinProyectiles())) ? 1 : 0;
+        indiceSkinProy  = ("alternativo".equals(config.getSkinProyectil())) ? 1 : 0;
     }
 
     private void inicializarBotones() {
@@ -171,7 +171,7 @@ public class PantallaConfiguracion extends Videojuego {
             config.setPistaMusical(opcionMusica[indiceMusica]);
             config.setSkinNave(opcionSkins[indiceSkinNave]);
             config.setSkinInvasores(opcionSkins[indiceSkinInv]);
-            config.setSkinProyectiles(opcionSkins[indiceSkinProy]);
+            config.setSkinProyectil(opcionSkins[indiceSkinProy]);
             config.guardar();
         }
         
