@@ -184,6 +184,18 @@ public class PantallaConfiguracion extends Videojuego {
         if (btnVolver.contienePunto(x, y)) {
             stop();
         }
+
+        frame.dispose();
+        if (config.isPantallaCompleta()) {
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setUndecorated(true);
+        } else {
+            frame.setUndecorated(false);
+            frame.setSize(ANCHO, ALTO);
+            frame.setLocationRelativeTo(null);
+        }
+        frame.setVisible(true);
+        canvas.requestFocus();
     }
 
     @Override
