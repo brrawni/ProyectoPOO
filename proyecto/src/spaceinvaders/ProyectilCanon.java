@@ -3,6 +3,8 @@ package spaceinvaders;
 import java.awt.Graphics2D;
 import java.util.List;
 import motor.Proyectil;
+import java.awt.image.BufferedImage;
+import java.awt.Color;
 
 public class ProyectilCanon extends Proyectil {
 
@@ -70,9 +72,10 @@ public class ProyectilCanon extends Proyectil {
     public void mover() { }
 
     @Override
-    public void dibujar(Graphics2D g) {
+    public void dibujar(Graphics2D g2d) {
         if (estaActivo()) {
-            g.fillRect(x, y, ancho, alto);
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(x, y, ancho, alto);
         }
     }
 }

@@ -19,7 +19,6 @@ public class ConfiguracionLR {
             if (file.exists()){
                 config.load(new FileInputStream(file));
             }
-            file.delete();
         } catch (IOException e) {
             System.out.println("Error en la carga de archivo");
             throw new RuntimeException(e);
@@ -101,65 +100,5 @@ public class ConfiguracionLR {
     }
     public void setTeclaIniciar(String teclaIniciar){
         config.setProperty("teclaIniciar", teclaIniciar);
-    }
-}
-
-class VentanaConfiguracion extends JDialog{
-    private ConfiguracionLR config;
-
-    public VentanaConfiguracion(ConfiguracionLR config, JFrame padre){
-        super(padre, "Configuracion", true); //modal hace que se superponga sobre el juego
-        this.config = config;
-
-        setSize(400, 400); //ventana de 400 ancho y 400 de largo
-        setLayout(new GridLayout(6, 1));
-        //1. CheckBox Pantalla Completa
-        JCheckBox chkPantalla = new JCheckBox("Pantalla completa");
-        chkPantalla.setSelected(config.isPantallaCompleta());
-        add(chkPantalla);
-        //2. CheckBox sonido
-        JCheckBox chkSonido = new JCheckBox("Efectos de sonido");
-        chkSonido.setSelected(config.isEfectosDeSonidoActivados());
-        add(chkSonido);
-        //3. CheckBox musica
-        JCheckBox chkMusica = new JCheckBox("Musica de fondo");
-        chkMusica.setSelected(config.isMusicaDeFondoActivada());
-        //4. ComboBox skins
-        JPanel panelSkin = new JPanel();
-        panelSkin.add(new JLabel("Skin de personaje: "));
-        String[] skins = {"original", "moderno", "retro"};
-        JComboBox<String> comboSkins = new JComboBox<>(skins);
-        comboSkins.setSelectedItem(config.getSkin());
-        panelSkin.add(comboSkins);
-        add(panelSkin);
-        //5. ComboBox pista musical
-        JPanel panelMusica = new JPanel();
-        panelMusica.add(new JLabel("Pista musical: "));
-        String[] pistas = {"original", "8-bit", "retro"};
-        JComboBox<String> comboPistas = new JComboBox<>(pistas);
-        comboPistas.setSelectedItem(config.getPistaMusical());
-        panelMusica.add(comboPistas);
-        add(panelMusica);
-        //6. Teclas
-
-        //7. Botones
-        JPanel panelBotones = new JPanel();
-        JButton btnGuardar = new JButton("Guardar");
-        btnGuardar.addActionListener(e -> {
-            config.setPantallaCompleta(chkPantalla.isSelected());
-            config.setEfectosDeSonidoActivados(chkSonido.isSelected());
-            config.setMusicaDeFondoActivada(chkMusica.isSelected());
-            config.setSkin(comboSkins.getSelectedItem().toString());
-            config.setPistaMusical(comboPistas.getSelectedItem().toString());
-            config.guardar();
-            dispose();
-        });
-        JButton btnReset = new JButton("Reset");
-        btnReset.addActionListener(e -> {
-            config.setearPorDefecto();
-        });
-        panelBotones.add(btnGuardar);
-        panelBotones.add(btnReset);
-        add(panelBotones);
     }
 }

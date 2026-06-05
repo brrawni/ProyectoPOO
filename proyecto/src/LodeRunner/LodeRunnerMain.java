@@ -24,8 +24,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     //variables de control
     private boolean mirandoIzq, cPresionada, enterPresionado;
     private boolean mirandoDer;
-    public enum EstadoJuego{MENU_PRINCIPAL, JUGANDO, GAME_OVER, VICTORIA}
-    private EstadoJuego estadoJuego;
     private int lingotesRestantes;
     //temporizador
     private int temporizador; //lo iniciamos en 5 minutos
@@ -36,7 +34,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     public LodeRunnerMain(ConfiguracionLR config) {
         super("Lode Runner - UNLPam edition", 800, 600);
         this.config = config;
-        estadoJuego = EstadoJuego.MENU_PRINCIPAL;
     }
 
     @Override
@@ -50,6 +47,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         nivelActual = 1;
         vidasHeroe = 5;
         config.cargar();
+        iniciarNivel();
     }
     public void iniciarNivel(){
         escenario = new Escenario(32, 32, nivelActual); // Ejemplo de creación del escenario
@@ -99,23 +97,8 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     }
     @Override
     public void gameUpdate(double delta) {
-        switch(estadoJuego){
-            case MENU_PRINCIPAL:
-                if (cPresionada){
-                    cPresionada = false;
-                    VentanaConfiguracion ventana = new VentanaConfiguracion(config, super.frame);
-                    ventana.setVisible(true);
-                }
-                String teclaParaJugar = config.getTeclaIniciar();
-                boolean quiereJugar = false;
-                if (teclaParaJugar.equals("ENTER") && enterPresionado ){
-                    quiereJugar = true;
-                }
-                if (quiereJugar){
-                    enEjecucion = true;
-                    estadoJuego = EstadoJuego.JUGANDO;
-                    iniciarNivel();
-                }
+                if (!enEjecucion)
+                    return;
                 if (config.isPantallaCompleta()){
                     super.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                     Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize(); //esto nos ayuda a obtener la resolucion de la pantalla en la que se eejcuta el juego
@@ -127,10 +110,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                     canvas.setSize(800, 600);
                     frame.setLocationRelativeTo(null);
                 }
-                break;
-            case JUGANDO:
-                if (!enEjecucion)
-                    return;
                 frames++;
                 if (frames == 30){ // 35 frames son aproximadamente un segundo
                     frames = 0;
@@ -230,8 +209,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                break;
-        }
         // AL PRINCIPIO DEL UPDATE
 
     }
@@ -257,29 +234,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
 
 // 🔥 clave para pixel art:
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        switch (estadoJuego){
-            case MENU_PRINCIPAL:
-                // 1. Pintamos el fondo de negro
-                g2.setColor(Color.BLACK);
-                g2.fillRect(0, 0, 800, 600);
-
-                // 2. Título del juego
-                g2.setColor(Color.YELLOW);
-                g2.setFont(new Font("Arial", Font.BOLD, 50));
-                g2.drawString("LODE RUNNER", 200, 200);
-
-                // 3. Textos de instrucciones
-                g2.setColor(Color.WHITE);
-                g2.setFont(new Font("Arial", Font.PLAIN, 20));
-
-                // Le preguntamos al ConfigManager qué tecla guardó el usuario para iniciar
-                String teclaParaJugar = config.getTeclaIniciar();
-
-                // Dibujamos las dos instrucciones en pantalla, una abajo de la otra
-                g2.drawString("Presiona " + teclaParaJugar.toUpperCase() + " para JUGAR", 250, 400);
-                g2.drawString("Presiona C para CONFIGURACIÓN", 230, 450);
-                break;
-            case JUGANDO:
                 // 1. Limpiamos la pantalla entera pintándola de negro
                 g2.setColor(Color.BLACK);
                 g2.fillRect(0, 0, 800, 600); // Ajustá al ancho y alto real de la ventana
@@ -300,8 +254,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 g2.drawString("Nivel: "   + nivelActual, 800 / 2 - 30, 580);
                 g2.drawString("Tiempo: "  + temporizador, 535, 580);
                 g2.drawString("Vidas: "   + vidasHeroe, 800 - 100, 580);
-                break;
-        }
         if (!enEjecucion){
             finDeJuego(g2);
         }
@@ -324,8 +276,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         g.setColor(Color.yellow);
         g.drawString("Game Over", 300, 150);
         g.drawString("Presione ENTER para ir al menu principal", 300, 100);
-        if (enterPresionado)
-            estadoJuego = EstadoJuego.MENU_PRINCIPAL;
     }
     public void keyPressed(KeyEvent e){
         switch(e.getKeyCode()){
