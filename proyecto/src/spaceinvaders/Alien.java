@@ -112,6 +112,10 @@ public class Alien extends Enemigo {
         BufferedImage img = gestor.cargar(ruta);
         
         if (img != null) {
+            // Si es skin original, colorea la imagen negra
+            if ("original".equals(skinInvasores)) {
+                img = gestor.colorear(img, color);
+            }
             g.drawImage(img, x, y, ancho, alto, null);
         } else {
             g.setColor(color);

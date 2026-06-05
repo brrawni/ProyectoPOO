@@ -81,6 +81,10 @@ public class NaveNodriza extends Enemigo {
 
         BufferedImage img = gestor.cargar(ruta);
         if (img != null) {
+            // Si es skin original, colorea la imagen negra
+            if ("original".equals(skin)) {
+                img = gestor.colorear(img, Color.WHITE);
+            }
             g.drawImage(img, x, y, ancho, alto, null);
         } else {
             g.setColor(Color.WHITE);
