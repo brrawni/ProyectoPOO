@@ -72,7 +72,7 @@ public class ProyectilCanon extends Proyectil {
     public void mover() { }
 
     @Override
-    public void dibujar(Graphics2D g) {
+    public void dibujar(Graphics2D g2d) {
         String skinElegida = GestorConfiguracionSpaceInvaders.getInstance().getSkinProyectil();
         
         String rutaImagen = "/nave_original.png"; // Por defecto
