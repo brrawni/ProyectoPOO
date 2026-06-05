@@ -26,6 +26,21 @@ public class MenuSpaceInvaders extends Videojuego {
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
 
+        //logica pantalla completa
+        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
+        frame.dispose();
+
+        if (config.isPantallaCompleta()) {
+            frame.setUndecorated(true);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            } else {
+            frame.setSize(ANCHO, ALTO);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        }
+        frame.setVisible(true);
+        canvas.requestFocus();
+
         // Inicializar estrellas para el fondo
         estrellas = new int[80][3];
         for (int i = 0; i < estrellas.length; i++) {
