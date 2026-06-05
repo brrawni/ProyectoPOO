@@ -40,8 +40,9 @@ public class SpaceInvaders extends Videojuego {
     private String nombreJugador = "";
     private boolean ingresandoNombre = false;
 
-    public SpaceInvaders() {
+    public SpaceInvaders(Launcher launcher) {
         super("Space Invaders", ANCHO_PANTALLA, ALTO_PANTALLA);
+        this.launcher = launcher;
     }
 
     public void siguienteNivel() {
