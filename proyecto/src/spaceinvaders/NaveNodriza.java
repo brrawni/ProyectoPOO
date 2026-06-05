@@ -9,6 +9,8 @@ import motor.Enemigo;
 public class NaveNodriza extends Enemigo {
     private int contadorDisparos;
     private boolean visible = false;
+    private int ticksDestruido = 0;
+    private static final int TICKS_ANIMACION_DESTRUCCION = 30;
 
     public NaveNodriza(Nivel nivel) {
         super(-50, 40, 60, 30, 2.0f); //arranca fuera de pantalla
@@ -20,6 +22,7 @@ public class NaveNodriza extends Enemigo {
         visible = true;
         x = -60; // Reinicia la posición para que vuelva a entrar
         vivo = true;
+        ticksDestruido = 0;
     }
 
     @Override
@@ -34,8 +37,25 @@ public class NaveNodriza extends Enemigo {
     }
 
     public void actualizar() {
-        // Lógica para actualizar la animación de la nave nodriza
+        if (ticksDestruido > 0) {
+            ticksDestruido--;
+            if (ticksDestruido == 0) {
+                visible = false;
+            }
+            return;
+        }
         mover();
+    }
+
+    @Override
+    public void morir() {
+        vivo = false;
+        ticksDestruido = TICKS_ANIMACION_DESTRUCCION;
+        visible = true;
+    }
+
+    public boolean estaDestruyendose() {
+        return ticksDestruido > 0;
     }
 
     public int calcularPuntos(int disparos) {
@@ -72,9 +92,20 @@ public class NaveNodriza extends Enemigo {
 
     @Override
     public void dibujar(Graphics2D g) {
-        if (!visible || !vivo) return;
+        if (!visible || (!vivo && !estaDestruyendose())) return;
 
         GestorImagenes gestor = GestorImagenes.getInstance();
+        if (estaDestruyendose()) {
+            BufferedImage img = gestor.cargar("/img/spaceinvaders/destruido.png");
+            if (img != null) {
+                g.drawImage(img, x, y, ancho, alto, null);
+            } else {
+                g.setColor(Color.ORANGE);
+                g.fillRect(x, y, ancho, alto);
+            }
+            return;
+        }
+
         String skin = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
         String sufijo = "alternativa".equals(skin) ? "nodriza_alternativa.png" : "navenodriza.png";
         String ruta = "/img/spaceinvaders/" + sufijo;
