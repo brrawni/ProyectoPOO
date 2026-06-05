@@ -39,7 +39,7 @@ public class GestorConfiguracionSpaceInvaders extends GestorConfiguracionBase {
         props.setProperty("teclaDisparo", String.valueOf(teclaDisparo));
         props.setProperty("skinNave", skinNave);
         props.setProperty("skinInvasores", skinInvasores);
-        props.setProperty("skinProyectiles", skinProyectiles);
+        props.setProperty("skinProyectil", skinProyectiles);
         props.setProperty("pistaMusical", pistaMusical);
         
         // El padre guarda sus variables y escribe todo en el disco
