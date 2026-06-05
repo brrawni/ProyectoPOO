@@ -54,7 +54,7 @@ public class SpaceInvaders extends Videojuego {
     private void inicializarNivel() {
         GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
         float vel;
-        switch (config.getDificultad()) {
+        switch (config.getVelocidad()) {
             case "LENTA": vel = 1.0f; break;
             case "RAPIDA": vel = 4.0f; break;
             default: vel = 2.0f; break;
