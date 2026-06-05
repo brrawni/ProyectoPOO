@@ -5,60 +5,65 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 
 public class ControlTeclado extends KeyAdapter {
-    private List<Escudo> escudos; // Para pasar la lista de escudos al proyectil
+    private List<Escudo> escudos;
 
-    // Estado de cada tecla — true si está apretada
+    // Variables para guardar las teclas configuradas
+    private int teclaIzq;
+    private int teclaDer;
+    private int teclaDisparo;
+
+    // Estado de cada tecla, true si está apretada
     private boolean izquierda = false;
     private boolean derecha   = false;
     private boolean disparo   = false;
 
-    //agregar para ingreso de nombre
     private StringBuilder textoIngresado = new StringBuilder();
     private boolean enterPresionado = false;
 
+    //recibe las teclas personalizadas
+    public ControlTeclado(int izq, int der, int disp) {
+        this.teclaIzq = izq;
+        this.teclaDer = der;
+        this.teclaDisparo = disp;
+    }
+
     @Override
     public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                enterPresionado = true;
-                return;
-            }
-            if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                if (textoIngresado.length() > 0)
-                    textoIngresado.deleteCharAt(textoIngresado.length() - 1);
-                    return;
-            }
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            enterPresionado = true;
+            return;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            if (textoIngresado.length() > 0)
+                textoIngresado.deleteCharAt(textoIngresado.length() - 1);
+            return;
+        }
 
-    // Solo letras y números
         char c = e.getKeyChar();
         if (Character.isLetterOrDigit(c) && textoIngresado.length() < 10) {
             textoIngresado.append(c);
         }
 
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT:  izquierda = true;  break;
-            case KeyEvent.VK_RIGHT: derecha   = true;  break;
-            case KeyEvent.VK_SPACE: disparo   = true;  break;
-        }
+        // Cambiamos el switch por if para poder usar nuestras variables
+        if (e.getKeyCode() == teclaIzq) izquierda = true;
+        if (e.getKeyCode() == teclaDer) derecha = true;
+        if (e.getKeyCode() == teclaDisparo) disparo = true;
     }
 
-    // Cuando se suelta una tecla, actualizamos el estado
     @Override
     public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT:  izquierda = false; break;
-            case KeyEvent.VK_RIGHT: derecha   = false; break;
-            case KeyEvent.VK_SPACE: disparo   = false; break;
-        }
+        // Lo mismo al soltar
+        if (e.getKeyCode() == teclaIzq) izquierda = false;
+        if (e.getKeyCode() == teclaDer) derecha = false;
+        if (e.getKeyCode() == teclaDisparo) disparo = false;
     }
 
-    // El gameloop llama esto cada frame
     public void procesarEntrada(CanonJugador canon) {
         if (izquierda) canon.moverIzquierda();
         if (derecha)   canon.moverDerecha();
-        if (disparo)   canon.disparar(); // Pasamos la lista de escudos para que el proyectil pueda detectar colisiones
+        if (disparo)   canon.disparar(); 
     }
 
-    // Setters para inyectar dependencias
     public String getTextoIngresado() { return textoIngresado.toString(); }
     public boolean isEnterPresionado() { return enterPresionado; }
     public void resetEntrada() {
