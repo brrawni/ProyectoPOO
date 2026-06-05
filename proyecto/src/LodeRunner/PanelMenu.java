@@ -15,6 +15,7 @@ public class PanelMenu extends JPanel {
     private Boton btnJugar;
     private Boton btnConfig;
     private Boton btnRanking;
+    private Boton btnVolver;
 
     public PanelMenu(GestorPantallas gestor) {
         this.gestor = gestor;
@@ -23,6 +24,7 @@ public class PanelMenu extends JPanel {
         btnJugar   = new Boton(300, 200, 200, 50, "JUGAR");
         btnConfig  = new Boton(300, 280, 200, 50, "CONFIGURACIÓN");
         btnRanking = new Boton(300, 360, 200, 50, "RANKING");
+        btnVolver = new Boton(300, 440, 200, 50, "VOLVER");
 
         configurarEventosMouse();
     }
@@ -33,6 +35,7 @@ public class PanelMenu extends JPanel {
                 btnJugar.setHover(btnJugar.contienePunto(e.getX(), e.getY()));
                 btnConfig.setHover(btnConfig.contienePunto(e.getX(), e.getY()));
                 btnRanking.setHover(btnRanking.contienePunto(e.getX(), e.getY()));
+                btnVolver.setHover(btnVolver.contienePunto(e.getX(), e.getY()));
                 repaint();
             }
         });
@@ -40,13 +43,15 @@ public class PanelMenu extends JPanel {
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if (btnJugar.contienePunto(e.getX(), e.getY())) {
-                    LodeRunnerMain juego = new LodeRunnerMain(new ConfiguracionLR());
+                    LodeRunnerMain juego = new LodeRunnerMain(gestor);
                     juego.run();
                     // gestor.cambiarPantalla(GestorPantallas.PANTALLA_JUEGO);
                 } else if (btnConfig.contienePunto(e.getX(), e.getY())) {
                     gestor.cambiarPantalla(GestorPantallas.PANTALLA_CONFIG); // Pide cambiar de pantalla
                 } else if (btnRanking.contienePunto(e.getX(), e.getY())) {
                     gestor.cambiarPantalla(GestorPantallas.PANTALLA_RANKING); // Pide cambiar de pantalla
+                } else if (btnVolver.contienePunto(e.getX(), e.getY())){
+                    gestor.getLodeRunnerMenu().dispose();
                 }
             }
         });
@@ -59,11 +64,12 @@ public class PanelMenu extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         g2.setColor(Color.YELLOW);
-        g2.setFont(new Font("Arial", Font.BOLD, 60));
+        g2.setFont(new Font("Times New Roman", Font.BOLD, 60));
         g2.drawString("LODE RUNNER", 180, 120);
 
         btnJugar.dibujar(g2);
         btnConfig.dibujar(g2);
         btnRanking.dibujar(g2);
+        btnVolver.dibujar(g2);
     }
 }

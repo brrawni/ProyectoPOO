@@ -1,6 +1,8 @@
 package LodeRunner;
 
+import launcher.Launcher;
 import motor.Videojuego;
+import ranking.EntradaRanking;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,32 +10,41 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 //Cada sprite mide 16x16
 
 public class LodeRunnerMain extends Videojuego implements KeyListener{
+    private GestorPantallas gestorPantallas;
     //Imagen para cancelar parpadeos
     private BufferedImage buffer;
-
-    //componentes del juego
+    //configuracion del juego
     private ConfiguracionLR config;
+    //componentes del juego
     private Escenario escenario;
     private Heroe heroe;
     private ArrayList<Guardia> guardias;
     private ArrayList<Oro> lingotes;
     private int vidasHeroe;
     //variables de control
-    private boolean mirandoIzq, cPresionada, enterPresionado;
+    private boolean mirandoIzq;
     private boolean mirandoDer;
     private int lingotesRestantes;
     //temporizador
-    private int temporizador; //lo iniciamos en 5 minutos
+    private int temporizador;
     private int frames = 0;
     private int puntajePorMin = 300;
+    //atributos para ranking
+    private RankingLR ranking;
+    private boolean rankingGuardado = false;
+    private String nombreJugador = "";
+    private boolean enterPresionado = false;
 
 
-    public LodeRunnerMain(ConfiguracionLR config) {
+    public LodeRunnerMain(GestorPantallas gestorPantallas) {
         super("Lode Runner - UNLPam edition", 800, 600);
-        this.config = config;
+        config = new ConfiguracionLR();
+        ranking = new RankingLR();
+        this.gestorPantallas = gestorPantallas;
     }
 
     @Override
@@ -45,7 +56,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         canvas.requestFocus();
         canvas.requestFocusInWindow();
         nivelActual = 1;
-        vidasHeroe = 5;
+        vidasHeroe = 1;
         config.cargar();
         iniciarNivel();
     }
@@ -54,7 +65,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         heroe = new Heroe(32, 32, 32, 32, vidasHeroe, escenario); // Ejemplo de creación del héroe
         guardias = new ArrayList<>();
         lingotes = new ArrayList<>();
-        //iniciar temporizador
+        //iniciar temporizador en 3 minutos
         temporizador = 180;
         // 1. Spawneo inteligente de Guardias
         guardias.clear(); //para no sobrecargar la memoria ram
@@ -220,7 +231,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         int windowWidth = frame.getContentPane().getWidth();
         int windowHeight = frame.getContentPane().getHeight();
         Graphics2D g2 = buffer.createGraphics();
-// mantener aspect ratio
+        // mantener aspect ratio
         double scaleX = (double) windowWidth / 800;
         double scaleY = (double) windowHeight / 600;
         double scale = Math.min(scaleX, scaleY);
@@ -228,17 +239,20 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         int newWidth = (int)(800 * scale);
         int newHeight = (int)(600 * scale);
 
-// centrar
+        // centrar
         int x = (windowWidth - newWidth) / 2;
         int y = (windowHeight - newHeight) / 2;
 
-// 🔥 clave para pixel art:
+        //para que los sprites no se vean borrosos
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
                 // 1. Limpiamos la pantalla entera pintándola de negro
                 g2.setColor(Color.BLACK);
                 g2.fillRect(0, 0, 800, 600); // Ajustá al ancho y alto real de la ventana
                 // Dibujamos guardias en azul
                 escenario.dibujar(g2);
+                if (!enEjecucion){
+                    finDeJuego(g2);
+                }
                 heroe.actualizarAnimacion();
                 heroe.dibujar(g2);
                 for (Guardia guardia : guardias){
@@ -254,9 +268,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 g2.drawString("Nivel: "   + nivelActual, 800 / 2 - 30, 580);
                 g2.drawString("Tiempo: "  + temporizador, 535, 580);
                 g2.drawString("Vidas: "   + vidasHeroe, 800 - 100, 580);
-        if (!enEjecucion){
-            finDeJuego(g2);
-        }
         g2.dispose();
         g.drawImage(buffer, x, y, newWidth, newHeight, null);
     }
@@ -264,24 +275,59 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     @Override
     public void gameShutdown() {
         // Código de cierre
+        gestorPantallas.cambiarPantalla(GestorPantallas.PANTALLA_MENU);
     }
     public void reiniciarNivel(){
         iniciarNivel();
     }
     public void finDeJuego(Graphics2D g){
-        g.setColor(Color.BLACK);
+        g.setColor(new Color(0, 0, 0, 180));
         g.fillRect(0, 0, 800, 600);
-        //fuente
+
         g.setFont(new Font("Times New Roman", Font.BOLD, 40));
-        g.setColor(Color.yellow);
-        g.drawString("Game Over", 300, 150);
-        g.drawString("Presione ENTER para ir al menu principal", 300, 100);
+        g.setColor(Color.RED);
+        g.drawString("GAME OVER", 800/2 - 100, 150);
+
+        if (!rankingGuardado) {
+            g.setFont(new Font("Arial", Font.PLAIN, 20));
+            g.setColor(Color.WHITE);
+            g.drawString("Nombre:", 800/2 - 100, 220);
+            g.drawString(nombreJugador + "|", 800/2 - 100, 250);
+            g.drawString("Puntaje obtenido: " + puntaje + "  Nivel: " + nivelActual, 800/2 - 100, 290);
+            g.setColor(Color.YELLOW);
+            g.drawString("Presiona ENTER para guardar", 800/2 - 100, 330);
+
+            if (enterPresionado && !nombreJugador.isEmpty()) {
+                ranking.agregarEntrada(
+                        new EntradaRanking(nombreJugador, nivelActual, puntaje)
+                );
+                rankingGuardado = true;
+                nombreJugador = "";
+            }
+        } else {
+            dibujarRanking(g);
+        }
+    }
+    private void dibujarRanking(Graphics2D g2d) {
+        g2d.setFont(new Font("Arial", Font.BOLD, 24));
+        g2d.setColor(Color.YELLOW);
+        g2d.drawString("TOP 10", 800/2 - 40, 180);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 16));
+        List<EntradaRanking> top = ranking.obtenerTop10();
+
+        for (int i = 0; i < top.size(); i++) {
+            EntradaRanking e = top.get(i);
+            String linea = (i+1) + ". " + e.getNombre() +
+                    "   Pts: " + e.getPuntaje() +
+                    "   Niv: " + e.getNivel() +
+                    "   "      + e.getFecha();
+            g2d.setColor(i == 0 ? Color.YELLOW : Color.WHITE);
+            g2d.drawString(linea, 800/2 - 180, 220 + i * 25);
+        }
     }
     public void keyPressed(KeyEvent e){
         switch(e.getKeyCode()){
-            case KeyEvent.VK_C:
-                cPresionada = true;
-                break;
             case KeyEvent.VK_ENTER:
                 enterPresionado = true;
                 break;
@@ -303,18 +349,26 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
             case KeyEvent.VK_RIGHT:
                 heroe.setDireccion(1);
                 break;
+            case KeyEvent.VK_BACK_SPACE:
+                if (nombreJugador.length() > 0 && !rankingGuardado)
+                    nombreJugador = nombreJugador.substring(0, nombreJugador.length() - 1);
             default:
                 break;
         }
     }
     public void keyTyped(KeyEvent e){
+        if (!rankingGuardado) {
+            char letra = e.getKeyChar();
 
+            // Evitamos que guarde caracteres raros (como el Enter o el retroceso que ya manejamos)
+            // Y le ponemos un límite de 10 caracteres para que no te rompa la tabla visual
+            if (letra != '\b' && letra != '\n' && letra != '\r' && nombreJugador.length() < 10) {
+                nombreJugador += letra;
+            }
+        }
     }
     public void keyReleased(KeyEvent e){
         switch(e.getKeyCode()){
-            case KeyEvent.VK_C:
-                cPresionada = false;
-                break;
             case KeyEvent.VK_ENTER:
                 enterPresionado = false;
                 break;
