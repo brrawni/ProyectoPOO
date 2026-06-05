@@ -147,10 +147,13 @@ public class PantallaConfiguracion extends Videojuego {
     }
 
     private void manejarClick(int x, int y) {
+        // Guardar estado previo para evitar recrear la ventana sin necesidad
+        boolean previaPantallaCompleta = pantallaCompleta;
+
         // Columna Izquierda
         if (btnVelIzq.contienePunto(x, y)) indiceVelocidad = Math.max(0, indiceVelocidad - 1);
         if (btnVelDer.contienePunto(x, y)) indiceVelocidad = Math.min(2, indiceVelocidad + 1);
-        
+
         if (btnSonido.contienePunto(x, y)) sonidoActivado = !sonidoActivado;
         if (btnPantalla.contienePunto(x, y)) pantallaCompleta = !pantallaCompleta;
         if (btnMusica.contienePunto(x, y)) indiceMusica = (indiceMusica + 1) % 2;
@@ -193,16 +196,19 @@ public class PantallaConfiguracion extends Videojuego {
             stop();
         }
 
-        frame.dispose();
-        if (config.isPantallaCompleta()) {
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            frame.setUndecorated(true);
-        } else {
-            frame.setUndecorated(false);
-            frame.setSize(ANCHO, ALTO);
-            frame.setLocationRelativeTo(null);
+        // Solo recrear/ajustar la ventana si cambió el modo pantalla completa
+        if (pantallaCompleta != previaPantallaCompleta) {
+            frame.dispose();
+            if (pantallaCompleta) {
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.setUndecorated(true);
+            } else {
+                frame.setUndecorated(false);
+                frame.setSize(ANCHO, ALTO);
+                frame.setLocationRelativeTo(null);
+            }
+            frame.setVisible(true);
         }
-        frame.setVisible(true);
         canvas.requestFocus();
     }
 
