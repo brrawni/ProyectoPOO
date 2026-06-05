@@ -1,6 +1,5 @@
 package spaceinvaders;
 
-import configuracion.GestorConfiguracion;
 import motor.Videojuego;
 import java.awt.*;
 import java.awt.event.*;
@@ -12,28 +11,40 @@ public class PantallaConfiguracion extends Videojuego {
     private static final int ALTO  = 600;
 
     private BufferedImage buffer;
-    private GestorConfiguracion config;
+    private GestorConfiguracionSpaceInvaders config;
 
-    //opciones
+    // Arrays de opciones
     private String[] opcionVelocidad = {"LENTA", "MEDIA", "RAPIDA"};
-    private int indiceVelocidad = 1; // Por defecto MEDIA
+    private String[] opcionSkins = {"original", "alternativo"};
+    private String[] opcionMusica = {"original", "remix"};
 
+    // Índices y estados
+    private int indiceVelocidad = 1;
+    private int indiceSkinNave = 0;
+    private int indiceSkinInv = 0;
+    private int indiceSkinProy = 0;
+    private int indiceMusica = 0;
+    
     private boolean sonidoActivado = true;
+    private boolean pantallaCompleta = false;
 
-    //teclas
+    // Teclas
     private int teclaIzquierda;
     private int teclaDerecha;
     private int teclaDisparo;
+    private String esperandoTecla = null;
 
-    //estado de edicion de teclas
-    private String esperandoTecla = null; //izquierda, derecha, disparo
-
-    //botones de opciones
+    // Botones Columna Izquierda (Generales)
     private Boton btnVelIzq, btnVelDer;
     private Boton btnSonido;
-    private Boton btnTeclaIzq, btnTeclaDer, btnTeclaDisparo;
+    private Boton btnPantalla;
+    private Boton btnMusica;
 
-    //botones inferiores
+    // Botones Columna Derecha (Controles y Skins)
+    private Boton btnTeclaIzq, btnTeclaDer, btnTeclaDisparo;
+    private Boton btnSkinNave, btnSkinInv, btnSkinProy;
+
+    // Botones inferiores
     private Boton btnGuardar, btnVolver, btnReset;
 
     public PantallaConfiguracion() {
@@ -43,38 +54,12 @@ public class PantallaConfiguracion extends Videojuego {
     @Override
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
-        config = GestorConfiguracion.getInstance();
+        config = GestorConfiguracionSpaceInvaders.getInstance();
 
-        //cargar valores actuales
-        sonidoActivado = config.isSonidoActivado();
-        teclaIzquierda = config.getTeclaIzquierda();
-        teclaDerecha   = config.getTeclaDerecha();
-        teclaDisparo   = config.getTeclaDisparo();
+        cargarValoresDesdeGestor();
+        inicializarBotones();
 
-        switch (config.getVelocidad()) {
-            case "LENTA": indiceVelocidad = 0; break;
-            case "RAPIDA": indiceVelocidad = 2; break;
-            default: indiceVelocidad = 1; break;
-        }
-
-        //botones de velocidad
-        btnVelIzq = new Boton(300, 150, 50, 40, "<");
-        btnVelDer = new Boton(450, 150, 50, 40, ">");
-
-        //boton de sonido
-        btnSonido = new Boton(300, 250, 200, 40, "Sonido: " + (sonidoActivado ? "ACTIVADO" : "DESACTIVADO"));
-
-        //botones de teclas
-        btnTeclaIzq    = new Boton(300, 350, 200, 40, "Izquierda: " + KeyEvent.getKeyText(teclaIzquierda));
-        btnTeclaDer    = new Boton(300, 410, 200, 40, "Derecha: " + KeyEvent.getKeyText(teclaDerecha));
-        btnTeclaDisparo = new Boton(300, 470, 200, 40, "Disparo: " + KeyEvent.getKeyText(teclaDisparo));
-
-        //botones inferiores
-        btnGuardar = new Boton(250, 520, 100, 40, "GUARDAR");
-        btnVolver  = new Boton(450, 520, 100, 40, "VOLVER");
-        btnReset  = new Boton(350, 520, 100, 40, "RESET");
-
-        //mouse click
+        // Mouse click
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -82,28 +67,19 @@ public class PantallaConfiguracion extends Videojuego {
             }
         });
 
-        //captura de tecla para reasignar controles
+        // Captura de tecla para reasignar controles
         canvas.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (esperandoTecla == null) return;
-
                 int codigo = e.getKeyCode();
                 switch (esperandoTecla) {
-                    case "izquierda":
-                        teclaIzquierda = codigo;
-                        btnTeclaIzq = new Boton(300, 350, 200, 40, "Izquierda: " + KeyEvent.getKeyText(codigo));
-                        break;
-                    case "derecha":
-                        teclaDerecha = codigo;
-                        btnTeclaDer = new Boton(300, 410, 200, 40, "Derecha: " + KeyEvent.getKeyText(codigo));
-                        break;
-                    case "disparo":
-                        teclaDisparo = codigo;
-                        btnTeclaDisparo = new Boton(300, 470, 200, 40, "Disparo: " + KeyEvent.getKeyText(codigo));
-                        break;
+                    case "izquierda": teclaIzquierda = codigo; break;
+                    case "derecha":   teclaDerecha = codigo; break;
+                    case "disparo":   teclaDisparo = codigo; break;
                 }
-                esperandoTecla = null; // Dejar de esperar después de asignar
+                actualizarTextosBotones();
+                esperandoTecla = null;
             }
         });
 
@@ -111,107 +87,162 @@ public class PantallaConfiguracion extends Videojuego {
         canvas.requestFocus();
     }
 
+    private void cargarValoresDesdeGestor() {
+        sonidoActivado   = config.isSonidoActivado();
+        pantallaCompleta = config.isPantallaCompleta();
+        teclaIzquierda   = config.getTeclaIzquierda();
+        teclaDerecha     = config.getTeclaDerecha();
+        teclaDisparo     = config.getTeclaDisparo();
+
+        indiceVelocidad = ("LENTA".equals(config.getVelocidad())) ? 0 : ("RAPIDA".equals(config.getVelocidad())) ? 2 : 1;
+        indiceMusica    = ("remix".equals(config.getPistaMusical())) ? 1 : 0;
+        indiceSkinNave  = ("alternativo".equals(config.getSkinNave())) ? 1 : 0;
+        indiceSkinInv   = ("alternativo".equals(config.getSkinInvasores())) ? 1 : 0;
+        indiceSkinProy  = ("alternativo".equals(config.getSkinProyectiles())) ? 1 : 0;
+    }
+
+    private void inicializarBotones() {
+        // COLUMNA IZQUIERDA (X = 100)
+        btnVelIzq   = new Boton(100, 150, 50, 40, "<");
+        btnVelDer   = new Boton(250, 150, 50, 40, ">");
+        btnSonido   = new Boton(100, 220, 200, 40, "");
+        btnPantalla = new Boton(100, 290, 200, 40, "");
+        btnMusica   = new Boton(100, 360, 200, 40, "");
+
+        // COLUMNA DERECHA (X = 450)
+        btnTeclaIzq     = new Boton(450, 150, 250, 40, "");
+        btnTeclaDer     = new Boton(450, 200, 250, 40, "");
+        btnTeclaDisparo = new Boton(450, 250, 250, 40, "");
+        btnSkinNave     = new Boton(450, 320, 250, 40, "");
+        btnSkinInv      = new Boton(450, 370, 250, 40, "");
+        btnSkinProy     = new Boton(450, 420, 250, 40, "");
+
+        // INFERIORES
+        btnGuardar = new Boton(250, 520, 100, 40, "GUARDAR");
+        btnReset   = new Boton(350, 520, 100, 40, "RESET");
+        btnVolver  = new Boton(450, 520, 100, 40, "VOLVER");
+
+        actualizarTextosBotones();
+    }
+
+    private void actualizarTextosBotones() {
+        btnSonido = new Boton(100, 220, 200, 40, "Sonido: " + (sonidoActivado ? "ON" : "OFF"));
+        btnPantalla = new Boton(100, 290, 200, 40, "Pantalla: " + (pantallaCompleta ? "FULL" : "VENTANA"));
+        btnMusica = new Boton(100, 360, 200, 40, "Música: " + opcionMusica[indiceMusica]);
+
+        btnTeclaIzq = new Boton(450, 150, 250, 40, "Izquierda: " + KeyEvent.getKeyText(teclaIzquierda));
+        btnTeclaDer = new Boton(450, 200, 250, 40, "Derecha: " + KeyEvent.getKeyText(teclaDerecha));
+        btnTeclaDisparo = new Boton(450, 250, 250, 40, "Disparo: " + KeyEvent.getKeyText(teclaDisparo));
+
+        btnSkinNave = new Boton(450, 320, 250, 40, "Skin Nave: " + opcionSkins[indiceSkinNave]);
+        btnSkinInv = new Boton(450, 370, 250, 40, "Skin Alien: " + opcionSkins[indiceSkinInv]);
+        btnSkinProy = new Boton(450, 420, 250, 40, "Skin Laser: " + opcionSkins[indiceSkinProy]);
+    }
+
     private void manejarClick(int x, int y) {
-        //velocidad izquierda
-        if (btnVelIzq.contienePunto(x, y)) {
-            indiceVelocidad = Math.max(0, indiceVelocidad - 1);
-        }
-        //velocidad derecha
-        if(btnVelDer.contienePunto(x, y)) {
-            indiceVelocidad = Math.min(2, indiceVelocidad + 1);
-        }
-        //sonido
-        if(btnSonido.contienePunto(x, y)) {
-            sonidoActivado = !sonidoActivado;
-            btnSonido = new Boton(300, 250, 200, 40, "Sonido: " + (sonidoActivado ? "ACTIVADO" : "DESACTIVADO"));
-        }
-        //teclas
-        if(btnTeclaIzq.contienePunto(x, y)) {
-            esperandoTecla = "izquierda";
-            canvas.requestFocus(); // Asegurarse de que el canvas tenga el foco para capturar la tecla
-        }
-        if(btnTeclaDer.contienePunto(x, y)) {
-            esperandoTecla = "derecha";
-            canvas.requestFocus(); // Asegurarse de que el canvas tenga el foco para capturar la tecla
-        }
-        if(btnTeclaDisparo.contienePunto(x, y)) {
-            esperandoTecla = "disparo";
-            canvas.requestFocus(); // Asegurarse de que el canvas tenga el foco para capturar la tecla
-        }
-        //guardar
-        if(btnGuardar.contienePunto(x, y)) {
+        // Columna Izquierda
+        if (btnVelIzq.contienePunto(x, y)) indiceVelocidad = Math.max(0, indiceVelocidad - 1);
+        if (btnVelDer.contienePunto(x, y)) indiceVelocidad = Math.min(2, indiceVelocidad + 1);
+        
+        if (btnSonido.contienePunto(x, y)) sonidoActivado = !sonidoActivado;
+        if (btnPantalla.contienePunto(x, y)) pantallaCompleta = !pantallaCompleta;
+        if (btnMusica.contienePunto(x, y)) indiceMusica = (indiceMusica + 1) % 2;
+
+        // Columna Derecha (Teclas)
+        if (btnTeclaIzq.contienePunto(x, y)) { esperandoTecla = "izquierda"; canvas.requestFocus(); }
+        if (btnTeclaDer.contienePunto(x, y)) { esperandoTecla = "derecha"; canvas.requestFocus(); }
+        if (btnTeclaDisparo.contienePunto(x, y)) { esperandoTecla = "disparo"; canvas.requestFocus(); }
+
+        // Columna Derecha (Skins)
+        if (btnSkinNave.contienePunto(x, y)) indiceSkinNave = (indiceSkinNave + 1) % 2;
+        if (btnSkinInv.contienePunto(x, y)) indiceSkinInv = (indiceSkinInv + 1) % 2;
+        if (btnSkinProy.contienePunto(x, y)) indiceSkinProy = (indiceSkinProy + 1) % 2;
+
+        actualizarTextosBotones();
+
+        // Botones Inferiores
+        if (btnGuardar.contienePunto(x, y)) {
             config.setSonidoActivado(sonidoActivado);
+            config.setPantallaCompleta(pantallaCompleta);
             config.setVelocidad(opcionVelocidad[indiceVelocidad]);
             config.setTeclaIzquierda(teclaIzquierda);
             config.setTeclaDerecha(teclaDerecha);
             config.setTeclaDisparo(teclaDisparo);
+            config.setPistaMusical(opcionMusica[indiceMusica]);
+            config.setSkinNave(opcionSkins[indiceSkinNave]);
+            config.setSkinInvasores(opcionSkins[indiceSkinInv]);
+            config.setSkinProyectiles(opcionSkins[indiceSkinProy]);
             config.guardar();
         }
-        //reset
-        if(btnReset.contienePunto(x, y)) {
+        
+        if (btnReset.contienePunto(x, y)) {
             config.restablecer();
-            //recargar valores
-            sonidoActivado = config.isSonidoActivado();
-            teclaIzquierda = config.getTeclaIzquierda();
-            teclaDerecha   = config.getTeclaDerecha();
-            teclaDisparo   = config.getTeclaDisparo();
-            indiceVelocidad = 1;
-            btnSonido = new Boton(300, 250, 200, 40, "Sonido: " + (sonidoActivado ? "ACTIVADO" : "DESACTIVADO"));
-            btnTeclaIzq = new Boton(300, 350, 200, 40, "Izquierda: " + KeyEvent.getKeyText(teclaIzquierda));
-            btnTeclaDer = new Boton(300, 410, 200, 40, "Derecha: " + KeyEvent.getKeyText(teclaDerecha));
-            btnTeclaDisparo = new Boton(300, 470, 200, 40, "Disparo: " + KeyEvent.getKeyText(teclaDisparo));
+            cargarValoresDesdeGestor();
+            actualizarTextosBotones();
         }
-        //volver
+        
         if (btnVolver.contienePunto(x, y)) {
             stop();
         }
     }
 
     @Override
-    public void gameUpdate(double delta) {
-        // No hay animaciones
-    }
+    public void gameUpdate(double delta) { }
     
     @Override
     public void gameDraw(Graphics2D g) {
         if (buffer == null) return;
         Graphics2D g2d = buffer.createGraphics();
 
-        //fondo
         g2d.setColor(Color.DARK_GRAY);
         g2d.fillRect(0, 0, ANCHO, ALTO);
 
-        //titulo
         g2d.setFont(new Font("Arial", Font.BOLD, 36));
         g2d.setColor(Color.WHITE);
         String titulo = "CONFIGURACION";
         FontMetrics fm = g2d.getFontMetrics();
-        g2d.drawString(titulo, 400 - fm.stringWidth(titulo)/2, 80);
+        g2d.drawString(titulo, 400 - fm.stringWidth(titulo)/2, 60);
 
-        //opciones
-        String[] velocidades = {"LENTA", "MEDIA", "RAPIDA"};
-        g2d.setFont(new Font("Arial", Font.PLAIN, 24));
-        g2d.drawString("Velocidad de juego:", 300, 130);
+        g2d.setFont(new Font("Arial", Font.PLAIN, 20));
+        
+        // Títulos de columnas
+        g2d.drawString("Velocidad:", 100, 130);
+        g2d.drawString("Controles:", 450, 130);
+        g2d.drawString("Apariencia:", 450, 310);
+
+        // Dibujar botones Columna Izquierda
         btnVelIzq.dibujar(g2d);
         btnVelDer.dibujar(g2d);
-        g2d.drawString(velocidades[indiceVelocidad], 375 - fm.stringWidth(velocidades[indiceVelocidad])/2, 180);
-
+        g2d.drawString(opcionVelocidad[indiceVelocidad], 175 - fm.stringWidth(opcionVelocidad[indiceVelocidad])/2, 178);
         btnSonido.dibujar(g2d);
+        btnPantalla.dibujar(g2d);
+        btnMusica.dibujar(g2d);
+
+        // Dibujar botones Columna Derecha
         btnTeclaIzq.dibujar(g2d);
         btnTeclaDer.dibujar(g2d);
         btnTeclaDisparo.dibujar(g2d);
+        btnSkinNave.dibujar(g2d);
+        btnSkinInv.dibujar(g2d);
+        btnSkinProy.dibujar(g2d);
 
-        //botones inferiores
+        // Si está esperando tecla, mostrar aviso
+        if (esperandoTecla != null) {
+            g2d.setColor(Color.YELLOW);
+            g2d.drawString("Presiona una tecla para: " + esperandoTecla, 450, 100);
+        }
+
+        // Dibujar botones Inferiores
         btnGuardar.dibujar(g2d);
-        btnVolver.dibujar(g2d);
         btnReset.dibujar(g2d);
+        btnVolver.dibujar(g2d);
 
-        //mostrar buffer
+        g2d.dispose();
         g.drawImage(buffer, 0, 0, null);
     }
     
     @Override
     public void gameShutdown() {
-        new MenuSpaceInvaders().run(); // Volver al menú de Space Invaders después de cerrar la configuración
+        new MenuSpaceInvaders().run();
     }
 }
