@@ -72,7 +72,7 @@ public class CanonJugador extends Jugador {
 
     @Override
     public void dibujar(Graphics2D g2d) {
-        String skinElegida = GestorConfiguracionSpaceInvaders.getInstance().getSkinProyectil();
+        String skinElegida = GestorConfiguracionSpaceInvaders.getInstance().getSkinNave();
         
         String rutaImagen = "/img/spaceinvaders/nave_original.png"; // Por defecto
         if ("alternativa".equals(skinElegida)) {
