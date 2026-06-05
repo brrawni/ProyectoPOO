@@ -126,17 +126,17 @@ public class PantallaConfiguracion extends Videojuego {
     }
 
     private void actualizarTextosBotones() {
-        btnSonido.setTexto("Sonido: " + (sonidoActivado ? "ON" : "OFF"));
-        btnPantalla.setTexto("Pantalla: " + (pantallaCompleta ? "FULL" : "VENTANA"));
-        btnMusica.setTexto("Música: " + opcionMusica[indiceMusica]);
+        btnSonido = new Boton(100, 220, 200, 40, "Sonido: " + (sonidoActivado ? "ON" : "OFF"));
+        btnPantalla = new Boton(100, 290, 200, 40, "Pantalla: " + (pantallaCompleta ? "FULL" : "VENTANA"));
+        btnMusica = new Boton(100, 360, 200, 40, "Música: " + opcionMusica[indiceMusica]);
 
-        btnTeclaIzq.setTexto("Izquierda: " + KeyEvent.getKeyText(teclaIzquierda));
-        btnTeclaDer.setTexto("Derecha: " + KeyEvent.getKeyText(teclaDerecha));
-        btnTeclaDisparo.setTexto("Disparo: " + KeyEvent.getKeyText(teclaDisparo));
+        btnTeclaIzq = new Boton(450, 150, 250, 40, "Izquierda: " + KeyEvent.getKeyText(teclaIzquierda));
+        btnTeclaDer = new Boton(450, 200, 250, 40, "Derecha: " + KeyEvent.getKeyText(teclaDerecha));
+        btnTeclaDisparo = new Boton(450, 250, 250, 40, "Disparo: " + KeyEvent.getKeyText(teclaDisparo));
 
-        btnSkinNave.setTexto("Skin Nave: " + opcionSkins[indiceSkinNave]);
-        btnSkinInv.setTexto("Skin Alien: " + opcionSkins[indiceSkinInv]);
-        btnSkinProy.setTexto("Skin Laser: " + opcionSkins[indiceSkinProy]);
+        btnSkinNave = new Boton(450, 320, 250, 40, "Skin Nave: " + opcionSkins[indiceSkinNave]);
+        btnSkinInv = new Boton(450, 370, 250, 40, "Skin Alien: " + opcionSkins[indiceSkinInv]);
+        btnSkinProy = new Boton(450, 420, 250, 40, "Skin Laser: " + opcionSkins[indiceSkinProy]);
     }
 
     private void manejarClick(int x, int y) {
