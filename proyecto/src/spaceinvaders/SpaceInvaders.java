@@ -89,7 +89,7 @@ public class SpaceInvaders extends Videojuego {
     // Métodos del ciclo de vida del juego
     @Override
     public void gameStartup() {
-        buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
+        buffer = new BufferedImage(ANCHO_PANTALLA, ALTO_PANTALLA, BufferedImage.TYPE_INT_ARGB);
     
         GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
 
