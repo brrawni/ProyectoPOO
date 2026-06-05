@@ -16,6 +16,7 @@ public class MenuSpaceInvaders extends Videojuego {
 
     private BufferedImage buffer;
     private Boton[]       botones;
+    private GestorSonidosSpaceInvaders gestorSonidos;
 
     private int[][] estrellas; // Para el fondo animado de estrellas
 
@@ -32,6 +33,8 @@ public class MenuSpaceInvaders extends Videojuego {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
     
         GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
+        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoActivado());
+        gestorSonidos.reproducirMusicaMenu();
 
         if (config.isPantallaCompleta()) {
             javax.swing.SwingUtilities.invokeLater(() -> {
@@ -158,7 +161,10 @@ public class MenuSpaceInvaders extends Videojuego {
     }
 
     @Override
-    public void gameShutdown() { 
+    public void gameShutdown() {
+        if (gestorSonidos != null) {
+            gestorSonidos.limpiar();
+        }
         switch (siguientePantalla) {
             case 0: // Volver al launcher
                 javax.swing.SwingUtilities.invokeLater(() -> launcher.setVisible(true));
