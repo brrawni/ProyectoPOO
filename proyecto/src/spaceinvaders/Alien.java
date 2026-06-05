@@ -89,40 +89,33 @@ public class Alien extends Enemigo {
         switch (tipo) {
             case CALAMAR:
                 nombreSprite = "calamar";
-                color = Color.WHITE;
+                color = Color.YELLOW;
                 break;
             case CANGREJO:
                 nombreSprite = "cangrejo";
-                color = Color.WHITE;
+                color = Color.RED;
                 break;
             case PULPO:
                 nombreSprite = "pulpo";
-                color = Color.WHITE;
+                color = Color.CYAN;
                 break;
             default:
                 nombreSprite = "calamar";
-                color = Color.WHITE;
+                color = Color.YELLOW;
         }
 
         int frame = obtenerFrameAnimacion();
         String skinInvasores = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
-        boolean alternativa = "alternativa".equals(skinInvasores);
         
-        // Si es skin original, siempre dibuja con color
-        if ("original".equals(skinInvasores)) {
+        String sufijo = "alternativa".equals(skinInvasores) ? "_alternativo_" : "_";
+        String ruta = "/img/spaceinvaders/" + nombreSprite + sufijo + frame + ".png";
+        BufferedImage img = gestor.cargar(ruta);
+        
+        if (img != null) {
+            g.drawImage(img, x, y, ancho, alto, null);
+        } else {
             g.setColor(color);
             g.fillRect(x, y, ancho, alto);
-        } else {
-            // Si es alternativa, intenta cargar la imagen
-            String sufijo = "_alternativo_";
-            String ruta = "/img/spaceinvaders/" + nombreSprite + sufijo + frame + ".png";
-            BufferedImage img = gestor.cargar(ruta);
-            if (img != null) {
-                g.drawImage(img, x, y, ancho, alto, null);
-            } else {
-                g.setColor(color);
-                g.fillRect(x, y, ancho, alto);
-            }
         }
     }
 

@@ -76,21 +76,15 @@ public class NaveNodriza extends Enemigo {
 
         GestorImagenes gestor = GestorImagenes.getInstance();
         String skin = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
+        String sufijo = "alternativa".equals(skin) ? "nodriza_alternativa.png" : "navenodriza.png";
+        String ruta = "/img/spaceinvaders/" + sufijo;
 
-        // Si es skin original, dibuja con color (sin intentar cargar imagen)
-        if ("original".equals(skin)) {
+        BufferedImage img = gestor.cargar(ruta);
+        if (img != null) {
+            g.drawImage(img, x, y, ancho, alto, null);
+        } else {
             g.setColor(Color.WHITE);
             g.fillRect(x, y, ancho, alto);
-        } else {
-            // Si es alternativa, intenta cargar la imagen
-            String ruta = "/img/spaceinvaders/nodriza_alternativa.png";
-            BufferedImage img = gestor.cargar(ruta);
-            if (img != null) {
-                g.drawImage(img, x, y, ancho, alto, null);
-            } else {
-                g.setColor(Color.WHITE);
-                g.fillRect(x, y, ancho, alto);
-            }
         }
     }
 }
