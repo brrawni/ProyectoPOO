@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import launcher.Boton;
+import javax.swing.SwingUtilities;
 import javax.swing.JFrame;
 import launcher.Launcher;
 
@@ -111,7 +112,7 @@ public class MenuSpaceInvaders extends Videojuego {
                         stop();
                         break;
                     case 2: // Ranking — próximamente
-                        System.out.println("Ranking SI");
+                        SwingUtilities.invokeLater(() -> new VentanaRankingSpaceInvaders(frame).setVisible(true));
                         break;
                     case 3: // Volver al launcher
                         siguientePantalla = 0;
