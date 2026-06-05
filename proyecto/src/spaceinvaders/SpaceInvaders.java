@@ -91,6 +91,7 @@ public class SpaceInvaders extends Videojuego {
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO_PANTALLA, ALTO_PANTALLA, BufferedImage.TYPE_INT_ARGB);
     
+        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
 
         if (config.isPantallaCompleta()) {
             javax.swing.SwingUtilities.invokeLater(() -> {
@@ -108,13 +109,10 @@ public class SpaceInvaders extends Videojuego {
             });
         }
 
-
         inicializarNivel();
 
 
-
         //leemos la configuracion una vez al iniciar
-        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
         int teclaIzq = config.getTeclaIzquierda();
         int teclaDer = config.getTeclaDerecha();
         int teclaDisp = config.getTeclaDisparo();
