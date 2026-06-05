@@ -10,7 +10,7 @@ public class NaveNodriza extends Enemigo {
     private int contadorDisparos;
     private boolean visible = false;
     private int ticksDestruido = 0;
-    private static final int TICKS_ANIMACION_DESTRUCCION = 30;
+    private static final int TICKS_ANIMACION_DESTRUCCION = 12;
 
     public NaveNodriza(Nivel nivel) {
         super(-50, 40, 60, 30, 2.0f); //arranca fuera de pantalla
