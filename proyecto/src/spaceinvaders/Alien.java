@@ -77,7 +77,7 @@ public class Alien extends Enemigo {
     @Override
     public boolean detectarColision() {
         // Lógica para detectar colisiones con proyectiles del jugador
-        return false; // Placeholder
+        return false;
     }
 
     @Override
@@ -104,11 +104,13 @@ public class Alien extends Enemigo {
                 color        = Color.WHITE;
         }
 
-        int    frame      = obtenerFrameAnimacion();
-        String ruta       = "/img/spaceinvaders/" + nombreSprite + "_" + frame + ".png";
+        int frame = obtenerFrameAnimacion();
+        boolean alternativa = "alternativa".equals(GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores());
+        String sufijo = alternativa ? "_alternativo_" : "_";
+        String ruta = "/img/spaceinvaders/" + nombreSprite + sufijo + frame + ".png";
         String claveCache = ruta + "_" + color.getRGB();
 
-        // Intentar cargar desde cache coloreado
+        //intentar cargar desde cache coloreado
         BufferedImage imgColoreada = gestor.cargarDeCache(claveCache);
 
         if (imgColoreada == null) {

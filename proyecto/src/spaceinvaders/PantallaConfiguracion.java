@@ -18,7 +18,7 @@ public class PantallaConfiguracion extends Videojuego {
     private Launcher launcher;
 
     // Arrays de opciones
-    private String[] opcionVelocidad = {"    LENTA", "    MEDIA", "    RAPIDA"};
+    private String[] opcionVelocidad = {"LENTA", "MEDIA", "RAPIDA"};
     private String[] opcionSkins = {"original", "alternativa"};
     private String[] opcionMusica = {"original", "remix"};
 
@@ -172,17 +172,7 @@ public class PantallaConfiguracion extends Videojuego {
 
         // Botones Inferiores
         if (btnGuardar.contienePunto(x, y)) {
-            config.guardar();
-            config.setSonidoActivado(sonidoActivado);
-            config.setPantallaCompleta(pantallaCompleta);
-            config.setVelocidad(opcionVelocidad[indiceVelocidad]);
-            config.setTeclaIzquierda(teclaIzquierda);
-            config.setTeclaDerecha(teclaDerecha);
-            config.setTeclaDisparo(teclaDisparo);
-            config.setPistaMusical(opcionMusica[indiceMusica]);
-            config.setSkinNave(opcionSkins[indiceSkinNave]);
-            config.setSkinInvasores(opcionSkins[indiceSkinInv]);
-            config.setSkinProyectil(opcionSkins[indiceSkinProy]);
+            aplicarConfiguracionActual();
         }
         
         if (btnReset.contienePunto(x, y)) {
@@ -192,11 +182,11 @@ public class PantallaConfiguracion extends Videojuego {
         }
         
         if (btnVolver.contienePunto(x, y)) {
-            config.guardar();
+            aplicarConfiguracionActual();
             stop();
         }
 
-        // Solo recrear/ajustar la ventana si cambió el modo pantalla completa
+        //solo ajustar la ventana si cambió el modo pantalla completa
         if (pantallaCompleta != previaPantallaCompleta) {
             frame.dispose();
             if (pantallaCompleta) {
@@ -210,6 +200,20 @@ public class PantallaConfiguracion extends Videojuego {
             frame.setVisible(true);
         }
         canvas.requestFocus();
+    }
+
+    private void aplicarConfiguracionActual() {
+        config.setSonidoActivado(sonidoActivado);
+        config.setPantallaCompleta(pantallaCompleta);
+        config.setVelocidad(opcionVelocidad[indiceVelocidad]);
+        config.setTeclaIzquierda(teclaIzquierda);
+        config.setTeclaDerecha(teclaDerecha);
+        config.setTeclaDisparo(teclaDisparo);
+        config.setPistaMusical(opcionMusica[indiceMusica]);
+        config.setSkinNave(opcionSkins[indiceSkinNave]);
+        config.setSkinInvasores(opcionSkins[indiceSkinInv]);
+        config.setSkinProyectil(opcionSkins[indiceSkinProy]);
+        config.guardar();
     }
 
     @Override

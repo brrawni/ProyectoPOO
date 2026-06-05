@@ -8,6 +8,7 @@ public class FormacionAlien {
     private List<Escudo>        escudos      = new ArrayList<>();
     private List<ProyectilAlien> proyectiles = new ArrayList<>();
     private float velocidad              = 1.0f;
+    private float velocidadProyectil      = 5.0f;
     private Alien[][] aliens;
     private int filas;
     private int columnas;
@@ -16,11 +17,12 @@ public class FormacionAlien {
     private int ticksMovimiento          = 0;
     private int intervaloMovimiento      = 8;
 
-    public FormacionAlien(int filas, int columnas, float velocidad, int yInicial) {
+    public FormacionAlien(int filas, int columnas, float velocidad, int yInicial, float velocidadProyectil) {
         this.velocidad = velocidad;
         this.filas     = filas;
         this.columnas  = columnas;
         aliens = new Alien[filas][columnas];
+        this.velocidadProyectil = velocidadProyectil;
 
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
@@ -112,12 +114,13 @@ public class FormacionAlien {
         if (!aliensVivos.isEmpty()) {
             int indice    = (int)(Math.random() * aliensVivos.size());
             Alien tirador = aliensVivos.get(indice);
-            proyectiles.add(new ProyectilAlien(
+                proyectiles.add(new ProyectilAlien(
                     tirador.obtenerX() + 15,
                     tirador.obtenerY() + 30,
                     jugador,
-                    escudos
-            ));
+                    escudos,
+                    velocidadProyectil
+                ));
         }
     }
 
