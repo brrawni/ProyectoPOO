@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import launcher.Boton;
+import Javax.swing.JFrame;
 
 public class PantallaConfiguracion extends Videojuego {
     private static final int ANCHO = 800;
@@ -185,6 +186,17 @@ public class PantallaConfiguracion extends Videojuego {
             stop();
         }
 
+        frame.dispose();
+        if (config.isPantallaCompleta()) {
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setUndecorated(true);
+        } else {
+            frame.setUndecorated(false);
+            frame.setSize(ANCHO, ALTO);
+            frame.setLocationRelativeTo(null);
+        }
+        frame.setVisible(true);
+        canvas.requestFocus();
     }
 
     @Override
