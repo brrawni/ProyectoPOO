@@ -15,6 +15,7 @@ public class PantallaConfiguracion extends Videojuego {
 
     private BufferedImage buffer;
     private GestorConfiguracionSpaceInvaders config;
+    private GestorSonidosSpaceInvaders gestorSonidos;
     private Launcher launcher;
 
     // Arrays de opciones
@@ -60,6 +61,8 @@ public class PantallaConfiguracion extends Videojuego {
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
         config = GestorConfiguracionSpaceInvaders.getInstance();
+        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoActivado());
+        gestorSonidos.reproducirMusicaMenu();
 
         cargarValoresDesdeGestor();
         inicializarBotones();
@@ -109,7 +112,7 @@ public class PantallaConfiguracion extends Videojuego {
     }
 
     private void inicializarBotones() {
-        // COLUMNA IZQUIERDA (X = 100)
+        //columna izquierda (X = 100)
         btnVelIzq   = new Boton(100, 150, 50, 40, "<");
         btnVelDer   = new Boton(250, 150, 50, 40, ">");
         btnSonido   = new Boton(100, 220, 200, 40, "");
@@ -147,11 +150,20 @@ public class PantallaConfiguracion extends Videojuego {
     }
 
     private void manejarClick(int x, int y) {
+        // Guardar estado previo para evitar recrear la ventana sin necesidad
+        boolean previaPantallaCompleta = pantallaCompleta;
+
         // Columna Izquierda
         if (btnVelIzq.contienePunto(x, y)) indiceVelocidad = Math.max(0, indiceVelocidad - 1);
         if (btnVelDer.contienePunto(x, y)) indiceVelocidad = Math.min(2, indiceVelocidad + 1);
-        
-        if (btnSonido.contienePunto(x, y)) sonidoActivado = !sonidoActivado;
+
+        if (btnSonido.contienePunto(x, y)) {
+            sonidoActivado = !sonidoActivado;
+            if (gestorSonidos != null) {
+                gestorSonidos.setSonidoActivado(sonidoActivado);
+                if (sonidoActivado) gestorSonidos.reproducirMusicaMenu();
+            }
+        }
         if (btnPantalla.contienePunto(x, y)) pantallaCompleta = !pantallaCompleta;
         if (btnMusica.contienePunto(x, y)) indiceMusica = (indiceMusica + 1) % 2;
 
@@ -169,17 +181,7 @@ public class PantallaConfiguracion extends Videojuego {
 
         // Botones Inferiores
         if (btnGuardar.contienePunto(x, y)) {
-            config.setSonidoActivado(sonidoActivado);
-            config.setPantallaCompleta(pantallaCompleta);
-            config.setVelocidad(opcionVelocidad[indiceVelocidad]);
-            config.setTeclaIzquierda(teclaIzquierda);
-            config.setTeclaDerecha(teclaDerecha);
-            config.setTeclaDisparo(teclaDisparo);
-            config.setPistaMusical(opcionMusica[indiceMusica]);
-            config.setSkinNave(opcionSkins[indiceSkinNave]);
-            config.setSkinInvasores(opcionSkins[indiceSkinInv]);
-            config.setSkinProyectil(opcionSkins[indiceSkinProy]);
-            config.guardar();
+            aplicarConfiguracionActual();
         }
         
         if (btnReset.contienePunto(x, y)) {
@@ -189,20 +191,38 @@ public class PantallaConfiguracion extends Videojuego {
         }
         
         if (btnVolver.contienePunto(x, y)) {
+            aplicarConfiguracionActual();
             stop();
         }
 
-        frame.dispose();
-        if (config.isPantallaCompleta()) {
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            frame.setUndecorated(true);
-        } else {
-            frame.setUndecorated(false);
-            frame.setSize(ANCHO, ALTO);
-            frame.setLocationRelativeTo(null);
+        //solo ajustar la ventana si cambió el modo pantalla completa
+        if (pantallaCompleta != previaPantallaCompleta) {
+            frame.dispose();
+            if (pantallaCompleta) {
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.setUndecorated(true);
+            } else {
+                frame.setUndecorated(false);
+                frame.setSize(ANCHO, ALTO);
+                frame.setLocationRelativeTo(null);
+            }
+            frame.setVisible(true);
         }
-        frame.setVisible(true);
         canvas.requestFocus();
+    }
+
+    private void aplicarConfiguracionActual() {
+        config.setSonidoActivado(sonidoActivado);
+        config.setPantallaCompleta(pantallaCompleta);
+        config.setVelocidad(opcionVelocidad[indiceVelocidad]);
+        config.setTeclaIzquierda(teclaIzquierda);
+        config.setTeclaDerecha(teclaDerecha);
+        config.setTeclaDisparo(teclaDisparo);
+        config.setPistaMusical(opcionMusica[indiceMusica]);
+        config.setSkinNave(opcionSkins[indiceSkinNave]);
+        config.setSkinInvasores(opcionSkins[indiceSkinInv]);
+        config.setSkinProyectil(opcionSkins[indiceSkinProy]);
+        config.guardar();
     }
 
     @Override
@@ -262,6 +282,9 @@ public class PantallaConfiguracion extends Videojuego {
     
     @Override
     public void gameShutdown() {
+        if (gestorSonidos != null) {
+            gestorSonidos.limpiar();
+        }
         new MenuSpaceInvaders(launcher).run();
     }
 }

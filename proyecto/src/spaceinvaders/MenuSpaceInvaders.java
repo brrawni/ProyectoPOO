@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import launcher.Boton;
+import javax.swing.SwingUtilities;
 import javax.swing.JFrame;
 import launcher.Launcher;
 
@@ -15,6 +16,7 @@ public class MenuSpaceInvaders extends Videojuego {
 
     private BufferedImage buffer;
     private Boton[]       botones;
+    private GestorSonidosSpaceInvaders gestorSonidos;
 
     private int[][] estrellas; // Para el fondo animado de estrellas
 
@@ -29,6 +31,26 @@ public class MenuSpaceInvaders extends Videojuego {
     @Override
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
+    
+        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
+        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoActivado());
+        gestorSonidos.reproducirMusicaMenu();
+
+        if (config.isPantallaCompleta()) {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                frame.dispose();
+                frame.setUndecorated(true);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.setVisible(true);
+                canvas.requestFocus();
+            });
+        } else {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                frame.setSize(ANCHO, ALTO);
+                frame.setLocationRelativeTo(null);
+                canvas.requestFocus();
+            });
+        }
 
     
         // Solo dejás esto:
@@ -93,7 +115,7 @@ public class MenuSpaceInvaders extends Videojuego {
                         stop();
                         break;
                     case 2: // Ranking — próximamente
-                        System.out.println("Ranking SI");
+                        SwingUtilities.invokeLater(() -> new VentanaRankingSpaceInvaders(frame).setVisible(true));
                         break;
                     case 3: // Volver al launcher
                         siguientePantalla = 0;
@@ -139,7 +161,10 @@ public class MenuSpaceInvaders extends Videojuego {
     }
 
     @Override
-    public void gameShutdown() { 
+    public void gameShutdown() {
+        if (gestorSonidos != null) {
+            gestorSonidos.limpiar();
+        }
         switch (siguientePantalla) {
             case 0: // Volver al launcher
                 javax.swing.SwingUtilities.invokeLater(() -> launcher.setVisible(true));

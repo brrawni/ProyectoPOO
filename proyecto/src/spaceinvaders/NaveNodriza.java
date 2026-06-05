@@ -62,12 +62,12 @@ public class NaveNodriza extends Enemigo {
 
     @Override
     public void disparar() {
-        // La nave nodriza no dispara
+        //la nave nodriza no dispara
     }
 
     @Override
     public boolean detectarColision() {
-        return false; // La nave nodriza no colisiona con proyectiles
+        return false; 
     }
 
     @Override
@@ -75,19 +75,19 @@ public class NaveNodriza extends Enemigo {
         if (!visible || !vivo) return;
 
         GestorImagenes gestor = GestorImagenes.getInstance();
-        String ruta       = "/img/spaceinvaders/navenodriza.png";
-        String claveCache = ruta + "_" + Color.RED.getRGB();
+        String skin = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
+        String sufijo = "alternativa".equals(skin) ? "nodriza_alternativa.png" : "navenodriza.png";
+        String ruta = "/img/spaceinvaders/" + sufijo;
 
-        BufferedImage img = gestor.cargarDeCache(claveCache);
-        if (img == null) {
-            img = gestor.colorear(gestor.cargar(ruta), Color.RED);
-            if (img != null) gestor.guardarEnCache(claveCache, img);
-        }
-
+        BufferedImage img = gestor.cargar(ruta);
         if (img != null) {
+            //si es skin original, colorea la imagen
+            if ("original".equals(skin)) {
+                img = gestor.colorear(img, Color.WHITE);
+            }
             g.drawImage(img, x, y, ancho, alto, null);
         } else {
-            g.setColor(Color.RED);
+            g.setColor(Color.WHITE);
             g.fillRect(x, y, ancho, alto);
         }
     }
