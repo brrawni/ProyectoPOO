@@ -103,7 +103,7 @@ public class SpaceInvaders extends Videojuego {
             });
         } else {
             javax.swing.SwingUtilities.invokeLater(() -> {
-                frame.setSize(ANCHO, ALTO);
+                frame.setSize(ANCHO_PANTALLA, ALTO_PANTALLA);
                 frame.setLocationRelativeTo(null);
                 canvas.requestFocus();
             });
