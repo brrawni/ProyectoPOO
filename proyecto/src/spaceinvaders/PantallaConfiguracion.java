@@ -18,7 +18,7 @@ public class PantallaConfiguracion extends Videojuego {
     private Launcher launcher;
 
     // Arrays de opciones
-    private String[] opcionVelocidad = {"LENTA", "MEDIA", "RAPIDA"};
+    private String[] opcionVelocidad = {"    LENTA", "    MEDIA", "    RAPIDA"};
     private String[] opcionSkins = {"original", "alternativa"};
     private String[] opcionMusica = {"original", "remix"};
 
@@ -109,7 +109,7 @@ public class PantallaConfiguracion extends Videojuego {
     }
 
     private void inicializarBotones() {
-        // COLUMNA IZQUIERDA (X = 100)
+        //columna izquierda (X = 100)
         btnVelIzq   = new Boton(100, 150, 50, 40, "<");
         btnVelDer   = new Boton(250, 150, 50, 40, ">");
         btnSonido   = new Boton(100, 220, 200, 40, "");
