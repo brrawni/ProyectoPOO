@@ -64,7 +64,9 @@ public class PantallaConfiguracion extends Videojuego {
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                manejarClick(e.getX(), e.getY());
+                int xLogico = (int)(e.getX() * ((double)ANCHO / canvas.getWidth()));
+                int yLogico = (int)(e.getY() * ((double)ALTO / canvas.getHeight()));
+                manejarClick(xLogico, yLogico);
             }
         });
 
