@@ -3,6 +3,8 @@ package spaceinvaders;
 import java.awt.Graphics2D;
 import java.util.List;
 import motor.Proyectil;
+import java.awt.image.BufferedImage;
+import java.awt.Color;
 
 public class ProyectilCanon extends Proyectil {
 
@@ -70,9 +72,21 @@ public class ProyectilCanon extends Proyectil {
     public void mover() { }
 
     @Override
-    public void dibujar(Graphics2D g) {
-        if (estaActivo()) {
-            g.fillRect(x, y, ancho, alto);
+    public void dibujar(Graphics2D g2d) {
+        String skinElegida = GestorConfiguracionSpaceInvaders.getInstance().getSkinProyectil();
+        
+        String rutaImagen = "/nave_original.png"; // Por defecto
+        if ("alternativo".equals(skinElegida)) {
+            rutaImagen = "/nave_alternativa.png";
+        }
+
+        BufferedImage imagen = GestorImagenes.getInstance().cargar(rutaImagen);
+
+        if (imagen != null) {
+            g2d.drawImage(imagen, x, y, ancho, alto, null);
+        } else {
+            g2d.setColor(Color.GREEN);
+            g2d.fillRect(x, y, ancho, alto);
         }
     }
 }
