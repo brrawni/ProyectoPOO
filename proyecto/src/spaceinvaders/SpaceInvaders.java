@@ -9,6 +9,7 @@ import motor.Videojuego;
 import ranking.EntradaRanking;
 import ranking.GestorRanking;
 
+
 public class SpaceInvaders extends Videojuego {
     private ControlTeclado teclado;
     private BufferedImage buffer;
@@ -95,9 +96,8 @@ public class SpaceInvaders extends Videojuego {
 
         if(config.isPantallaCompleta()) {
             frame.setUndecorated(true);
-            monitor.setFullScreenWindow(frame);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         } else {
-            monitor.setFullScreenWindow(null);
             frame.setUndecorated(false);
             frame.setSize(ANCHO_PANTALLA, ALTO_PANTALLA);
             frame.setLocationRelativeTo(null);
