@@ -157,9 +157,7 @@ public class MenuSpaceInvaders extends Videojuego {
     public void gameShutdown() { 
         switch (siguientePantalla) {
             case 0: // Volver al launcher
-                javax.swing.SwingUtilities.invokeLater(
-                    () -> launcher.setVisible(true)
-                );
+                javax.swing.SwingUtilities.invokeLater(() -> launcher.mostrarMenuPrincipal());
                 break;
             case 1: // Jugar
                 new SpaceInvaders(launcher).run();
