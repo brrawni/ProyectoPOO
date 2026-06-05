@@ -226,7 +226,7 @@ public class SpaceInvaders extends Videojuego {
             g2d.drawString(teclado.getTextoIngresado() + "|", ANCHO_PANTALLA/2 - 100, 250);
             g2d.drawString("Puntaje: " + puntaje + "  Nivel: " + nivelActual, ANCHO_PANTALLA/2 - 100, 290);
             g2d.setColor(Color.YELLOW);
-            g2d.drawString("Presioná ENTER para guardar", ANCHO_PANTALLA/2 - 100, 330);
+            g2d.drawString("Presioná ENTER para guardar o ESC para salir", ANCHO_PANTALLA/2 - 100, 330);
 
             if (teclado.isEnterPresionado() && !teclado.getTextoIngresado().isEmpty()) {
                 gestorRanking.agregarEntrada(
@@ -235,8 +235,17 @@ public class SpaceInvaders extends Videojuego {
                 rankingGuardado = true;
                 teclado.resetEntrada();
             }
+            if (teclado.isEscapePresionado()) {
+                stop();
+            }
         } else {
             dibujarRanking(g2d);
+            g2d.setFont(new Font("Arial", Font.PLAIN, 18));
+            g2d.setColor(Color.YELLOW);
+            g2d.drawString("Presioná ENTER o ESC para volver al menú", ANCHO_PANTALLA/2 - 170, 450);
+            if (teclado.isEnterPresionado() || teclado.isEscapePresionado()) {
+                stop();
+            }
         }
     }
 
