@@ -8,11 +8,13 @@ import javax.swing.JFrame;
 import motor.Videojuego;
 import ranking.EntradaRanking;
 import ranking.GestorRanking;
+import launcher.Launcher;
 
 
 public class SpaceInvaders extends Videojuego {
     private ControlTeclado teclado;
     private BufferedImage buffer;
+    private Launcher launcher;
     //entidades principales del juego
     private FormacionAlien formacion;
     private CanonJugador canon;
@@ -176,7 +178,7 @@ public class SpaceInvaders extends Videojuego {
     @Override
     public void gameShutdown() {
         // Aquí podrías guardar el ranking o realizar cualquier limpieza necesaria
-        new MenuSpaceInvaders(this).run(); // Volver al menú de Space Invaders después de cerrar el juego
+        new MenuSpaceInvaders(launcher).run(); // Volver al menú de Space Invaders después de cerrar el juego
     }
 
     public boolean verificarFinJuego() {
