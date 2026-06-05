@@ -75,8 +75,8 @@ public class CanonJugador extends Jugador {
         String skinElegida = GestorConfiguracionSpaceInvaders.getInstance().getSkinProyectil();
         
         String rutaImagen = "/img/spaceinvaders/nave_original.png"; // Por defecto
-        if ("alternativo".equals(skinElegida)) {
-            rutaImagen = "/img/spaceinvaders/nave_alternativo.png";
+        if ("alternativa".equals(skinElegida)) {
+            rutaImagen = "/img/spaceinvaders/nave_alternativa.png";
         }
 
         BufferedImage imagen = GestorImagenes.getInstance().cargar(rutaImagen);
