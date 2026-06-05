@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import launcher.Boton;
 import javax.swing.JFrame;
 import launcher.Launcher;
+import motor.GestorConfiguracionBase;
 
 public class PantallaConfiguracion extends Videojuego {
     private static final int ANCHO = 800;
@@ -50,8 +51,9 @@ public class PantallaConfiguracion extends Videojuego {
     // Botones inferiores
     private Boton btnGuardar, btnVolver, btnReset;
 
-    public PantallaConfiguracion() {
+    public PantallaConfiguracion(Launcher launcher) {
         super("Configuracion Space Invaders", ANCHO, ALTO);
+        this.launcher = launcher;
     }
 
     @Override
