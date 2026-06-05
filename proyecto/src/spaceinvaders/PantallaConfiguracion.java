@@ -15,6 +15,7 @@ public class PantallaConfiguracion extends Videojuego {
 
     private BufferedImage buffer;
     private GestorConfiguracionSpaceInvaders config;
+    private GestorSonidosSpaceInvaders gestorSonidos;
     private Launcher launcher;
 
     // Arrays de opciones
@@ -60,6 +61,8 @@ public class PantallaConfiguracion extends Videojuego {
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
         config = GestorConfiguracionSpaceInvaders.getInstance();
+        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoActivado());
+        gestorSonidos.reproducirMusicaMenu();
 
         cargarValoresDesdeGestor();
         inicializarBotones();
@@ -154,7 +157,13 @@ public class PantallaConfiguracion extends Videojuego {
         if (btnVelIzq.contienePunto(x, y)) indiceVelocidad = Math.max(0, indiceVelocidad - 1);
         if (btnVelDer.contienePunto(x, y)) indiceVelocidad = Math.min(2, indiceVelocidad + 1);
 
-        if (btnSonido.contienePunto(x, y)) sonidoActivado = !sonidoActivado;
+        if (btnSonido.contienePunto(x, y)) {
+            sonidoActivado = !sonidoActivado;
+            if (gestorSonidos != null) {
+                gestorSonidos.setSonidoActivado(sonidoActivado);
+                if (sonidoActivado) gestorSonidos.reproducirMusicaMenu();
+            }
+        }
         if (btnPantalla.contienePunto(x, y)) pantallaCompleta = !pantallaCompleta;
         if (btnMusica.contienePunto(x, y)) indiceMusica = (indiceMusica + 1) % 2;
 
@@ -273,6 +282,9 @@ public class PantallaConfiguracion extends Videojuego {
     
     @Override
     public void gameShutdown() {
+        if (gestorSonidos != null) {
+            gestorSonidos.limpiar();
+        }
         new MenuSpaceInvaders(launcher).run();
     }
 }

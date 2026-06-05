@@ -40,6 +40,10 @@ public class GestorSonidosSpaceInvaders {
     public void reproducirMusicaMenu() {
         if (!sonidoActivado) return;
 
+        if (musicaMenu != null && musicaMenu.isRunning()) {
+            return;
+        }
+
         musicaMenu = cargarAudio("musicaMenu.wav");
         if (musicaMenu != null) {
             musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
