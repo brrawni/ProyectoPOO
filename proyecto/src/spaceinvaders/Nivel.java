@@ -22,18 +22,21 @@ public class Nivel {
                 filas               = 3;
                 columnas            = 6;
                 probabilidadDisparo = 0.01f;
+                velocidadProyectil  = 4.0f;
                 break;
             case 2:
                 velocidadAlien      = 2.5f;
                 filas               = 4;
                 columnas            = 7;
                 probabilidadDisparo = 0.015f;
+                velocidadProyectil  = 4.5f;
                 break;
             case 3:
                 velocidadAlien      = 3.0f;
                 filas               = 4;
                 columnas            = 8;
                 probabilidadDisparo = 0.02f;
+                velocidadProyectil  = 5.0f;
                 break;
             case 4:
                 velocidadAlien      = 3.5f;

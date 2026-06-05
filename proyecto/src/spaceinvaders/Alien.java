@@ -85,44 +85,33 @@ public class Alien extends Enemigo {
         GestorImagenes gestor = GestorImagenes.getInstance();
 
         String nombreSprite;
-        Color  color;
+        Color color;
         switch (tipo) {
             case CALAMAR:
                 nombreSprite = "calamar";
-                color        = Color.GREEN;
+                color = Color.WHITE;
                 break;
             case CANGREJO:
                 nombreSprite = "cangrejo";
-                color        = Color.RED;
+                color = Color.WHITE;
                 break;
             case PULPO:
                 nombreSprite = "pulpo";
-                color        = Color.MAGENTA;
+                color = Color.WHITE;
                 break;
             default:
                 nombreSprite = "calamar";
-                color        = Color.WHITE;
+                color = Color.WHITE;
         }
 
         int frame = obtenerFrameAnimacion();
         boolean alternativa = "alternativa".equals(GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores());
         String sufijo = alternativa ? "_alternativo_" : "_";
         String ruta = "/img/spaceinvaders/" + nombreSprite + sufijo + frame + ".png";
-        String claveCache = ruta + "_" + color.getRGB();
 
-        //intentar cargar desde cache coloreado
-        BufferedImage imgColoreada = gestor.cargarDeCache(claveCache);
-
-        if (imgColoreada == null) {
-            BufferedImage img = gestor.cargar(ruta);
-            imgColoreada = gestor.colorear(img, color);
-            if (imgColoreada != null) {
-                gestor.guardarEnCache(claveCache, imgColoreada);
-            }
-        }
-
-        if (imgColoreada != null) {
-            g.drawImage(imgColoreada, x, y, ancho, alto, null);
+        BufferedImage img = gestor.cargar(ruta);
+        if (img != null) {
+            g.drawImage(img, x, y, ancho, alto, null);
         } else {
             g.setColor(color);
             g.fillRect(x, y, ancho, alto);
