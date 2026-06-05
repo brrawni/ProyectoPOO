@@ -15,7 +15,7 @@ public class PantallaConfiguracion extends Videojuego {
 
     // Arrays de opciones
     private String[] opcionVelocidad = {"LENTA", "MEDIA", "RAPIDA"};
-    private String[] opcionSkins = {"original", "alternativo"};
+    private String[] opcionSkins = {"original", "alternativa"};
     private String[] opcionMusica = {"original", "remix"};
 
     // Índices y estados
@@ -96,9 +96,9 @@ public class PantallaConfiguracion extends Videojuego {
 
         indiceVelocidad = ("LENTA".equals(config.getVelocidad())) ? 0 : ("RAPIDA".equals(config.getVelocidad())) ? 2 : 1;
         indiceMusica    = ("remix".equals(config.getPistaMusical())) ? 1 : 0;
-        indiceSkinNave  = ("alternativo".equals(config.getSkinNave())) ? 1 : 0;
-        indiceSkinInv   = ("alternativo".equals(config.getSkinInvasores())) ? 1 : 0;
-        indiceSkinProy  = ("alternativo".equals(config.getSkinProyectil())) ? 1 : 0;
+        indiceSkinNave  = ("alternativa".equals(config.getSkinNave())) ? 1 : 0;
+        indiceSkinInv   = ("alternativa".equals(config.getSkinInvasores())) ? 1 : 0;
+        indiceSkinProy  = ("alternativa".equals(config.getSkinProyectil())) ? 1 : 0;
     }
 
     private void inicializarBotones() {
