@@ -29,6 +29,24 @@ public class MenuSpaceInvaders extends Videojuego {
     @Override
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
+    
+        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
+
+        if (config.isPantallaCompleta()) {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                frame.dispose();
+                frame.setUndecorated(true);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.setVisible(true);
+                canvas.requestFocus();
+            });
+        } else {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                frame.setSize(ANCHO, ALTO);
+                frame.setLocationRelativeTo(null);
+                canvas.requestFocus();
+            });
+        }
 
     
         // Solo dejás esto:

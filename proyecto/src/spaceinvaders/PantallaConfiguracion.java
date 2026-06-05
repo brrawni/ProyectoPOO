@@ -169,6 +169,7 @@ public class PantallaConfiguracion extends Videojuego {
 
         // Botones Inferiores
         if (btnGuardar.contienePunto(x, y)) {
+            config.guardar();
             config.setSonidoActivado(sonidoActivado);
             config.setPantallaCompleta(pantallaCompleta);
             config.setVelocidad(opcionVelocidad[indiceVelocidad]);
@@ -179,7 +180,6 @@ public class PantallaConfiguracion extends Videojuego {
             config.setSkinNave(opcionSkins[indiceSkinNave]);
             config.setSkinInvasores(opcionSkins[indiceSkinInv]);
             config.setSkinProyectil(opcionSkins[indiceSkinProy]);
-            config.guardar();
         }
         
         if (btnReset.contienePunto(x, y)) {
@@ -189,6 +189,7 @@ public class PantallaConfiguracion extends Videojuego {
         }
         
         if (btnVolver.contienePunto(x, y)) {
+            config.guardar();
             stop();
         }
 

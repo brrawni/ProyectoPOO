@@ -52,7 +52,15 @@ public class SpaceInvaders extends Videojuego {
     }
 
     private void inicializarNivel() {
-        nivel    = new Nivel(nivelActual);
+        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
+        float vel;
+        switch (config.getDificultad()) {
+            case "LENTA": vel = 1.0f; break;
+            case "RAPIDA": vel = 4.0f; break;
+            default: vel = 2.0f; break;
+        }
+
+        nivel = new Nivel(nivelActual);
         nivel.cargar();
 
         int yInicial = 60 + (nivelActual - 1) * 20; //baja 20 px por nivel
@@ -81,7 +89,30 @@ public class SpaceInvaders extends Videojuego {
     // Métodos del ciclo de vida del juego
     @Override
     public void gameStartup() {
+        buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
+    
+        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
+
+        if (config.isPantallaCompleta()) {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                frame.dispose();
+                frame.setUndecorated(true);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.setVisible(true);
+                canvas.requestFocus();
+            });
+        } else {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                frame.setSize(ANCHO, ALTO);
+                frame.setLocationRelativeTo(null);
+                canvas.requestFocus();
+            });
+        }
+
+
         inicializarNivel();
+
+
 
         //leemos la configuracion una vez al iniciar
         GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
