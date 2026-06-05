@@ -51,15 +51,19 @@ public class MenuSpaceInvaders extends Videojuego {
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                manejarClick(e.getX(), e.getY());
+                int xLogico = (int)(e.getX() * ((double)ANCHO / canvas.getWidth()));
+                int yLogico = (int)(e.getY() * ((double)ALTO / canvas.getHeight()));
+                manejarClick(xLogico, yLogico);
             }
         });
 
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
+                int xLogico = (int)(e.getX() * ((double)ANCHO / canvas.getWidth()));
+                int yLogico = (int)(e.getY() * ((double)ALTO / canvas.getHeight()));
                 for (Boton b : botones) {
-                    b.setHover(b.contienePunto(e.getX(), e.getY()));
+                    b.setHover(b.contienePunto(xLogico, yLogico));
                 }
             }
         });
