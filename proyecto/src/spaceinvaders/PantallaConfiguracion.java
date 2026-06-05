@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import launcher.Boton;
 import javax.swing.JFrame;
+import launcher.Launcher;
 
 public class PantallaConfiguracion extends Videojuego {
     private static final int ANCHO = 800;
