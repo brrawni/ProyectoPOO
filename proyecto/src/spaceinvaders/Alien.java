@@ -105,16 +105,24 @@ public class Alien extends Enemigo {
         }
 
         int frame = obtenerFrameAnimacion();
-        boolean alternativa = "alternativa".equals(GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores());
-        String sufijo = alternativa ? "_alternativo_" : "_";
-        String ruta = "/img/spaceinvaders/" + nombreSprite + sufijo + frame + ".png";
-
-        BufferedImage img = gestor.cargar(ruta);
-        if (img != null) {
-            g.drawImage(img, x, y, ancho, alto, null);
-        } else {
+        String skinInvasores = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
+        boolean alternativa = "alternativa".equals(skinInvasores);
+        
+        // Si es skin original, siempre dibuja con color
+        if ("original".equals(skinInvasores)) {
             g.setColor(color);
             g.fillRect(x, y, ancho, alto);
+        } else {
+            // Si es alternativa, intenta cargar la imagen
+            String sufijo = "_alternativo_";
+            String ruta = "/img/spaceinvaders/" + nombreSprite + sufijo + frame + ".png";
+            BufferedImage img = gestor.cargar(ruta);
+            if (img != null) {
+                g.drawImage(img, x, y, ancho, alto, null);
+            } else {
+                g.setColor(color);
+                g.fillRect(x, y, ancho, alto);
+            }
         }
     }
 
