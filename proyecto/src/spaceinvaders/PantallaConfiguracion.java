@@ -14,6 +14,7 @@ public class PantallaConfiguracion extends Videojuego {
 
     private BufferedImage buffer;
     private GestorConfiguracionSpaceInvaders config;
+    private Launcher launcher;
 
     // Arrays de opciones
     private String[] opcionVelocidad = {"LENTA", "MEDIA", "RAPIDA"};
