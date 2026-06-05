@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import launcher.Boton;
+import javax.swing.JFrame;
 
 public class MenuSpaceInvaders extends Videojuego {
 
