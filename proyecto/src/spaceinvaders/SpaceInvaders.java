@@ -90,18 +90,6 @@ public class SpaceInvaders extends Videojuego {
         teclado = new ControlTeclado(teclaIzq, teclaDer, teclaDisp);
         canvas.addKeyListener(teclado);
 
-        //logica pantalla completa
-        frame.dispose();
-
-        if(config.isPantallaCompleta()) {
-            frame.setUndecorated(true);
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        } else {
-            frame.setUndecorated(false);
-            frame.setSize(ANCHO_PANTALLA, ALTO_PANTALLA);
-            frame.setLocationRelativeTo(null);
-        }
-        frame.setVisible(true);
 
         canvas.addKeyListener(teclado);
         canvas.setFocusable(true);
