@@ -99,7 +99,7 @@ public class GestorConfiguracionSpaceInvaders extends GestorConfiguracionBase {
     public void setSkinInvasores(String skinInvasores) { this.skinInvasores = skinInvasores; }
 
     public String getSkinProyectil() { return skinProyectiles; }
-    public void setSkinProyectiles(String skinProyectiles) { this.skinProyectiles = skinProyectiles; }
+    public void setSkinProyectil(String skinProyectiles) { this.skinProyectiles = skinProyectiles; }
 
     public String getPistaMusical() { return pistaMusical; }
     public void setPistaMusical(String pistaMusical) { this.pistaMusical = pistaMusical; }
