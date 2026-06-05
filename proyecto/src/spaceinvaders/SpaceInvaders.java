@@ -20,6 +20,7 @@ public class SpaceInvaders extends Videojuego {
     private CanonJugador canon;
     private List<Escudo> escudos;
     private NaveNodriza nodriza;
+    private GestorSonidosSpaceInvaders gestorSonidos;
     private int vidasGuardadas = 3;
 
     //estado del juego
@@ -117,6 +118,8 @@ public class SpaceInvaders extends Videojuego {
         int teclaDer = config.getTeclaDerecha();
         int teclaDisp = config.getTeclaDisparo();
 
+        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoActivado());
+
         //registramos el control de teclado con las teclas personalizadas
         teclado = new ControlTeclado(teclaIzq, teclaDer, teclaDisp);
         canvas.addKeyListener(teclado);
@@ -199,10 +202,14 @@ public class SpaceInvaders extends Videojuego {
     public NaveNodriza getNaveNodriza()  { return nodriza; }
     public int getContadorDisparos()     { return contadorDisparos; }
     public void sumarPuntaje(int puntos) { puntaje += puntos; }
+    public GestorSonidosSpaceInvaders getGestorSonidos() { return gestorSonidos; }
 
 
     @Override
     public void gameShutdown() {
+        if (gestorSonidos != null) {
+            gestorSonidos.limpiar();
+        }
         // Aquí podrías guardar el ranking o realizar cualquier limpieza necesaria
         new MenuSpaceInvaders(launcher).run(); // Volver al menú de Space Invaders después de cerrar el juego
     }

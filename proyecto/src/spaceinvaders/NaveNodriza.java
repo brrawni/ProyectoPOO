@@ -62,12 +62,12 @@ public class NaveNodriza extends Enemigo {
 
     @Override
     public void disparar() {
-        // La nave nodriza no dispara
+        //la nave nodriza no dispara
     }
 
     @Override
     public boolean detectarColision() {
-        return false; // La nave nodriza no colisiona con proyectiles
+        return false; 
     }
 
     @Override
@@ -81,7 +81,7 @@ public class NaveNodriza extends Enemigo {
 
         BufferedImage img = gestor.cargar(ruta);
         if (img != null) {
-            // Si es skin original, colorea la imagen negra
+            //si es skin original, colorea la imagen
             if ("original".equals(skin)) {
                 img = gestor.colorear(img, Color.WHITE);
             }
