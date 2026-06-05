@@ -114,7 +114,7 @@ public class MenuSpaceInvaders extends Videojuego {
                         siguientePantalla = 2;
                         stop();
                         break;
-                    case 2: // Ranking — próximamente
+                    case 2: // 
                         SwingUtilities.invokeLater(() -> new VentanaRankingSpaceInvaders(frame).setVisible(true));
                         break;
                     case 3: // Volver al launcher
