@@ -45,8 +45,11 @@ public class FormacionAlien {
         boolean cambioDireccion = false;
         for (Alien[] fila : aliens) {
             for (Alien alien : fila) {
-                if (alien != null && alien.estaVivo()) {
+                if (alien == null) continue;
+                if (alien.estaVivo() || alien.estaDestruyendose()) {
                     alien.actualizar();
+                }
+                if (alien.estaVivo()) {
                     alien.setVelocidad(velocidad * multiplicadorVelocidad);
                     alien.setDireccion(direccion);
                     alien.mover();
@@ -72,7 +75,7 @@ public class FormacionAlien {
     public void dibujarFormacion(Graphics2D g) {
         for (Alien[] fila : aliens) {
             for (Alien alien : fila) {
-                if (alien != null && alien.estaVivo()) {
+                if (alien != null && (alien.estaVivo() || alien.estaDestruyendose())) {
                     alien.dibujar(g);
                 }
             }

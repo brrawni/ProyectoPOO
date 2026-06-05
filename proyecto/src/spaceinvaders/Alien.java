@@ -17,6 +17,8 @@ public class Alien extends Enemigo {
     private float xReal; //posicion real en float
     private int  direccion = 1;
     private int frameAnimacion;
+    private int ticksDestruido = 0;
+    private static final int TICKS_ANIMACION_DESTRUCCION = 20;
 
     public Alien(int tipo, int x, int y) {
         super(x, y, 32, 32, 1.0f); // Tamaño y velocidad del alien
@@ -48,15 +50,29 @@ public class Alien extends Enemigo {
     }
 
     public void actualizar() {
+        if (ticksDestruido > 0) {
+            ticksDestruido--;
+            return;
+        }
         // Lógica para actualizar la animación del alien
         frameAnimacion++;
-        if (frameAnimacion >= 8) { // Cambia de frame cada 30 actualizaciones
+        if (frameAnimacion >= 8) { // Cambia de frame cada 8 actualizaciones
             frameAnimacion = 0;
         }
     }
 
     public int obtenerFrameAnimacion() {
         return frameAnimacion < 4 ? 0 : 1; // Retorna 0 o 1 para alternar entre dos frames
+    }
+
+    @Override
+    public void morir() {
+        vivo = false;
+        ticksDestruido = TICKS_ANIMACION_DESTRUCCION;
+    }
+
+    public boolean estaDestruyendose() {
+        return ticksDestruido > 0;
     }
 
     @Override
@@ -102,6 +118,17 @@ public class Alien extends Enemigo {
             default:
                 nombreSprite = "calamar";
                 color = Color.YELLOW;
+        }
+
+        if (estaDestruyendose()) {
+            BufferedImage img = gestor.cargar("/img/spaceinvaders/destruido.png");
+            if (img != null) {
+                g.drawImage(img, x, y, ancho, alto, null);
+            } else {
+                g.setColor(Color.ORANGE);
+                g.fillRect(x, y, ancho, alto);
+            }
+            return;
         }
 
         int frame = obtenerFrameAnimacion();
