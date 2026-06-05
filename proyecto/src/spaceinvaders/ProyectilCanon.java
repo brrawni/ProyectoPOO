@@ -3,6 +3,8 @@ package spaceinvaders;
 import java.awt.Graphics2D;
 import java.util.List;
 import motor.Proyectil;
+import java.awt.image.BufferedImage;
+import java.awt.Color;
 
 public class ProyectilCanon extends Proyectil {
 
