@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import launcher.Boton;
 import javax.swing.JFrame;
+import launcher.Launcher;
 
 public class MenuSpaceInvaders extends Videojuego {
 
@@ -18,31 +19,22 @@ public class MenuSpaceInvaders extends Videojuego {
     private int[][] estrellas; // Para el fondo animado de estrellas
 
     private int siguientePantalla = 0; // 0=salir, 1=jugar, 2=configuracion
+    private Launcher launcher;
 
-    public MenuSpaceInvaders() {
+    public MenuSpaceInvaders(Launcher launcher) {
         super("Space Invaders", ANCHO, ALTO);
+        this.launcher = launcher;
     }
 
     @Override
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
 
-        //logica pantalla completa
-        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
-        frame.dispose();
-
-        if (config.isPantallaCompleta()) {
-            frame.setUndecorated(true);
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            } else {
-            frame.setSize(ANCHO, ALTO);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        }
-        frame.setVisible(true);
+    
+        // Solo dejás esto:
         canvas.requestFocus();
 
-        // Inicializar estrellas para el fondo
+        // Estrellas
         estrellas = new int[80][3];
         for (int i = 0; i < estrellas.length; i++) {
             estrellas[i][0] = (int)(Math.random() * ANCHO);
@@ -50,12 +42,10 @@ public class MenuSpaceInvaders extends Videojuego {
             estrellas[i][2] = Math.random() < 0.3 ? 2 : 1;
         }
 
-
-        int bAncho    = 260;
-        int bAlto     = 50;
-        int bX        = 400 - bAncho / 2;
-        int espaciado = 65;
-        int yInicio   = 220;
+        // Botones
+        int bAncho = 260, bAlto = 50;
+        int bX = 400 - bAncho / 2;
+        int espaciado = 65, yInicio = 220;
 
         botones = new Boton[] {
             new Boton(bX, yInicio,               bAncho, bAlto, "JUGAR"),
@@ -86,8 +76,6 @@ public class MenuSpaceInvaders extends Videojuego {
 
         canvas.setFocusable(true);
         canvas.requestFocus();
-
-        
     }
 
 
@@ -152,10 +140,16 @@ public class MenuSpaceInvaders extends Videojuego {
 
     @Override
     public void gameShutdown() { 
-        if (siguientePantalla == 1) {
-            new SpaceInvaders().run(); // Volver al menú de Space Invaders después de cerrar el juego
-        } else if (siguientePantalla == 2) {
-            new PantallaConfiguracion().run(); // Ir a configuración
+        switch (siguientePantalla) {
+            case 0: // Volver al launcher
+                javax.swing.SwingUtilities.invokeLater(() -> launcher.setVisible(true));
+                break;
+            case 1: // Jugar
+                new SpaceInvaders(launcher).run();
+                break;
+            case 2: // Configuración
+                new PantallaConfiguracion(launcher).run();
+                break;
         }
     }
 }

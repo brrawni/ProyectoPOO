@@ -6,6 +6,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import launcher.Boton;
 import javax.swing.JFrame;
+import launcher.Launcher;
+import motor.GestorConfiguracionBase;
 
 public class PantallaConfiguracion extends Videojuego {
     private static final int ANCHO = 800;
@@ -13,6 +15,7 @@ public class PantallaConfiguracion extends Videojuego {
 
     private BufferedImage buffer;
     private GestorConfiguracionSpaceInvaders config;
+    private Launcher launcher;
 
     // Arrays de opciones
     private String[] opcionVelocidad = {"LENTA", "MEDIA", "RAPIDA"};
@@ -48,8 +51,9 @@ public class PantallaConfiguracion extends Videojuego {
     // Botones inferiores
     private Boton btnGuardar, btnVolver, btnReset;
 
-    public PantallaConfiguracion() {
+    public PantallaConfiguracion(Launcher launcher) {
         super("Configuracion Space Invaders", ANCHO, ALTO);
+        this.launcher = launcher;
     }
 
     @Override
@@ -258,6 +262,6 @@ public class PantallaConfiguracion extends Videojuego {
     
     @Override
     public void gameShutdown() {
-        new MenuSpaceInvaders().run();
+        new MenuSpaceInvaders(launcher).run();
     }
 }
