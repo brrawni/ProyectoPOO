@@ -43,6 +43,9 @@ public class CanonJugador extends Jugador {
     if (puedeDisparar && proyectil == null) {
         proyectil = new ProyectilCanon(x + ancho / 2, y, formacion, escudos, juego); // Crea un nuevo proyectil en la posición del cañón
         puedeDisparar = false;
+        if (juego != null && juego.getGestorSonidos() != null) {
+            juego.getGestorSonidos().reproducirEfecto("laser_canon.wav"); //sonido de disparo
+        }
         juego.getNaveNodriza().incrementarDisparos(); // Incrementa el contador de disparos para la nave nodriza
         }
     }
