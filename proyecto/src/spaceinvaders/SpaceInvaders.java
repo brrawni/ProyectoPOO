@@ -177,7 +177,7 @@ public class SpaceInvaders extends Videojuego {
         }
 
         g2d.dispose();
-        g.drawImage(buffer, 0, 0, null);
+        g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
     }
 
     public NaveNodriza getNaveNodriza()  { return nodriza; }

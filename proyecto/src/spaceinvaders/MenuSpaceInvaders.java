@@ -127,7 +127,7 @@ public class MenuSpaceInvaders extends Videojuego {
         }
         //dispose y mostrar
         g2d.dispose();
-        g.drawImage(buffer, 0, 0, null);
+        g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
     }
 
     @Override
