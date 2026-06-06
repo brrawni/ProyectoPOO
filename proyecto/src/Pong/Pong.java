@@ -140,6 +140,8 @@ public class Pong extends Videojuego {
                 gestorSonidos.reproducirGameOver();
                 gestorSonidos.detenerMusica();
             }
+        } else if (juegoTerminado && !rankingGuardado) {
+            guardarRankingSiCorresponde();
         }
     }
 
@@ -185,11 +187,26 @@ public class Pong extends Videojuego {
             String ganadorTxt = ganador + " gana!";
             bg.drawString(ganadorTxt, (ANCHO_LOGICO - fm.stringWidth(ganadorTxt)) / 2, ALTO_LOGICO / 2 + 20);
 
-            bg.setFont(new Font("Arial", Font.PLAIN, 18));
-            fm = bg.getFontMetrics();
-            String cerrar = "Cerrá la ventana para volver al menú";
-            bg.setColor(new Color(180, 180, 180));
-            bg.drawString(cerrar, (ANCHO_LOGICO - fm.stringWidth(cerrar)) / 2, ALTO_LOGICO / 2 + 70);
+            bg.setFont(new Font("Arial", Font.PLAIN, 20));
+            bg.setColor(Color.WHITE);
+            if (!rankingGuardado) {
+                fm = bg.getFontMetrics();
+                String pedirNombre = "Ingresa tu nombre:";
+                bg.drawString(pedirNombre, (ANCHO_LOGICO - fm.stringWidth(pedirNombre)) / 2, ALTO_LOGICO / 2 + 70);
+
+                String nombre = controlTeclado.getTextoIngresado() + "|";
+                fm = bg.getFontMetrics();
+                bg.drawString(nombre, (ANCHO_LOGICO - fm.stringWidth(nombre)) / 2, ALTO_LOGICO / 2 + 105);
+
+                bg.setColor(Color.YELLOW);
+                String guardar = "Presiona ENTER para guardar en el ranking";
+                fm = bg.getFontMetrics();
+                bg.drawString(guardar, (ANCHO_LOGICO - fm.stringWidth(guardar)) / 2, ALTO_LOGICO / 2 + 140);
+            } else {
+                fm = bg.getFontMetrics();
+                String guardado = "Puntaje guardado. Cerra la ventana para volver al menu";
+                bg.drawString(guardado, (ANCHO_LOGICO - fm.stringWidth(guardado)) / 2, ALTO_LOGICO / 2 + 80);
+            }
         }
 
         bg.dispose();
@@ -209,9 +226,6 @@ public class Pong extends Videojuego {
 
     @Override
     public void gameShutdown() {
-        if (!rankingGuardado && !ganador.isEmpty()) {
-            guardarEnRanking();
-        }
         gestorSonidos.limpiar();
         if (buffer != null) buffer.flush();
     }
@@ -241,9 +255,21 @@ public class Pong extends Videojuego {
         }
     }
 
-    private void guardarEnRanking() {
+    private void guardarRankingSiCorresponde() {
+        if (controlTeclado.isEnterPresionado()) {
+            String nombre = controlTeclado.getTextoIngresado();
+            if (!nombre.isEmpty()) {
+                guardarEnRanking(nombre);
+                controlTeclado.resetEntrada();
+            } else {
+                controlTeclado.resetEnter();
+            }
+        }
+    }
+
+    private void guardarEnRanking(String nombreJugador) {
         int puntajeFinal = Math.max(puntajeJugador1, puntajeJugador2);
-        EntradaRanking entrada = new EntradaRanking(ganador, 1, puntajeFinal, LocalDate.now());
+        EntradaRanking entrada = new EntradaRanking(nombreJugador, 1, puntajeFinal, LocalDate.now());
         gestorRanking.agregarEntrada(entrada);
         gestorRanking.guardar();
         rankingGuardado = true;
