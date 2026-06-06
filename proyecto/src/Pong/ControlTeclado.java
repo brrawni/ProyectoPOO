@@ -25,6 +25,9 @@ public class ControlTeclado implements KeyListener {
     private int teclaAbajo1 = KeyEvent.VK_DOWN;
     private int teclaArriba2 = KeyEvent.VK_W;
     private int teclaAbajo2 = KeyEvent.VK_S;
+    private String textoIngresado = "";
+    private boolean enterPresionado = false;
+    private static final int MAX_TEXTO = 12;
 
     /**
      * Se llama cuando se presiona una tecla
@@ -47,6 +50,12 @@ public class ControlTeclado implements KeyListener {
         }
         if (codigo == teclaAbajo2) {
             abajo2 = true;
+        }
+        if (codigo == KeyEvent.VK_ENTER) {
+            enterPresionado = true;
+        }
+        if (codigo == KeyEvent.VK_BACK_SPACE && !textoIngresado.isEmpty()) {
+            textoIngresado = textoIngresado.substring(0, textoIngresado.length() - 1);
         }
     }
 
@@ -79,7 +88,10 @@ public class ControlTeclado implements KeyListener {
      */
     @Override
     public void keyTyped(KeyEvent e) {
-        // No necesitamos implementar esta funcionalidad
+        char c = e.getKeyChar();
+        if ((Character.isLetterOrDigit(c) || c == ' ') && textoIngresado.length() < MAX_TEXTO) {
+            textoIngresado += c;
+        }
     }
 
     // Getters para consultar el estado de las teclas
@@ -131,5 +143,22 @@ public class ControlTeclado implements KeyListener {
 
     public int getTeclaAbajo2() {
         return teclaAbajo2;
+    }
+
+    public String getTextoIngresado() {
+        return textoIngresado.trim();
+    }
+
+    public boolean isEnterPresionado() {
+        return enterPresionado;
+    }
+
+    public void resetEnter() {
+        enterPresionado = false;
+    }
+
+    public void resetEntrada() {
+        textoIngresado = "";
+        enterPresionado = false;
     }
 }
