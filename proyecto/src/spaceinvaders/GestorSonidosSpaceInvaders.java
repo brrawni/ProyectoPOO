@@ -117,12 +117,6 @@ public class GestorSonidosSpaceInvaders {
         }
     }
 
-    public void limpiar() {
-        detenerMusica();
-        if (musicaMenu != null) {
-            musicaMenu.close();
-        }
-    }
 
     public void limpiar() {
         detenerMusica();
