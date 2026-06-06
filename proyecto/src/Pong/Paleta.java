@@ -119,15 +119,18 @@ public class Paleta extends Entidad {
         if (visible) {
             // Obtener color del tema (o usar blanco como fallback si no hay tema)
             Color colorPaleta = (tema != null) ? tema.getColorPaleta() : Color.WHITE;
+            String skin = (tema != null) ? tema.getSkinBarras() : "original";
+            int anchoDibujo = "delgado".equals(skin) ? Math.max(6, ancho / 2) : ancho;
+            int xDibujo = x + (ancho - anchoDibujo) / 2;
             
             // Dibujar la paleta con color del tema
             g.setColor(colorPaleta);
-            g.fillRect(x, y, ancho, alto);
+            g.fillRect(xDibujo, y, anchoDibujo, alto);
             
             // Opcional: Dibujar borde para mejor visualización
             g.setColor(new Color(colorPaleta.getRed()/2, colorPaleta.getGreen()/2, colorPaleta.getBlue()/2));
             g.setStroke(new BasicStroke(2));
-            g.drawRect(x, y, ancho, alto);
+            g.drawRect(xDibujo, y, anchoDibujo, alto);
         }
     }
 }
