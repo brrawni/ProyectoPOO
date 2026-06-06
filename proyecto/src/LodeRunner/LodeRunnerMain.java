@@ -1,6 +1,5 @@
 package LodeRunner;
 
-import launcher.Launcher;
 import motor.Videojuego;
 import ranking.EntradaRanking;
 
@@ -388,7 +387,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
 
             // Evitamos que guarde caracteres raros (como el Enter o el retroceso que ya manejamos)
             // Y le ponemos un límite de 10 caracteres para que no te rompa la tabla visual
-            if (letra != '\b' && letra != '\n' && letra != '\r' && nombreJugador.length() < 10) {
+            if (letra != '\b' && letra != '\n' && letra != '\r' && nombreJugador.length() < 10 && !enEjecucion) {
                 nombreJugador += letra;
             }
         }
