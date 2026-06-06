@@ -20,6 +20,7 @@ public class SpaceInvaders extends Videojuego {
     private CanonJugador canon;
     private List<Escudo> escudos;
     private NaveNodriza nodriza;
+    private GestorSonidosSpaceInvaders gestorSonidos;
     private int vidasGuardadas = 3;
 
     //estado del juego
@@ -39,6 +40,8 @@ public class SpaceInvaders extends Videojuego {
     private boolean rankingGuardado = false;
     private String nombreJugador = "";
     private boolean ingresandoNombre = false;
+    private int ticksGameOver = 0;
+    private static final int TICKS_ANTES_VOLVER_AL_MENU = 300; // ~5 segundos a 60 FPS
 
     public SpaceInvaders(Launcher launcher) {
         super("Space Invaders", ANCHO_PANTALLA, ALTO_PANTALLA);
@@ -48,6 +51,7 @@ public class SpaceInvaders extends Videojuego {
     public void siguienteNivel() {
         nivelActual++;
         vidasGuardadas = Math.min(canon.obtenerVidas() + 1, 5);
+        canon = null; // Recrear canon con vidas regeneradas
         inicializarNivel();
     }
 
@@ -63,23 +67,32 @@ public class SpaceInvaders extends Videojuego {
         nivel = new Nivel(nivelActual);
         nivel.cargar();
 
-        int yInicial = 60 + (nivelActual - 1) * 20; //baja 20 px por nivel
-        // 1. Primero crear formacion y escudos
-        formacion = new FormacionAlien(nivel.obtenerFilas(), nivel.obtenerColumnas(), nivel.obtenerVelocidadAlien(), yInicial, nivel.obtenerVelocidadProyectil());
-        escudos   = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            escudos.add(new Escudo(150 + i * 150, ALTO_PANTALLA - 150));
+        // Limpiar escudos completamente destruidos antes de pasar al siguiente nivel
+        if (nivelActual > 1) {
+            List<Escudo> escudosIntactos = new ArrayList<>();
+            for (Escudo escudo : escudos) {
+                if (!escudo.estaDestruido()) {
+                    escudosIntactos.add(escudo);
+                }
+            }
+            escudos = escudosIntactos;
         }
 
-        // 2. Después crear el canon
-        canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 80, 32, 32, vidasGuardadas);
+        int yInicial = 60 + (nivelActual - 1) * 20; //baja 20 px por nivel
+        // Crear nueva formacion de aliens (los escudos persisten con daño acumulado)
+        formacion = new FormacionAlien(nivel.obtenerFilas(), nivel.obtenerColumnas(), nivel.obtenerVelocidadAlien(), yInicial, nivel.obtenerVelocidadProyectil());
 
-        // 3. Setear todo al canon DESPUÉS de crearlo
-        canon.setFormacion(formacion);  // ← esto debe estar
+        // Recrear o reusar el canon
+        if (canon == null) {
+            canon = new CanonJugador(ANCHO_PANTALLA / 2 - 16, ALTO_PANTALLA - 80, 32, 32, vidasGuardadas);
+        }
+
+        // Setear todo al canon
+        canon.setFormacion(formacion);
         canon.setEscudos(escudos);
         canon.setJuego(this);
 
-        // 4. Setear escudos a la formacion
+        // Setear escudos a la formacion
         formacion.setEscudos(escudos);
 
         nodriza = new NaveNodriza(nivel);
@@ -109,6 +122,12 @@ public class SpaceInvaders extends Videojuego {
             });
         }
 
+        // Crear escudos UNA SOLA VEZ al iniciar el juego (persisten con daño acumulado entre niveles)
+        escudos = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            escudos.add(new Escudo(150 + i * 150, ALTO_PANTALLA - 150));
+        }
+
         inicializarNivel();
 
 
@@ -116,6 +135,8 @@ public class SpaceInvaders extends Videojuego {
         int teclaIzq = config.getTeclaIzquierda();
         int teclaDer = config.getTeclaDerecha();
         int teclaDisp = config.getTeclaDisparo();
+
+        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoGeneralActivado());
 
         //registramos el control de teclado con las teclas personalizadas
         teclado = new ControlTeclado(teclaIzq, teclaDer, teclaDisp);
@@ -128,7 +149,14 @@ public class SpaceInvaders extends Videojuego {
 
     @Override
     public void gameUpdate(double delta) {
-        if (!enEjecucion) return;
+        if (!enEjecucion) {
+            ticksGameOver++;
+            // Volver al menú automáticamente después de mostrar el ranking
+            if (rankingGuardado && ticksGameOver >= TICKS_ANTES_VOLVER_AL_MENU) {
+                stop();
+            }
+            return;
+        }
 
         teclado.procesarEntrada(canon);
 
@@ -199,10 +227,14 @@ public class SpaceInvaders extends Videojuego {
     public NaveNodriza getNaveNodriza()  { return nodriza; }
     public int getContadorDisparos()     { return contadorDisparos; }
     public void sumarPuntaje(int puntos) { puntaje += puntos; }
+    public GestorSonidosSpaceInvaders getGestorSonidos() { return gestorSonidos; }
 
 
     @Override
     public void gameShutdown() {
+        if (gestorSonidos != null) {
+            gestorSonidos.limpiar();
+        }
         // Aquí podrías guardar el ranking o realizar cualquier limpieza necesaria
         new MenuSpaceInvaders(launcher).run(); // Volver al menú de Space Invaders después de cerrar el juego
     }
@@ -226,7 +258,7 @@ public class SpaceInvaders extends Videojuego {
             g2d.drawString(teclado.getTextoIngresado() + "|", ANCHO_PANTALLA/2 - 100, 250);
             g2d.drawString("Puntaje: " + puntaje + "  Nivel: " + nivelActual, ANCHO_PANTALLA/2 - 100, 290);
             g2d.setColor(Color.YELLOW);
-            g2d.drawString("Presioná ENTER para guardar o ESC para salir", ANCHO_PANTALLA/2 - 100, 330);
+            g2d.drawString("Presioná ENTER para guardar", ANCHO_PANTALLA/2 - 100, 330);
 
             if (teclado.isEnterPresionado() && !teclado.getTextoIngresado().isEmpty()) {
                 gestorRanking.agregarEntrada(
@@ -234,18 +266,14 @@ public class SpaceInvaders extends Videojuego {
                 );
                 rankingGuardado = true;
                 teclado.resetEntrada();
-            }
-            if (teclado.isEscapePresionado()) {
-                stop();
+                ticksGameOver = 0;
             }
         } else {
             dibujarRanking(g2d);
-            g2d.setFont(new Font("Arial", Font.PLAIN, 18));
+            g2d.setFont(new Font("Arial", Font.PLAIN, 16));
             g2d.setColor(Color.YELLOW);
-            g2d.drawString("Presioná ENTER o ESC para volver al menú", ANCHO_PANTALLA/2 - 170, 450);
-            if (teclado.isEnterPresionado() || teclado.isEscapePresionado()) {
-                stop();
-            }
+            int segundosRestantes = (TICKS_ANTES_VOLVER_AL_MENU - ticksGameOver) / 60;
+            g2d.drawString("Volviendo al menú en " + Math.max(0, segundosRestantes) + "s...", ANCHO_PANTALLA/2 - 120, 450);
         }
     }
 

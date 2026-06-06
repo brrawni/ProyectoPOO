@@ -9,6 +9,8 @@ import motor.Enemigo;
 public class NaveNodriza extends Enemigo {
     private int contadorDisparos;
     private boolean visible = false;
+    private int ticksDestruido = 0;
+    private static final int TICKS_ANIMACION_DESTRUCCION = 12;
 
     public NaveNodriza(Nivel nivel) {
         super(-50, 40, 60, 30, 2.0f); //arranca fuera de pantalla
@@ -20,6 +22,7 @@ public class NaveNodriza extends Enemigo {
         visible = true;
         x = -60; // Reinicia la posición para que vuelva a entrar
         vivo = true;
+        ticksDestruido = 0;
     }
 
     @Override
@@ -34,8 +37,25 @@ public class NaveNodriza extends Enemigo {
     }
 
     public void actualizar() {
-        // Lógica para actualizar la animación de la nave nodriza
+        if (ticksDestruido > 0) {
+            ticksDestruido--;
+            if (ticksDestruido == 0) {
+                visible = false;
+            }
+            return;
+        }
         mover();
+    }
+
+    @Override
+    public void morir() {
+        vivo = false;
+        ticksDestruido = TICKS_ANIMACION_DESTRUCCION;
+        visible = true;
+    }
+
+    public boolean estaDestruyendose() {
+        return ticksDestruido > 0;
     }
 
     public int calcularPuntos(int disparos) {
@@ -62,35 +82,44 @@ public class NaveNodriza extends Enemigo {
 
     @Override
     public void disparar() {
-        // La nave nodriza no dispara
+        //la nave nodriza no dispara
     }
 
     @Override
     public boolean detectarColision() {
-        return false; // La nave nodriza no colisiona con proyectiles
+        return false; 
     }
 
     @Override
     public void dibujar(Graphics2D g) {
-        if (!visible || !vivo) return;
+        if (!visible || (!vivo && !estaDestruyendose())) return;
 
         GestorImagenes gestor = GestorImagenes.getInstance();
-        String skin = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
-
-        // Si es skin original, dibuja con color (sin intentar cargar imagen)
-        if ("original".equals(skin)) {
-            g.setColor(Color.WHITE);
-            g.fillRect(x, y, ancho, alto);
-        } else {
-            // Si es alternativa, intenta cargar la imagen
-            String ruta = "/img/spaceinvaders/nodriza_alternativa.png";
-            BufferedImage img = gestor.cargar(ruta);
+        if (estaDestruyendose()) {
+            BufferedImage img = gestor.cargar("/img/spaceinvaders/destruido.png");
             if (img != null) {
                 g.drawImage(img, x, y, ancho, alto, null);
             } else {
-                g.setColor(Color.WHITE);
+                g.setColor(Color.ORANGE);
                 g.fillRect(x, y, ancho, alto);
             }
+            return;
+        }
+
+        String skin = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
+        String sufijo = "alternativa".equals(skin) ? "nodriza_alternativa.png" : "navenodriza.png";
+        String ruta = "/img/spaceinvaders/" + sufijo;
+
+        BufferedImage img = gestor.cargar(ruta);
+        if (img != null) {
+            //si es skin original, colorea la imagen
+            if ("original".equals(skin)) {
+                img = gestor.colorear(img, Color.WHITE);
+            }
+            g.drawImage(img, x, y, ancho, alto, null);
+        } else {
+            g.setColor(Color.WHITE);
+            g.fillRect(x, y, ancho, alto);
         }
     }
 }
