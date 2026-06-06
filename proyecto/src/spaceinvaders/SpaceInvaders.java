@@ -136,7 +136,7 @@ public class SpaceInvaders extends Videojuego {
         int teclaDer = config.getTeclaDerecha();
         int teclaDisp = config.getTeclaDisparo();
 
-        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoActivado());
+        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoGeneralActivado());
 
         //registramos el control de teclado con las teclas personalizadas
         teclado = new ControlTeclado(teclaIzq, teclaDer, teclaDisp);

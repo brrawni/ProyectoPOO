@@ -33,7 +33,7 @@ public class MenuSpaceInvaders extends Videojuego {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
     
         GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
-        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoActivado());
+        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoGeneralActivado());
         gestorSonidos.reproducirMusicaMenu();
 
         if (config.isPantallaCompleta()) {
@@ -114,7 +114,7 @@ public class MenuSpaceInvaders extends Videojuego {
                         siguientePantalla = 2;
                         stop();
                         break;
-                    case 2: // 
+                    case 2: // Ranking — próximamente
                         SwingUtilities.invokeLater(() -> new VentanaRankingSpaceInvaders(frame).setVisible(true));
                         break;
                     case 3: // Volver al launcher
