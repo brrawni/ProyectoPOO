@@ -119,11 +119,12 @@ public class MenuPong extends JFrame {
         setVisible(false);
         timer.stop();
 
-        Pong pong = new Pong();
+        Pong pong = new Pong(config.getSkinCancha());
         pong.setPuntuacionMaxima(config.getPuntuacionMaxima());
         pong.setModoJuego(modoJuego);
         // Pong maneja internamente el redimensionado del canvas en gameStartup()
         pong.setPantallaCompleta(config.isPantallaCompleta());
+        
 
         pong.frame.addWindowListener(new WindowAdapter() {
             @Override

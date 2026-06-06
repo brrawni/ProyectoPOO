@@ -37,6 +37,21 @@ public class GestorSonidosSpaceInvaders {
         }
     }
 
+    public void reproducirEfecto(String ruta) {
+        if (!sonidoActivado) return;
+
+        Clip clip = cargarAudio(ruta);
+        if (clip == null) return;
+
+        clip.setFramePosition(0);
+        clip.start();
+        clip.addLineListener(event -> {
+            if (event.getType() == LineEvent.Type.STOP) {
+                clip.close();
+            }
+        });
+    }
+
     public void reproducirMusicaMenu() {
         if (!sonidoActivado) return;
 
