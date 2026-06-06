@@ -78,7 +78,7 @@ public class VentanaConfiguracionPong extends JDialog {
         // ComboBox para seleccionar la pista de música de fondo (por defecto: original)
         JPanel panelMusica = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelMusica.add(new JLabel("Pista musical:"));
-        String[] pistas = {"original", "8-bit", "jazz", "clasica"};
+        String[] pistas = {"original", "8bit", "jazz", "clasica"};
         JComboBox<String> comboPistas = new JComboBox<>(pistas);
         comboPistas.setSelectedItem(config.getPistaMusical());
         panelMusica.add(comboPistas);

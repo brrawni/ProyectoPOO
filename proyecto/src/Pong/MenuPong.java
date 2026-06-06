@@ -25,6 +25,7 @@ public class MenuPong extends JFrame {
     private Boton[] botones;
     private ConfiguracionPong config;
     private GestorRanking gestorRanking;
+    private GestorSonidosPong gestorSonidos;
     private JFrame launcher;
 
     public MenuPong(JFrame launcher) {
@@ -34,9 +35,11 @@ public class MenuPong extends JFrame {
         this.gestorRanking = new GestorRanking(RANKING_PONG);
 
         config.cargar();
+        this.gestorSonidos = new GestorSonidosPong(config.isSonidoActivado());
         configurarVentana();
         crearBotones();
         configurarListeners();
+        gestorSonidos.reproducirMusica("menu");
 
         timer = new Timer(16, e -> canvas.repaint());
         timer.start();
@@ -66,6 +69,7 @@ public class MenuPong extends JFrame {
             @Override
             public void windowClosed(WindowEvent e) {
                 timer.stop();
+                gestorSonidos.limpiar();
                 SwingUtilities.invokeLater(() -> launcher.setVisible(true));
             }
         });
@@ -108,7 +112,10 @@ public class MenuPong extends JFrame {
             switch (i) {
                 case 0: lanzarPong(2); break;
                 case 1: lanzarPong(1); break;
-                case 2: new VentanaConfiguracionPong(config, this).setVisible(true); break;
+                case 2:
+                    new VentanaConfiguracionPong(config, this).setVisible(true);
+                    actualizarSonidoMenu();
+                    break;
                 case 3: new VentanaRankingPong(gestorRanking, this).setVisible(true); break;
                 case 4: dispose(); break;
             }
@@ -119,10 +126,13 @@ public class MenuPong extends JFrame {
     private void lanzarPong(int modoJuego) {
         setVisible(false);
         timer.stop();
+        gestorSonidos.detenerMusica();
 
         Pong pong = new Pong(config.getSkinCancha(), config.getSkinBarras(), config.getSkinPelota());
         pong.setPuntuacionMaxima(config.getPuntuacionMaxima());
         pong.setModoJuego(modoJuego);
+        pong.setPistaMusical(config.getPistaMusical());
+        pong.setSonidoActivado(config.isSonidoActivado());
         // Pong maneja internamente el redimensionado del canvas en gameStartup()
         pong.setPantallaCompleta(config.isPantallaCompleta());
         
@@ -132,6 +142,7 @@ public class MenuPong extends JFrame {
             public void windowClosed(WindowEvent e) {
                 SwingUtilities.invokeLater(() -> {
                     timer.start();
+                    actualizarSonidoMenu();
                     setVisible(true);
                 });
             }
@@ -169,4 +180,11 @@ public class MenuPong extends JFrame {
         bg.dispose();
         g.drawImage(buffer, 0, 0, null);
     }
+
+    private void actualizarSonidoMenu() {
+        gestorSonidos.setSonidoActivado(config.isSonidoActivado());
+        gestorSonidos.detenerMusica();
+        gestorSonidos.reproducirMusica("menu");
+    }
+
 }
