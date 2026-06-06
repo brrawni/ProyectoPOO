@@ -18,6 +18,7 @@ import java.time.LocalDate;
 public class Pong extends Videojuego {
     private static final int ANCHO_LOGICO = 800;
     private static final int ALTO_LOGICO  = 600;
+    private static final String RANKING_PONG = "ranking_pong.txt";
 
     private Paleta paleta1;
     private Paleta paleta2;
@@ -46,9 +47,16 @@ public class Pong extends Videojuego {
 
     public Pong(String nombreTema) {
         super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
-        this.gestorRanking = new GestorRanking();
+        this.gestorRanking = new GestorRanking(RANKING_PONG);
         this.gestorSonidos = new GestorSonidosPong(true);
         this.tema = new TemasPong(nombreTema);
+    }
+
+    public Pong(String skinCancha, String skinBarras, String skinPelota) {
+        super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
+        this.gestorRanking = new GestorRanking(RANKING_PONG);
+        this.gestorSonidos = new GestorSonidosPong(true);
+        this.tema = new TemasPong(skinCancha, skinBarras, skinPelota);
     }
 
     public void setModoJuego(int modo) {
@@ -251,6 +259,15 @@ public class Pong extends Videojuego {
     public TemasPong getTema()         { return tema; }
     public void cambiarTema(String nombreTema) {
         tema.cambiarTema(nombreTema);
+        paleta1.setTema(tema);
+        paleta2.setTema(tema);
+        pelota.setTema(tema);
+    }
+
+    public void cambiarSkins(String skinCancha, String skinBarras, String skinPelota) {
+        tema.cambiarSkinCancha(skinCancha);
+        tema.cambiarSkinBarras(skinBarras);
+        tema.cambiarSkinPelota(skinPelota);
         paleta1.setTema(tema);
         paleta2.setTema(tema);
         pelota.setTema(tema);

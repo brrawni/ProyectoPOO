@@ -138,8 +138,17 @@ public class Pelota extends Entidad {
     public void dibujar(Graphics2D g) {
         if (visible) {
             Color colorPelota = (tema != null) ? tema.getColorPelota() : Color.WHITE;
+            String skin = (tema != null) ? tema.getSkinPelota() : "original";
             g.setColor(colorPelota);
-            g.fillOval(x, y, ancho, alto);
+            if ("cuadrada".equals(skin)) {
+                g.fillRect(x, y, ancho, alto);
+            } else if ("triangulo".equals(skin)) {
+                int[] xs = {x + ancho / 2, x, x + ancho};
+                int[] ys = {y, y + alto, y + alto};
+                g.fillPolygon(xs, ys, 3);
+            } else {
+                g.fillOval(x, y, ancho, alto);
+            }
         }
     }
 }
