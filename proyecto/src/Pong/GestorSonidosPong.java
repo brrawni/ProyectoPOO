@@ -30,7 +30,7 @@ public class GestorSonidosPong {
     private boolean sonidoActivado;
 
     // Ruta base para archivos de audio
-    private static final String RUTA_AUDIO = "proyecto/resources/audio/";
+    private static final String RUTA_AUDIO = "proyecto/resources/sonido/Pong/";
 
     /**
      * Constructor: inicializa el gestor de sonidos
