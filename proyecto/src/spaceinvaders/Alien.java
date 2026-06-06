@@ -46,7 +46,7 @@ public class Alien extends Enemigo {
 
     @Override
     public void disparar() {
-        // Lógica para disparar un proyectil
+        //la logica para disparar un proyectil
     }
 
     public void actualizar() {
@@ -54,15 +54,15 @@ public class Alien extends Enemigo {
             ticksDestruido--;
             return;
         }
-        // Lógica para actualizar la animación del alien
+        //la logica para actualizar la animación del alien
         frameAnimacion++;
-        if (frameAnimacion >= 8) { // Cambia de frame cada 8 actualizaciones
+        if (frameAnimacion >= 8) {//cambia de frame cada 8 actualizaciones
             frameAnimacion = 0;
         }
     }
 
     public int obtenerFrameAnimacion() {
-        return frameAnimacion < 4 ? 0 : 1; // Retorna 0 o 1 para alternar entre dos frames
+        return frameAnimacion < 4 ? 0 : 1; //retorna 0 o 1 para alternar entre dos frames
     }
 
     @Override
@@ -92,7 +92,7 @@ public class Alien extends Enemigo {
     
     @Override
     public boolean detectarColision() {
-        // Lógica para detectar colisiones con proyectiles del jugador
+        //la logica para detectar colisiones con proyectiles del jugador
         return false;
     }
 
@@ -139,7 +139,7 @@ public class Alien extends Enemigo {
         BufferedImage img = gestor.cargar(ruta);
         
         if (img != null) {
-            // Si es skin original, colorea la imagen negra
+            //si es skin original, colorea la imagen negra
             if ("original".equals(skinInvasores)) {
                 img = gestor.colorear(img, color);
             }
