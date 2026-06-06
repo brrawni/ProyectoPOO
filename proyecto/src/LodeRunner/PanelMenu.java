@@ -43,7 +43,7 @@ public class PanelMenu extends JPanel {
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if (btnJugar.contienePunto(e.getX(), e.getY())) {
-                    LodeRunnerMain juego = new LodeRunnerMain(gestor);
+                    LodeRunnerMain juego = new LodeRunnerMain();
                     juego.run();
                     // gestor.cambiarPantalla(GestorPantallas.PANTALLA_JUEGO);
                 } else if (btnConfig.contienePunto(e.getX(), e.getY())) {
