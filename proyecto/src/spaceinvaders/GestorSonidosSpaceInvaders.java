@@ -15,13 +15,23 @@ public class GestorSonidosSpaceInvaders {
 
     private Clip cargarAudio(String ruta) {
         try {
+            AudioInputStream audioInputStream = null;
             File archivoAudio = new File(RUTA_AUDIO + ruta);
-            if (!archivoAudio.exists()) {
-                System.out.println("archivo de audio no encontrado" + archivoAudio.getAbsolutePath());
-                return null;
+
+            if (archivoAudio.exists()) {
+                audioInputStream = AudioSystem.getAudioInputStream(archivoAudio);
+            } else {
+                String rutaClasspath = "/sonido/spaceinvaders/" + ruta;
+                java.io.InputStream recurso = getClass().getResourceAsStream(rutaClasspath);
+                if (recurso != null) {
+                    audioInputStream = AudioSystem.getAudioInputStream(recurso);
+                } else {
+                    System.out.println("archivo de audio no encontrado: " + archivoAudio.getAbsolutePath());
+                    System.out.println("Clase tampoco encontró recurso en classpath: " + rutaClasspath);
+                    return null;
+                }
             }
 
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(archivoAudio);
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             return clip;
