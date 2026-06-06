@@ -8,45 +8,40 @@ import java.io.IOException;
 public class GestorSonidosSpaceInvaders {
     private Clip musicaMenu;
     private boolean sonidoActivado;
-    private static final String RUTA_AUDIO = "resources/sonido/spaceinvaders/";
+    private static final String RUTA_AUDIO = "proyecto/resources/sonido/spaceinvaders/";
 
     public GestorSonidosSpaceInvaders(boolean sonidoActivado) {
         this.sonidoActivado = sonidoActivado;
     }
 
     private Clip cargarAudio(String ruta) {
-        try {
-            AudioInputStream audioInputStream = null;
-            File archivoAudio = new File(RUTA_AUDIO + ruta);
-
-            if (archivoAudio.exists()) {
-                audioInputStream = AudioSystem.getAudioInputStream(archivoAudio);
-            } else {
-                String rutaClasspath = "/sonido/spaceinvaders/" + ruta;
-                java.io.InputStream recurso = getClass().getResourceAsStream(rutaClasspath);
-                if (recurso != null) {
-                    audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(recurso));
-                } else {
-                    System.out.println("archivo de audio no encontrado: " + archivoAudio.getAbsolutePath());
-                    System.out.println("Clase tampoco encontró recurso en classpath: " + rutaClasspath);
-                    return null;
-                }
-            }
-
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            return clip;
-        } catch (UnsupportedAudioFileException e) {
-            System.out.println("formato de audio no soportado: " + ruta);
-            return null;
-        } catch (IOException e) {
-            System.out.println("error al leer archivo de audio: " + ruta);
-            return null;
-        } catch (LineUnavailableException e) {
-            System.out.println("linea de audio no disponible");
+    try {
+        String rutaClasspath = "/sonido/spaceinvaders/" + ruta;
+        java.io.InputStream recurso = getClass().getResourceAsStream(rutaClasspath);
+        
+        if (recurso == null) {
+            System.out.println("no encontrado en classpath: " + rutaClasspath);
             return null;
         }
+
+        AudioInputStream audio = AudioSystem.getAudioInputStream(
+            new java.io.BufferedInputStream(recurso)
+        );
+        Clip clip = AudioSystem.getClip();
+        clip.open(audio);
+        return clip;
+
+    } catch (UnsupportedAudioFileException e) {
+        System.out.println("formato no soportado: " + ruta);
+        return null;
+    } catch (IOException e) {
+        System.out.println("error leyendo: " + ruta);
+        return null;
+    } catch (LineUnavailableException e) {
+        System.out.println("linea de audio no disponible");
+        return null;
     }
+}
 
     public void reproducirEfecto(String ruta) {
         if (!sonidoActivado) return;
