@@ -14,7 +14,7 @@ import java.util.List;
 //Cada sprite mide 16x16
 
 public class LodeRunnerMain extends Videojuego implements KeyListener{
-    private GestorPantallas gestorPantallas;
+
     //Imagen para cancelar parpadeos
     private BufferedImage buffer;
     //configuracion del juego
@@ -29,6 +29,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     private boolean mirandoIzq;
     private boolean mirandoDer;
     private int lingotesRestantes;
+    private boolean juegoGanado = false;
     //temporizador
     private int temporizador;
     private int frames = 0;
@@ -40,11 +41,10 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     private boolean enterPresionado = false;
 
 
-    public LodeRunnerMain(GestorPantallas gestorPantallas) {
+    public LodeRunnerMain() {
         super("Lode Runner - UNLPam edition", 800, 600);
         config = new ConfiguracionLR();
         ranking = new RankingLR();
-        this.gestorPantallas = gestorPantallas;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         canvas.setFocusable(true);
         canvas.requestFocus();
         canvas.requestFocusInWindow();
-        nivelActual = 1;
+        nivelActual = 3;
         vidasHeroe = 5;
         config.cargar();
         iniciarNivel();
@@ -204,9 +204,14 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                     if (heroe.getY() <= 0){ //el heroe cruzo la escalera
                         puntaje += 200;
                         puntaje += puntajePorMin;
+                        escenario.setEscaleraSalidaActiva(false);
+                        if (nivelActual == 3){
+                            enEjecucion = false;
+                            juegoGanado = true;
+                            return;
+                        }
                         vidasHeroe++; //Si el heroe completa el nivel, se le otorga una vida extra
                         nivelActual++; //siguiente nivel
-                        escenario.setEscaleraSalidaActiva(false);
                         iniciarNivel();
                     }
                 }
@@ -214,7 +219,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 if (vidasHeroe == 0){
                     enEjecucion = false;
                 }
-
                 try {
                     Thread.sleep(32);
                 } catch (InterruptedException e) {
@@ -228,9 +232,10 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     public void gameDraw(Graphics2D g) {
         if (buffer == null)
             return;
+        Graphics2D g2 = buffer.createGraphics();
         int windowWidth = frame.getContentPane().getWidth();
         int windowHeight = frame.getContentPane().getHeight();
-        Graphics2D g2 = buffer.createGraphics();
+
         // mantener aspect ratio
         double scaleX = (double) windowWidth / 800;
         double scaleY = (double) windowHeight / 600;
@@ -245,29 +250,32 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
 
         //para que los sprites no se vean borrosos
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-                // 1. Limpiamos la pantalla entera pintándola de negro
-                g2.setColor(Color.BLACK);
-                g2.fillRect(0, 0, 800, 600); // Ajustá al ancho y alto real de la ventana
-                // Dibujamos guardias en azul
-                escenario.dibujar(g2);
-                if (!enEjecucion){
-                    finDeJuego(g2);
-                }
-                heroe.actualizarAnimacion();
-                heroe.dibujar(g2);
-                for (Guardia guardia : guardias){
-                    guardia.actualizarAnimacion();
-                    guardia.dibujar(g2);
-                }
-                for (Oro o : lingotes){
-                    g2.setColor(Color.YELLOW);
-                    o.dibujar(g2);
-                }
-                g2.setColor(Color.yellow);
-                g2.drawString("Puntaje: " + puntaje, 20, 580);
-                g2.drawString("Nivel: "   + nivelActual, 800 / 2 - 30, 580);
-                g2.drawString("Tiempo: "  + temporizador, 535, 580);
-                g2.drawString("Vidas: "   + vidasHeroe, 800 - 100, 580);
+        if (enEjecucion){
+            // 1. Limpiamos la pantalla entera pintándola de negro
+            g2.setColor(Color.BLACK);
+            g2.fillRect(0, 0, 800, 600); // Ajustá al ancho y alto real de la ventana
+            // Dibujamos guardias en azul
+            escenario.dibujar(g2);
+            heroe.actualizarAnimacion();
+            heroe.dibujar(g2);
+            for (Guardia guardia : guardias){
+                guardia.actualizarAnimacion();
+                guardia.dibujar(g2);
+            }
+            for (Oro o : lingotes){
+                g2.setColor(Color.YELLOW);
+                o.dibujar(g2);
+            }
+            g2.setColor(Color.yellow);
+            g2.drawString("Puntaje: " + puntaje, 20, 580);
+            g2.drawString("Nivel: "   + nivelActual, 800 / 2 - 30, 580);
+            g2.drawString("Tiempo: "  + temporizador, 535, 580);
+            g2.drawString("Vidas: "   + vidasHeroe, 800 - 100, 580);
+        }
+        else{
+            escenario.dibujar(g2); //escenario de fondo para fin de juego
+            finDeJuego(g2);
+        }
         g2.dispose();
         g.drawImage(buffer, x, y, newWidth, newHeight, null);
     }
@@ -286,8 +294,17 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         g.fillRect(0, 0, 800, 600);
 
         g.setFont(new Font("Times New Roman", Font.BOLD, 40));
-        g.setColor(Color.RED);
-        g.drawString("GAME OVER", 800/2 - 100, 150);
+
+        String texto = "";
+        if (juegoGanado){
+            g.setColor(Color.YELLOW);
+            texto = "¡FELICITACIONES!";
+        }
+        else{
+            g.setColor(Color.RED);
+            texto = "GAME OVER";
+        }
+        g.drawString(texto, 800/2 - 100, 150);
 
         if (!rankingGuardado) {
             g.setFont(new Font("Arial", Font.PLAIN, 20));
