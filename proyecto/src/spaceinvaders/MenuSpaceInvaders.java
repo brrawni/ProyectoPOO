@@ -34,7 +34,11 @@ public class MenuSpaceInvaders extends Videojuego {
     
         GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
         gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoGeneralActivado());
-        gestorSonidos.reproducirMusicaMenu();
+        if (config.isSonidoGeneralActivado()) { //reproducir música de menú si está activado
+            String pista = "musicaMenu.wav";
+            if ("remix".equals(config.getPistaMusical())) pista = "musicaMenu_alternativa.wav";
+            gestorSonidos.reproducirMusica(pista);
+        }
 
         if (config.isPantallaCompleta()) {
             javax.swing.SwingUtilities.invokeLater(() -> {

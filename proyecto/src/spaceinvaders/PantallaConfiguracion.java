@@ -61,10 +61,11 @@ public class PantallaConfiguracion extends Videojuego {
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
         config = GestorConfiguracionSpaceInvaders.getInstance();
-        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoGeneralActivado());
-        gestorSonidos.reproducirMusicaMenu();
-
         cargarValoresDesdeGestor();
+        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoGeneralActivado());
+        if (config.isSonidoGeneralActivado()) {
+            gestorSonidos.reproducirMusica(archivoPistaSeleccionada());
+        }
         inicializarBotones();
 
         // Mouse click
@@ -165,7 +166,13 @@ public class PantallaConfiguracion extends Videojuego {
             }
         }
         if (btnPantalla.contienePunto(x, y)) pantallaCompleta = !pantallaCompleta;
-        if (btnMusica.contienePunto(x, y)) indiceMusica = (indiceMusica + 1) % 2;
+        if (btnMusica.contienePunto(x, y)) {
+            indiceMusica = (indiceMusica + 1) % 2;
+            // reproducir pista seleccionada al cambiar la opción
+            if (gestorSonidos != null && sonidoActivado) {
+                gestorSonidos.reproducirMusica(archivoPistaSeleccionada());
+            }
+        }
 
         // Columna Derecha (Teclas)
         if (btnTeclaIzq.contienePunto(x, y)) { esperandoTecla = "izquierda"; canvas.requestFocus(); }
@@ -223,7 +230,15 @@ public class PantallaConfiguracion extends Videojuego {
         config.setSkinInvasores(opcionSkins[indiceSkinInv]);
         config.setSkinProyectil(opcionSkins[indiceSkinProy]);
         config.guardar();
+        // reproducir la pista seleccionada inmediatamente después de guardar
+        if (gestorSonidos != null && sonidoActivado) {
+            gestorSonidos.reproducirMusica(archivoPistaSeleccionada());
+        }
     }
+
+    private String archivoPistaSeleccionada() {
+        return "remix".equals(opcionMusica[indiceMusica]) ? "musicaMenu_alternativa.wav" : "musicaMenu.wav"; //devuelve el nombre de archivo
+    }   
 
     @Override
     public void gameUpdate(double delta) { }
