@@ -38,6 +38,8 @@ public class Pong extends Videojuego {
 
     private GestorSonidosPong gestorSonidos;
     private TemasPong tema;
+    private String pistaMusical = "original";
+    private boolean sonidoActivado = true;
 
     private int modoJuego = 2;
     private IA ia;
@@ -48,14 +50,14 @@ public class Pong extends Videojuego {
     public Pong(String nombreTema) {
         super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
         this.gestorRanking = new GestorRanking(RANKING_PONG);
-        this.gestorSonidos = new GestorSonidosPong(true);
+        this.gestorSonidos = new GestorSonidosPong(sonidoActivado);
         this.tema = new TemasPong(nombreTema);
     }
 
     public Pong(String skinCancha, String skinBarras, String skinPelota) {
         super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
         this.gestorRanking = new GestorRanking(RANKING_PONG);
-        this.gestorSonidos = new GestorSonidosPong(true);
+        this.gestorSonidos = new GestorSonidosPong(sonidoActivado);
         this.tema = new TemasPong(skinCancha, skinBarras, skinPelota);
     }
 
@@ -65,6 +67,15 @@ public class Pong extends Videojuego {
 
     public void setPantallaCompleta(boolean pantallaCompleta) {
         this.pantallaCompleta = pantallaCompleta;
+    }
+
+    public void setPistaMusical(String pistaMusical) {
+        this.pistaMusical = pistaMusical;
+    }
+
+    public void setSonidoActivado(boolean sonidoActivado) {
+        this.sonidoActivado = sonidoActivado;
+        this.gestorSonidos.setSonidoActivado(sonidoActivado);
     }
 
     @Override
@@ -88,7 +99,7 @@ public class Pong extends Videojuego {
         canvas.requestFocus();
 
         gestorSonidos.cargarTodosSonidos();
-        gestorSonidos.reproducirMusica("original");
+        gestorSonidos.reproducirMusica(pistaMusical);
 
         int altoPaleta  = 100;
         int anchoPaleta = 15;

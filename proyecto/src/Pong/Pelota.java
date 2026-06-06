@@ -20,8 +20,8 @@ public class Pelota extends Entidad {
 
     // Velocidad inicial más perceptible que el 1.5 original (que causaba que pareciera quieta)
     private static final float VELOCIDAD_INICIAL = 5.5f;
-    private static final float INCREMENTO_VELOCIDAD = 0.2f;
-    private static final int REBOTES_PARA_ACELERAR = 4;
+    private static final float INCREMENTO_VELOCIDAD = 0.35f;
+    private static final int REBOTES_PARA_ACELERAR = 1;
 
     public Pelota(int x, int y, int ancho, int alto, int anchoVentana, int altoVentana) {
         super(x, y, ancho, alto);
