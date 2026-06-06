@@ -56,7 +56,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         canvas.requestFocus();
         canvas.requestFocusInWindow();
         nivelActual = 1;
-        vidasHeroe = 1;
+        vidasHeroe = 5;
         config.cargar();
         iniciarNivel();
     }
@@ -275,7 +275,8 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     @Override
     public void gameShutdown() {
         // Código de cierre
-        gestorPantallas.cambiarPantalla(GestorPantallas.PANTALLA_MENU);
+        if (frame != null)
+            frame.dispose();
     }
     public void reiniciarNivel(){
         iniciarNivel();
@@ -325,6 +326,9 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
             g2d.setColor(i == 0 ? Color.YELLOW : Color.WHITE);
             g2d.drawString(linea, 800/2 - 180, 220 + i * 25);
         }
+        g2d.setColor(Color.YELLOW);
+        g2d.setFont(new Font("Arial", Font.BOLD, 18));
+        g2d.drawString("Presione ESCAPE para volver al menu principal", 800/2 - 200, 520);
     }
     public void keyPressed(KeyEvent e){
         switch(e.getKeyCode()){
@@ -352,6 +356,11 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
             case KeyEvent.VK_BACK_SPACE:
                 if (nombreJugador.length() > 0 && !rankingGuardado)
                     nombreJugador = nombreJugador.substring(0, nombreJugador.length() - 1);
+                break;
+            case KeyEvent.VK_ESCAPE:
+                if (rankingGuardado){
+                    stop();
+                }
             default:
                 break;
         }
