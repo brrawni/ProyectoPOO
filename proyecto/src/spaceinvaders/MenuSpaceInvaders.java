@@ -57,15 +57,15 @@ public class MenuSpaceInvaders extends Videojuego {
         }
 
     
-        // Solo dejás esto:
+        // Asegura que el canvas tenga el foco para recibir eventos de teclado
         canvas.requestFocus();
 
-        // Estrellas
+        //estrellas para el fondo animado
         estrellas = new int[80][3];
         for (int i = 0; i < estrellas.length; i++) {
             estrellas[i][0] = (int)(Math.random() * ANCHO);
-            estrellas[i][1] = (int)(Math.random() * ALTO);
-            estrellas[i][2] = Math.random() < 0.3 ? 2 : 1;
+            estrellas[i][1] = (int)(Math.random() * ALTO); 
+            estrellas[i][2] = Math.random() < 0.3 ? 2 : 1; //estrellas grandes o pequeñas
         }
 
         // Botones
@@ -110,15 +110,15 @@ public class MenuSpaceInvaders extends Videojuego {
         for (int i = 0; i < botones.length; i++) {
             if (botones[i].contienePunto(mx, my)) {
                 switch (i) {
-                    case 0: // Jugar
+                    case 0: //jugar
                         siguientePantalla = 1;
                         stop();
                         break;
-                    case 1: // Configuracion
+                    case 1: //configuracion
                         siguientePantalla = 2;
                         stop();
                         break;
-                    case 2: // Ranking — próximamente
+                    case 2: //ranking
                         SwingUtilities.invokeLater(() -> new VentanaRankingSpaceInvaders(frame).setVisible(true));
                         break;
                     case 3: // Volver al launcher
@@ -155,7 +155,7 @@ public class MenuSpaceInvaders extends Videojuego {
 
         //animacion de estrellas
         for (int[] e : estrellas) {
-            int brillo = 100 + (int)(Math.random() * 155);
+            int brillo = 100 + (int)(Math.random() * 155); //parpadeo de estrellas
             g2d.setColor(new Color(brillo, brillo, brillo));
             g2d.fillRect(e[0], e[1], e[2], e[2]);
         }
