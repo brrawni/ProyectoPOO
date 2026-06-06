@@ -1,13 +1,14 @@
 package spaceinvaders;
 
 import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 
 public class GestorSonidosSpaceInvaders {
     private Clip musicaMenu;
     private boolean sonidoActivado;
-    private static final String RUTA_AUDIO = "proyecto/resources/sonido/spaceinvaders/";
+    private static final String RUTAS_AUDIO = "proyecto/resources/sonido/spaceinvaders/";
 
     public GestorSonidosSpaceInvaders(boolean sonidoActivado) {
         this.sonidoActivado = sonidoActivado;
@@ -16,17 +17,26 @@ public class GestorSonidosSpaceInvaders {
     private Clip cargarAudio(String ruta) {
         try {
             AudioInputStream audioInputStream = null;
-            File archivoAudio = new File(RUTA_AUDIO + ruta);
+            File archivoAudio = null;
 
-            if (archivoAudio.exists()) {
-                audioInputStream = AudioSystem.getAudioInputStream(archivoAudio);
-            } else {
+            for (String base : RUTAS_AUDIO) {
+                archivoAudio = new File(base + ruta);
+                if (archivoAudio.exists()) {
+                    audioInputStream = AudioSystem.getAudioInputStream(archivoAudio);
+                    break;
+                }
+            }
+
+            if (audioInputStream == null) {
                 String rutaClasspath = "/sonido/spaceinvaders/" + ruta;
                 java.io.InputStream recurso = getClass().getResourceAsStream(rutaClasspath);
                 if (recurso != null) {
-                    audioInputStream = AudioSystem.getAudioInputStream(recurso);
+                    audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(recurso));
                 } else {
-                    System.out.println("archivo de audio no encontrado: " + archivoAudio.getAbsolutePath());
+                    System.out.println("archivo de audio no encontrado en rutas físicas:");
+                    for (String base : RUTAS_AUDIO) {
+                        System.out.println("  " + base + ruta);
+                    }
                     System.out.println("Clase tampoco encontró recurso en classpath: " + rutaClasspath);
                     return null;
                 }
