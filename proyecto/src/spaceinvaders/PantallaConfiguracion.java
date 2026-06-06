@@ -61,7 +61,7 @@ public class PantallaConfiguracion extends Videojuego {
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
         config = GestorConfiguracionSpaceInvaders.getInstance();
-        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoActivado());
+        gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoGeneralActivado());
         gestorSonidos.reproducirMusicaMenu();
 
         cargarValoresDesdeGestor();
@@ -98,7 +98,7 @@ public class PantallaConfiguracion extends Videojuego {
     }
 
     private void cargarValoresDesdeGestor() {
-        sonidoActivado   = config.isSonidoActivado();
+        sonidoActivado   = config.isSonidoGeneralActivado();
         pantallaCompleta = config.isPantallaCompleta();
         teclaIzquierda   = config.getTeclaIzquierda();
         teclaDerecha     = config.getTeclaDerecha();
@@ -212,7 +212,7 @@ public class PantallaConfiguracion extends Videojuego {
     }
 
     private void aplicarConfiguracionActual() {
-        config.setSonidoActivado(sonidoActivado);
+        config.setSonidoGeneral(sonidoActivado);
         config.setPantallaCompleta(pantallaCompleta);
         config.setVelocidad(opcionVelocidad[indiceVelocidad]);
         config.setTeclaIzquierda(teclaIzquierda);

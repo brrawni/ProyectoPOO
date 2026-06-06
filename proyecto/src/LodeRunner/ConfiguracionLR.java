@@ -1,104 +1,126 @@
 package LodeRunner;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.*;
+import motor.GestorConfiguracionBase;
 import java.util.Properties;
 
-public class ConfiguracionLR {
-    private Properties config;
-    private final static String ARCHIVO_CONFIG = "config.properties";
+/**
+ * Configuración de Lode Runner.
+ *
+ * Hereda de GestorConfiguracionBase los campos comunes:
+ *   pantallaCompleta, efectosSonido, musicaFondo, pistaMusical.
+ *
+ * Agrega los campos propios de LR:
+ *   skinPersonaje, teclaCavar, teclaEfectos, teclaMusica, teclaIniciar.
+ *
+ * Nota sobre el sonido:
+ *   LR controla efectos y música por separado, por lo que usa directamente
+ *   isEfectosSonidoActivados() / isMusicaFondoActivada() de la base.
+ *   Los alias isEfectosDeSonidoActivados() / isMusicaDeFondoActivada() se
+ *   mantienen por compatibilidad con PanelConfiguracion.
+ */
+public class ConfiguracionLR extends GestorConfiguracionBase {
 
-    public ConfiguracionLR(){
-        config = new Properties();
+    // Campos propios de Lode Runner
+    private String skinPersonaje = "original";
+    private String teclaCavar    = "SPACE";
+    private String teclaEfectos  = "Q";
+    private String teclaMusica   = "W";
+    private String teclaIniciar  = "ENTER";
+
+    public ConfiguracionLR() {
+        super("config_loderunner.properties");
     }
 
-    public void cargar(){
-        try{
-            File file = new File(ARCHIVO_CONFIG);
-            if (file.exists()){
-                config.load(new FileInputStream(file));
-            }
-        } catch (IOException e) {
-            System.out.println("Error en la carga de archivo");
-            throw new RuntimeException(e);
-        }
+    // ── Implementación de los métodos abstractos ─────────────────────
+
+    @Override
+    public void guardar() {
+        Properties props = new Properties();
+        // Propios de LR
+        props.setProperty("skinPersonaje", skinPersonaje);
+        props.setProperty("teclaCavar",    teclaCavar);
+        props.setProperty("teclaEfectos",  teclaEfectos);
+        props.setProperty("teclaMusica",   teclaMusica);
+        props.setProperty("teclaIniciar",  teclaIniciar);
+        // La base agrega pantallaCompleta + efectosSonido + musicaFondo
+        // + pistaMusical y escribe el archivo en disco
+        super.guardarBase(props);
     }
-    public void guardar(){
-        try {
-            FileOutputStream out = new FileOutputStream(ARCHIVO_CONFIG);
-            config.store(out, "Configuracion de Lode Runner");
-            out.close();
-        } catch (IOException e) {
-            System.out.println("Error en el guardado de archivos");
-            throw new RuntimeException(e);
-        }
+
+    @Override
+    public void cargar() {
+        // La base lee el archivo y carga sus 4 campos comunes;
+        // nos devuelve el mismo Properties para que leamos los nuestros.
+        Properties props = super.cargarBase();
+        skinPersonaje = props.getProperty("skinPersonaje", "original");
+        teclaCavar    = props.getProperty("teclaCavar",    "SPACE");
+        teclaEfectos  = props.getProperty("teclaEfectos",  "Q");
+        teclaMusica   = props.getProperty("teclaMusica",   "W");
+        teclaIniciar  = props.getProperty("teclaIniciar",  "ENTER");
     }
-    public void setearPorDefecto(){
-        config.setProperty("pantallaCompleta", "false");
-        config.setProperty("efectosDeSonido", "true");
-        config.setProperty("musicaActivada", "true");
-        config.setProperty("pistaMusical", "original");
-        config.setProperty("skinPersonaje", "original");
-        config.setProperty("teclaCavar", "SPACE");
-        config.setProperty("teclaEfectos", "q");
-        config.setProperty("teclaMusica", "w");
-        config.setProperty("teclaIniciar", "ENTER");
+
+    @Override
+    public void restablecer() {
+        // Campos heredados
+        pantallaCompleta = false;
+        efectosSonido    = true;
+        musicaFondo      = true;
+        pistaMusical     = "original";
+        // Campos propios
+        skinPersonaje = "original";
+        teclaCavar    = "SPACE";
+        teclaEfectos  = "Q";
+        teclaMusica   = "W";
+        teclaIniciar  = "ENTER";
         guardar();
     }
 
+    /**
+     * @deprecated Usar restablecer(). Mantenido por compatibilidad con PanelConfiguracion.
+     */
+    @Deprecated
+    public void setearPorDefecto() {
+        restablecer();
+    }
+
+    // ── Aliases de compatibilidad con PanelConfiguracion ─────────────
+
+    /**
+     * Alias de isEfectosSonidoActivados() para compatibilidad con el código existente.
+     */
     public boolean isEfectosDeSonidoActivados() {
-        return Boolean.parseBoolean(config.getProperty("efectosDeSonido"));
+        return isEfectosSonidoActivados();
     }
-    public void setEfectosDeSonidoActivados(boolean activados){
-        config.setProperty("efectosDeSonido", String.valueOf(activados));
+
+    public void setEfectosDeSonidoActivados(boolean v) {
+        setEfectosSonidoActivados(v);
     }
+
+    /**
+     * Alias de isMusicaFondoActivada() para compatibilidad con el código existente.
+     */
     public boolean isMusicaDeFondoActivada() {
-        return Boolean.parseBoolean(config.getProperty("musicaActivada"));
+        return isMusicaFondoActivada();
     }
-    public void setMusicaDeFondoActivada(boolean musicaDeFondoActivada){
-        config.setProperty("musicaActivada", String.valueOf(musicaDeFondoActivada));
+
+    public void setMusicaDeFondoActivada(boolean v) {
+        setMusicaFondoActivada(v);
     }
-    public boolean isPantallaCompleta() {
-        return Boolean.parseBoolean(config.getProperty("pantallaCompleta"));
-    }
-    public void setPantallaCompleta(boolean pantallaCompleta){
-        config.setProperty("pantallaCompleta", String.valueOf(pantallaCompleta));
-    }
-    public String getPistaMusical(){
-        return config.getProperty("pistaMusical");
-    }
-    public void setPistaMusical(String pistaMusical){
-        config.setProperty("pistaMusical", pistaMusical);
-    }
-    public String getSkin(){
-        return config.getProperty("skinPersonaje");
-    }
-    public void setSkin(String skin){
-        config.setProperty("skinPersonaje", skin);
-    }
-    public String getTeclaCavar(){
-        return config.getProperty("teclaCavar");
-    }
-    public void setTeclaCavar(String teclaCavar){
-        config.setProperty("teclaCavar", teclaCavar);
-    }
-    public String getTeclaEfectos(){
-        return config.getProperty("teclaEfectos");
-    }
-    public void setTeclaEfectos(String teclaEfectos){
-        config.setProperty("teclaEfectos", teclaEfectos);
-    }
-    public String getTeclaMusica(){
-        return config.getProperty("teclaMusica");
-    }
-    public void setTeclaMusica(String teclaMusica){
-        config.setProperty("teclaMusica", teclaMusica);
-    }
-    public String getTeclaIniciar(){
-        return config.getProperty("teclaIniciar");
-    }
-    public void setTeclaIniciar(String teclaIniciar){
-        config.setProperty("teclaIniciar", teclaIniciar);
-    }
+
+    // ── Getters / Setters propios de LR ──────────────────────────────
+
+    public String getSkin()                      { return skinPersonaje; }
+    public void   setSkin(String v)              { this.skinPersonaje = v; }
+
+    public String getTeclaCavar()                { return teclaCavar; }
+    public void   setTeclaCavar(String v)        { this.teclaCavar = v; }
+
+    public String getTeclaEfectos()              { return teclaEfectos; }
+    public void   setTeclaEfectos(String v)      { this.teclaEfectos = v; }
+
+    public String getTeclaMusica()               { return teclaMusica; }
+    public void   setTeclaMusica(String v)       { this.teclaMusica = v; }
+
+    public String getTeclaIniciar()              { return teclaIniciar; }
+    public void   setTeclaIniciar(String v)      { this.teclaIniciar = v; }
 }
