@@ -16,6 +16,7 @@ public class MenuPong extends JFrame {
 
     private static final int ANCHO = 800;
     private static final int ALTO  = 600;
+    private static final String RANKING_PONG = "ranking_pong.txt";
 
     private JPanel canvas;
     private Timer timer;
@@ -30,7 +31,7 @@ public class MenuPong extends JFrame {
         super("Pong - Menu Principal");
         this.launcher      = launcher;
         this.config        = new ConfiguracionPong();
-        this.gestorRanking = new GestorRanking();
+        this.gestorRanking = new GestorRanking(RANKING_PONG);
 
         config.cargar();
         configurarVentana();
@@ -119,7 +120,7 @@ public class MenuPong extends JFrame {
         setVisible(false);
         timer.stop();
 
-        Pong pong = new Pong(config.getSkinCancha());
+        Pong pong = new Pong(config.getSkinCancha(), config.getSkinBarras(), config.getSkinPelota());
         pong.setPuntuacionMaxima(config.getPuntuacionMaxima());
         pong.setModoJuego(modoJuego);
         // Pong maneja internamente el redimensionado del canvas en gameStartup()

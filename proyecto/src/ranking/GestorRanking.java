@@ -11,8 +11,14 @@ public class GestorRanking {
     private List<EntradaRanking> entradas = new ArrayList<>();
     private static final String RUTA     = "ranking_spaceinvaders.txt";
     private static final int    MAX      = 10;
+    private String ruta;
 
     public GestorRanking() {
+        this(RUTA);
+    }
+
+    public GestorRanking(String ruta) {
+        this.ruta = ruta;
         cargar();
     }
 
@@ -35,7 +41,7 @@ public class GestorRanking {
     // Carga el ranking desde el archivo, si existe
     public void cargar() {
         entradas.clear();
-        File archivo = new File(RUTA);
+        File archivo = new File(ruta);
         if (!archivo.exists()) return;
 
         try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
@@ -58,7 +64,7 @@ public class GestorRanking {
 
 
     public void guardar() {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(RUTA))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(ruta))) {
             for (EntradaRanking e : entradas) {
                 pw.println(e.toString());
             }
