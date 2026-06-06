@@ -137,7 +137,7 @@ public class SpaceInvaders extends Videojuego {
         int teclaDisp = config.getTeclaDisparo();
 
         gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoGeneralActivado());
-        // reproducir música de partida si está activado
+        //reproducir música de partida si está activado
         if (config.isSonidoGeneralActivado()) {
             gestorSonidos.reproducirMusicaPartida("musicaPartida.wav");
         }
