@@ -8,7 +8,7 @@ import java.io.IOException;
 public class GestorSonidosSpaceInvaders {
     private Clip musicaMenu;
     private boolean sonidoActivado;
-    private static final String RUTA_AUDIO = "proyecto/resources/sonido/spaceinvaders/";
+    private static final String RUTA_AUDIO = "resources/sonido/spaceinvaders/";
 
     public GestorSonidosSpaceInvaders(boolean sonidoActivado) {
         this.sonidoActivado = sonidoActivado;
