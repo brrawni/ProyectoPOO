@@ -18,7 +18,7 @@ public class Alien extends Enemigo {
     private int  direccion = 1;
     private int frameAnimacion;
     private int ticksDestruido = 0;
-    private static final int TICKS_ANIMACION_DESTRUCCION = 2;
+    private static final int TICKS_ANIMACION_DESTRUCCION = 1; //duración de la animación de destrucción en ticks
 
     public Alien(int tipo, int x, int y) {
         super(x, y, 32, 32, 1.0f); // Tamaño y velocidad del alien
