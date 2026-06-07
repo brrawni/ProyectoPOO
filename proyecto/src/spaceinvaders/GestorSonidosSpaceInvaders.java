@@ -69,7 +69,6 @@ public class GestorSonidosSpaceInvaders {
         musicaMenu = cargarAudio("musicaMenu.wav");
         if (musicaMenu != null) {
             musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
-            System.out.println("reproduciendo musicaMenu.wav");
         }
     }
 

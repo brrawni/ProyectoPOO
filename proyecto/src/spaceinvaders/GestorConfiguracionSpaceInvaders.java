@@ -5,15 +5,14 @@ import java.awt.event.KeyEvent;
 import java.util.Properties;
 
 /**
- * Configuración de Space Invaders.
- *
- * Hereda de GestorConfiguracionBase los campos comunes:
- *   pantallaCompleta, efectosSonido, musicaFondo, pistaMusical.
- *
- * Space Invaders expone un único toggle "Sonido activado/desactivado" que
- * controla efectos Y música al mismo tiempo. Para eso la UI usa:
- *   config.isSonidoGeneralActivado()   → true si ambos canales están ON
- *   config.setSonidoGeneral(boolean)   → activa/desactiva ambos a la vez
+Configuración de Space Invaders.
+ 
+Hereda de GestorConfiguracionBase los campos comunes: pantallaCompleta, efectosSonido, musicaFondo, pistaMusical.
+
+Space Invaders expone un único toggle "Sonido activado/desactivado" que
+controla efectos Y música al mismo tiempo. Para eso la UI usa:
+config.isSonidoGeneralActivado()   true si ambos canales están ON
+config.setSonidoGeneral(boolean)   activa/desactiva ambos a la vez
  * Ambos métodos están definidos en GestorConfiguracionBase.
  *
  * Nota: el campo pistaMusical ya no se declara aquí; viene heredado de la base.
@@ -31,7 +30,7 @@ public class GestorConfiguracionSpaceInvaders extends GestorConfiguracionBase {
     private String skinInvasores   = "original";
     private String skinProyectiles = "original";
 
-    // Constructor privado (Singleton)
+    //constructor privado para evitar instanciación directa; se accede a través de getInstance()
     private GestorConfiguracionSpaceInvaders() {
         super("config_spaceinvaders.properties");
         cargar();
@@ -42,12 +41,12 @@ public class GestorConfiguracionSpaceInvaders extends GestorConfiguracionBase {
         return instancia;
     }
 
-    // ── Implementación de los métodos abstractos ─────────────────────
+    // implementacion de metodos abstractos de la base 
 
     @Override
     public void guardar() {
         Properties props = new Properties();
-        // Propios de Space Invaders
+        //propios de Space Invaders
         props.setProperty("velocidad",       velocidad);
         props.setProperty("teclaIzquierda",  String.valueOf(teclaIzquierda));
         props.setProperty("teclaDerecha",    String.valueOf(teclaDerecha));
@@ -55,8 +54,8 @@ public class GestorConfiguracionSpaceInvaders extends GestorConfiguracionBase {
         props.setProperty("skinNave",        skinNave);
         props.setProperty("skinInvasores",   skinInvasores);
         props.setProperty("skinProyectiles", skinProyectiles);
-        // La base agrega pantallaCompleta + efectosSonido + musicaFondo
-        // + pistaMusical y escribe el archivo en disco
+        //la base agrega pantallaCompleta + efectosSonido + musicaFondo
+        //pistaMusical y escribe el archivo en disco
         super.guardarBase(props);
     }
 
@@ -92,7 +91,7 @@ public class GestorConfiguracionSpaceInvaders extends GestorConfiguracionBase {
         guardar();
     }
 
-    // ── Getters / Setters propios de Space Invaders ──────────────────
+    //getters y setters propios de Space Invaders
 
     public String getVelocidad()                    { return velocidad; }
     public void   setVelocidad(String v)            { this.velocidad = v; }
@@ -115,5 +114,5 @@ public class GestorConfiguracionSpaceInvaders extends GestorConfiguracionBase {
     public String getSkinProyectil()                { return skinProyectiles; }
     public void   setSkinProyectil(String v)        { this.skinProyectiles = v; }
 
-    // pistaMusical → heredado; getPistaMusical() / setPistaMusical() ya están en la base.
+    //pistaMusical es heredado, getPistaMusical() y setPistaMusical() ya están en la base.
 }
