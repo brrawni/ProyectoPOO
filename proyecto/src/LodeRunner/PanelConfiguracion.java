@@ -18,6 +18,7 @@ public class PanelConfiguracion extends JPanel{
     private Boton btnSkin;
     private Boton btnRestaurar;
     private Boton btnVolver;
+    private Boton btnPista;
 
     public PanelConfiguracion(GestorPantallas gestor) {
         this.gestor = gestor;
@@ -42,7 +43,8 @@ public class PanelConfiguracion extends JPanel{
         btnSkin     = new Boton(430, 260, 220, 50, obtenerTextoSkin());
 
         // Botones de abajo (Centrados en X = 290)
-        btnRestaurar = new Boton(290, 360, 220, 50, "RESTAURAR DEFECTO");
+        btnRestaurar = new Boton(150, 340, 220, 50, "RESTAURAR DEFECTO");
+        btnPista = new Boton(430, 340, 220, 50, obtenerPistaMusical());
         btnVolver    = new Boton(290, 460, 220, 50, "VOLVER Y GUARDAR");
 
         configurarEventosMouse();
@@ -61,6 +63,7 @@ public class PanelConfiguracion extends JPanel{
     private String obtenerTextoSkin() {
         return "Skin: " + config.getSkin().toUpperCase();
     }
+    private String obtenerPistaMusical(){ return "Pista: " + config.getPistaMusical().toUpperCase(); }
 
     // --- ACTUALIZAR TODOS LOS BOTONES A LA VEZ ---
     private void refrescarTextosBotones() {
@@ -68,6 +71,7 @@ public class PanelConfiguracion extends JPanel{
         btnMusica.setTexto(obtenerTextoMusica());
         btnPantalla.setTexto(obtenerTextoPantalla());
         btnSkin.setTexto(obtenerTextoSkin());
+        btnPista.setTexto(obtenerPistaMusical());
     }
 
     private void configurarEventosMouse() {
@@ -83,6 +87,7 @@ public class PanelConfiguracion extends JPanel{
                 btnSkin.setHover(btnSkin.contienePunto(x, y));
                 btnRestaurar.setHover(btnRestaurar.contienePunto(x, y));
                 btnVolver.setHover(btnVolver.contienePunto(x, y));
+                btnPista.setHover(btnPista.contienePunto(x, y));
                 repaint();
             }
         });
@@ -106,7 +111,7 @@ public class PanelConfiguracion extends JPanel{
                     btnPantalla.setTexto(obtenerTextoPantalla());
 
                 } else if (btnSkin.contienePunto(x, y)) {
-                    // Alterna entre "original" y "alternativo" (puedes agregar más)
+                    // Alterna entre "original" y "alternativo"
                     String nuevaSkin = config.getSkin().equals("original") ? "alternativo" : "original";
                     config.setSkin(nuevaSkin);
                     btnSkin.setTexto(obtenerTextoSkin());
@@ -121,6 +126,10 @@ public class PanelConfiguracion extends JPanel{
                     config.guardar();
                     // 2. Volvemos al menú principal
                     gestor.cambiarPantalla(GestorPantallas.PANTALLA_MENU);
+                } else if (btnPista.contienePunto(x, y)) {
+                    String nuevaPista = config.getPistaMusical().equals("original") ? "alternativa" : "original";
+                    config.setPistaMusical(nuevaPista);
+                    btnPista.setTexto(obtenerPistaMusical());
                 }
 
                 repaint(); // Repintamos para reflejar los cambios de texto inmediatamente
@@ -144,6 +153,7 @@ public class PanelConfiguracion extends JPanel{
         btnMusica.dibujar(g2);
         btnPantalla.dibujar(g2);
         btnSkin.dibujar(g2);
+        btnPista.dibujar(g2);
         btnRestaurar.dibujar(g2);
         btnVolver.dibujar(g2);
     }

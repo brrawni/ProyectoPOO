@@ -13,7 +13,8 @@ import java.util.List;
 //Cada sprite mide 16x16
 
 public class LodeRunnerMain extends Videojuego implements KeyListener{
-
+    //incluimos el gestor de sonidos
+    private GestorSonidosLodeRunner sonidos;
     //Imagen para cancelar parpadeos
     private BufferedImage buffer;
     //configuracion del juego
@@ -29,6 +30,8 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     private boolean mirandoDer;
     private int lingotesRestantes;
     private boolean juegoGanado = false;
+    private boolean efectoEscaleraReproducido;
+    private boolean efectoCaidaReproducido;
     //temporizador
     private int temporizador;
     private int frames = 0;
@@ -57,9 +60,13 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         nivelActual = 1;
         vidasHeroe = 5;
         config.cargar();
+        sonidos = new GestorSonidosLodeRunner(config.isEfectosDeSonidoActivados(), config.getPistaMusical());
+        sonidos.reproducirMusicaPartida();
         iniciarNivel();
     }
     public void iniciarNivel(){
+        efectoEscaleraReproducido = false;
+        efectoCaidaReproducido = false;
         escenario = new Escenario(32, 32, nivelActual); // Ejemplo de creación del escenario
         heroe = new Heroe(32, 32, 32, 32, vidasHeroe, escenario); // Ejemplo de creación del héroe
         guardias = new ArrayList<>();
@@ -107,8 +114,10 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     }
     @Override
     public void gameUpdate(double delta) {
-                if (!enEjecucion)
+                if (!enEjecucion){
+                    sonidos.detenerMusicaPartida();
                     return;
+                }
                 if (config.isPantallaCompleta()){
                     super.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                     Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize(); //esto nos ayuda a obtener la resolucion de la pantalla en la que se eejcuta el juego
@@ -142,6 +151,15 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 }
                 // Le pasamos el estado al héroe de entrada
                 heroe.setArribaDeGuardia(heroeArriba);
+                // Si el heroe se esta cayendo, reproducir sonido
+                if (heroe.isEnCaidaLibre() && !efectoCaidaReproducido){
+                    sonidos.reproducirEfectoCaida();
+                    efectoCaidaReproducido = true;
+                }
+                else if (!heroe.isEnCaidaLibre()){
+                    sonidos.detenerEfectoCaida();
+                    efectoCaidaReproducido = false;
+                }
                 //logica de persecucion
                 for (Guardia g : guardias){
                     g.perseguir(heroe);
@@ -191,13 +209,19 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
 
                     o.mover(); // Si el oro está en manos de un guardia, lo sigue. Si no, se queda quieto.
                     heroe.recolectarOro(o);
-                    if (o.isRecolectadoPorHeroe())
+                    if (o.isRecolectadoPorHeroe()){
+                        sonidos.reproducirEfectoAgarrarOro();
                         puntaje += Oro.obtenerValor();
-                }
+                    }
 
+                }
                 lingotes.removeIf(o -> o.isRecolectadoPorHeroe());
                 lingotesRestantes = lingotes.size();
                 if (lingotesRestantes == 0){
+                    if (!efectoEscaleraReproducido){
+                        sonidos.reproducirEfectoEscaleraActiva();
+                        efectoEscaleraReproducido = true;
+                    }
                     escenario.setEscaleraSalidaActiva(true);
                     escenario.activarEscalera(nivelActual);
                     if (heroe.getY() <= 0){ //el heroe cruzo la escalera
@@ -205,6 +229,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                         puntaje += puntajePorMin;
                         escenario.setEscaleraSalidaActiva(false);
                         if (nivelActual == 3){
+                            sonidos.reproducirEfectoGanarPartida();
                             enEjecucion = false;
                             juegoGanado = true;
                             return;
@@ -216,6 +241,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 }
                 //si el heroe pierde todas sus vidas, game over
                 if (vidasHeroe == 0){
+                    sonidos.reproducirEfectoGameOver();
                     enEjecucion = false;
                 }
                 try {
@@ -352,6 +378,8 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 enterPresionado = true;
                 break;
             case KeyEvent.VK_SPACE:
+                if (enEjecucion)
+                    sonidos.reproducirEfectoCavar();
                 if (mirandoIzq) //heroe esta mirando a la izquierda
                     heroe.cavarIzquierda();
                 else if (mirandoDer)// heroe esta mirando a la derecha
@@ -375,6 +403,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 break;
             case KeyEvent.VK_ESCAPE:
                 if (rankingGuardado){
+                    sonidos.reproducirMusicaMenu();
                     stop();
                 }
             default:
