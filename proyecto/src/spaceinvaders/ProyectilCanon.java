@@ -37,6 +37,7 @@ public class ProyectilCanon extends Proyectil {
                 if (alien != null && alien.estaVivo()
                         && obtenerLimites().intersects(alien.obtenerLimites())) {
                     juego.sumarPuntaje(alien.obtenerPuntaje());
+                    juego.getGestorSonidos().reproducirEfecto("explosion.wav"); //sonido de explosion
                     alien.morir();
                     desactivar();
                     return;

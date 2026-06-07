@@ -55,12 +55,12 @@ public class Nivel {
         }
     }
 
-    public void cargar()                              { configurar(numero); }
-    public int   obtenerNumero()                      { return numero; }
-    public float obtenerVelocidadAlien()              { return velocidadAlien; }
-    public int   obtenerFilaInicio()                  { return filaInicio; }
-    public int   obtenerFilas()                       { return filas; }
-    public int   obtenerColumnas()                    { return columnas; }
-    public float obtenerProbabilidadDisparo()         { return probabilidadDisparo; }
-    public float obtenerVelocidadProyectil()          { return velocidadProyectil; }
+    public void cargar() { configurar(numero); }
+    public int   obtenerNumero() { return numero; }
+    public float obtenerVelocidadAlien() { return velocidadAlien; }
+    public int   obtenerFilaInicio() { return filaInicio; }
+    public int   obtenerFilas() { return filas; }
+    public int   obtenerColumnas() { return columnas; }
+    public float obtenerProbabilidadDisparo() { return probabilidadDisparo; }
+    public float obtenerVelocidadProyectil() { return velocidadProyectil; }
 }
