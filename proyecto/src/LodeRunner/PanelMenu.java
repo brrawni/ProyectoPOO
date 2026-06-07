@@ -11,6 +11,7 @@ import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseListener;
 import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseMotionListener;
 
 public class PanelMenu extends JPanel {
+    private GestorSonidosLodeRunner gestorSonidosLodeRunner;
     private GestorPantallas gestor; // Referencia al gestor para pedirle cambios de pantalla
     private Boton btnJugar;
     private Boton btnConfig;
@@ -18,6 +19,10 @@ public class PanelMenu extends JPanel {
     private Boton btnVolver;
 
     public PanelMenu(GestorPantallas gestor) {
+        ConfiguracionLR config = new ConfiguracionLR();
+        config.cargar();
+        gestorSonidosLodeRunner = new GestorSonidosLodeRunner(config.isSonidoGeneralActivado(), config.getPistaMusical());
+        gestorSonidosLodeRunner.reproducirMusicaMenu();
         this.gestor = gestor;
         this.setBackground(Color.BLACK);
 
@@ -43,6 +48,7 @@ public class PanelMenu extends JPanel {
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if (btnJugar.contienePunto(e.getX(), e.getY())) {
+                    gestorSonidosLodeRunner.detenerMusicaMenu();
                     LodeRunnerMain juego = new LodeRunnerMain();
                     juego.run();
                     // gestor.cambiarPantalla(GestorPantallas.PANTALLA_JUEGO);
@@ -51,6 +57,7 @@ public class PanelMenu extends JPanel {
                 } else if (btnRanking.contienePunto(e.getX(), e.getY())) {
                     gestor.cambiarPantalla(GestorPantallas.PANTALLA_RANKING); // Pide cambiar de pantalla
                 } else if (btnVolver.contienePunto(e.getX(), e.getY())){
+                    gestorSonidosLodeRunner.detenerMusicaMenu();
                     gestor.getLodeRunnerMenu().dispose();
                 }
             }

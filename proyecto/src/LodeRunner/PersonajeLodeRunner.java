@@ -12,6 +12,7 @@ public abstract class PersonajeLodeRunner extends Entidad{
     protected boolean enEscalera = false;
     protected boolean colgadoDeBarra = false;
     protected int direccion; //0: izquierda, 1: derecha, 2: arriba, 3: abajo
+    protected boolean enCaidaLibre = false;
     protected Escenario escenario;
 
     public PersonajeLodeRunner(int x, int y, int ancho, int alto, Escenario escenario){
@@ -21,6 +22,7 @@ public abstract class PersonajeLodeRunner extends Entidad{
     }
     public abstract void mover();
     public void aplicarGravedad(){
+        enCaidaLibre = true;
         this.x = ((this.x + 16)/32)*32;
         this.y += 4; // Cae por gravedad
     }
@@ -524,13 +526,13 @@ class Heroe extends PersonajeLodeRunner{
     }
     @Override
     public void mover(){
-
         boolean tienePiso = detectarColision();
         if (!tienePiso && !enEscalera && !colgadoDeBarra){
             estadoActual = "cayendo";
             aplicarGravedad();
             return;
         }
+        enCaidaLibre = false;
         if (tienePiso && !enEscalera && !colgadoDeBarra) {
             int filaSuelo = (this.y + this.alto) / 32;
             this.y = (filaSuelo * 32) - this.alto; // Aterrizaje perfecto
@@ -658,4 +660,5 @@ class Heroe extends PersonajeLodeRunner{
     }
     public void setArribaDeGuardia(boolean arribaDeGuardia){ this.arribaDeGuardia = arribaDeGuardia; }
     public boolean isArribaDeGuardia(){ return arribaDeGuardia; }
+    public boolean isEnCaidaLibre(){ return enCaidaLibre; }
 }
