@@ -57,7 +57,7 @@ public class MenuSpaceInvaders extends Videojuego {
         }
 
     
-        // Asegura que el canvas tenga el foco para recibir eventos de teclado
+        //asegura que el canvas tenga el foco para recibir eventos de teclado
         canvas.requestFocus();
 
         //estrellas para el fondo animado
