@@ -29,6 +29,22 @@ public class PanelMenu extends JPanel {
                 gestorSonidosLodeRunner.detenerMusicaMenu();
             }
         });
+
+        gestor.getLodeRunnerMenu().addWindowFocusListener(new java.awt.event.WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(java.awt.event.WindowEvent e) {
+                // El juego se cerró y el jugador volvió a hacer click o mirar el menú
+                if (gestorSonidosLodeRunner != null) {
+                    gestorSonidosLodeRunner.reproducirMusicaMenu();
+                }
+            }
+
+            @Override
+            public void windowLostFocus(java.awt.event.WindowEvent e) {
+                // Cuando el menú pierde el foco (ej: se abre el juego), no hacemos nada
+            }
+        });
+
         btnJugar   = new Boton(300, 200, 200, 50, "JUGAR");
         btnConfig  = new Boton(300, 280, 200, 50, "CONFIGURACIÓN");
         btnRanking = new Boton(300, 360, 200, 50, "RANKING");
