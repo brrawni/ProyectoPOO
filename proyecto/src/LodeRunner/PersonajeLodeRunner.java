@@ -118,7 +118,7 @@ class Guardia extends PersonajeLodeRunner{
         double base = (heroe.getX() + heroe.getAncho()/2) - (this.x + this.ancho/2);
         double altura = (heroe.getY() + heroe.getAlto()/2) - (this.y + this.alto/2);
         double hipotenusa = Math.sqrt(Math.pow(base, 2.0) + Math.pow(altura, 2.0));
-        if (hipotenusa < 32*7){ //El rango de vision de los guardias esta definido en 14 bloques, y cada bloque mide 32 pixeles de largo y ancho
+        if (hipotenusa < 32*10){ //El rango de vision de los guardias esta definido en 14 bloques, y cada bloque mide 32 pixeles de largo y ancho
             // Verificamos si el guardia está perfectamente alineado con la grilla vertical
             if (this.y % 32 != 0 && !colgadoDeBarra) {
                 // Lo obligamos a que siga subiendo (o bajando) hasta que sus pies toquen la superficie.
