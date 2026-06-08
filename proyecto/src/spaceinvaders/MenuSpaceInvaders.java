@@ -36,7 +36,7 @@ public class MenuSpaceInvaders extends Videojuego {
         gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoGeneralActivado());
         if (config.isSonidoGeneralActivado()) { //reproducir música de menú si está activado
             String pista = "musicaMenu.wav";
-            if ("remix".equals(config.getPistaMusical())) pista = "musicaMenu_alternativa.wav";
+            if ("alternativa".equals(config.getPistaMusical())) pista = "musicaMenu_alternativa.wav";
             gestorSonidos.reproducirMusica(pista);
         }
 
