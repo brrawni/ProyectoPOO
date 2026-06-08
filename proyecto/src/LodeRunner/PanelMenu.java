@@ -7,8 +7,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseListener;
-import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseMotionListener;
 
 public class PanelMenu extends JPanel {
     private GestorSonidosLodeRunner gestorSonidosLodeRunner;
@@ -25,7 +23,12 @@ public class PanelMenu extends JPanel {
         gestorSonidosLodeRunner.reproducirMusicaMenu();
         this.gestor = gestor;
         this.setBackground(Color.BLACK);
-
+        gestor.getLodeRunnerMenu().addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                gestorSonidosLodeRunner.detenerMusicaMenu();
+            }
+        });
         btnJugar   = new Boton(300, 200, 200, 50, "JUGAR");
         btnConfig  = new Boton(300, 280, 200, 50, "CONFIGURACIÓN");
         btnRanking = new Boton(300, 360, 200, 50, "RANKING");
@@ -51,7 +54,6 @@ public class PanelMenu extends JPanel {
                     gestorSonidosLodeRunner.detenerMusicaMenu();
                     LodeRunnerMain juego = new LodeRunnerMain();
                     juego.run();
-                    // gestor.cambiarPantalla(GestorPantallas.PANTALLA_JUEGO);
                 } else if (btnConfig.contienePunto(e.getX(), e.getY())) {
                     gestor.cambiarPantalla(GestorPantallas.PANTALLA_CONFIG); // Pide cambiar de pantalla
                 } else if (btnRanking.contienePunto(e.getX(), e.getY())) {
