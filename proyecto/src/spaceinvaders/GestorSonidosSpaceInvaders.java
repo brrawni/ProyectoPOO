@@ -8,6 +8,7 @@ import java.io.IOException;
 public class GestorSonidosSpaceInvaders {
     private Clip musicaMenu;
     private Clip musicaPartida;
+    private String pistaActualMenu;
     private boolean sonidoActivado;
     private static final String RUTA_AUDIO = "proyecto/resources/sonido/spaceinvaders/";
 
@@ -69,19 +70,32 @@ public class GestorSonidosSpaceInvaders {
         musicaMenu = cargarAudio("musicaMenu.wav");
         if (musicaMenu != null) {
             musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
+            pistaActualMenu = "musicaMenu.wav";
         }
     }
 
     public void reproducirMusica(String pista) {
         if (!sonidoActivado) return;
-        if (musicaMenu != null && musicaMenu.isRunning()) {
+        // Si ya se está reproduciendo la misma pista, no hacer nada
+        if (musicaMenu != null && pista.equals(pistaActualMenu)) {
+            if (musicaMenu.isRunning()) return;
+            // Si existe pero está parada, volver a reproducir sin recargar
+            musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
+            return;
+        }
+
+        // Si hay otra pista cargada, liberarla
+        if (musicaMenu != null) {
             musicaMenu.stop();
             musicaMenu.close();
             musicaMenu = null;
+            pistaActualMenu = null;
         }
+
         musicaMenu = cargarAudio(pista);
         if (musicaMenu != null) {
             musicaMenu.loop(Clip.LOOP_CONTINUOUSLY); //reproduce la música en bucle
+            pistaActualMenu = pista;
             System.out.println("reproduciendo " + pista);
         } else {
             System.out.println("No se pudo cargar pista: " + pista);
@@ -122,6 +136,7 @@ public class GestorSonidosSpaceInvaders {
         if (musicaMenu != null) {
             musicaMenu.close();
             musicaMenu = null;
+            pistaActualMenu = null;
         }
         if (musicaPartida != null) {
             musicaPartida.stop();
