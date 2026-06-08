@@ -45,7 +45,7 @@ java -jar RetroArcade.jar
 
 ---
 
-## 🗂️ Estructura del proyecto
+## Estructura del proyecto
 
 ```
 proyecto/
@@ -79,13 +79,13 @@ proyecto/
 
 ---
 
-## 🎮 Cómo jugar
+## Cómo jugar
 
 Al iniciar la aplicación se abre el Launcher, desde donde podés seleccionar cualquiera de los tres juegos.
 
 ---
 
-### 👾 Space Invaders
+### Space Invaders
 
 Eliminá todas las oleadas de aliens antes de que lleguen al suelo.
 
@@ -115,7 +115,7 @@ Puntuación:
 
 ---
 
-### 🏃 Lode Runner
+### Lode Runner
 
 Recolectá todo el oro del nivel mientras evitás a los guardias.
 
@@ -143,7 +143,7 @@ Recolectá todo el oro del nivel mientras evitás a los guardias.
 
 ---
 
-### 🏓 Pong
+### Pong
 
 Tenis de mesa clásico para dos jugadores (humano vs humano o humano vs CPU).
 
@@ -162,7 +162,7 @@ Tenis de mesa clásico para dos jugadores (humano vs humano o humano vs CPU).
 
 ---
 
-## ⚙️ Configuración
+## Configuración
 
 Cada juego tiene su propia pantalla de configuración accesible desde su menú. Los valores se guardan automáticamente en archivos `.properties`:
 
@@ -185,7 +185,7 @@ Cada juego tiene su propia pantalla de configuración accesible desde su menú. 
 
 ---
 
-## 🏆 Ranking
+## Ranking
 
 Cada juego guarda los 10 mejores puntajes en archivos de texto:
 
@@ -200,7 +200,7 @@ El ranking se puede consultar desde el menú de cada juego, antes de comenzar la
 
 ---
 
-## 🏗️ Arquitectura del sistema
+## Arquitectura del sistema
 
 El proyecto aplica una arquitectura en capas basada en herencia:
 
@@ -226,7 +226,7 @@ GestorConfiguracionBase   ← configuración base compartida
 
 ---
 
-## 👥 Integrantes
+## Integrantes
 
 | Integrante | Juego |
 |-----------|-------|
@@ -236,7 +236,7 @@ GestorConfiguracionBase   ← configuración base compartida
 
 ---
 
-## 📚 Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - **Java** — lenguaje de programación
 - **Java Swing** — interfaz gráfica
