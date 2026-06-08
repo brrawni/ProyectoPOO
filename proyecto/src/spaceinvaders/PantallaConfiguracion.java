@@ -15,9 +15,6 @@ public class PantallaConfiguracion extends JFrame {
     private Launcher launcher;
     private ConfigPanel panelConfiguracion;
 
-    private Launcher launcher;
-    private ConfigPanel panelConfiguracion;
-
     private BufferedImage buffer;
     private GestorConfiguracionSpaceInvaders config;
     private GestorSonidosSpaceInvaders gestorSonidos;
