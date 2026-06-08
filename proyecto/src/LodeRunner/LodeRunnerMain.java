@@ -57,6 +57,13 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         canvas.setFocusable(true);
         canvas.requestFocus();
         canvas.requestFocusInWindow();
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                // Cuando detecta que aprietan la cruz, ejecuta apagado limpio
+                stop();
+            }
+        });
         nivelActual = 1;
         vidasHeroe = 5;
         config.cargar();
@@ -308,8 +315,19 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     @Override
     public void gameShutdown() {
         // Código de cierre
-        if (frame != null)
+        // 1. Frenamos el bucle del juego
+        enEjecucion = false;
+
+        // 2. ¡CORTAMOS LA MÚSICA DE GOLPE!
+        if (sonidos != null) {
+            sonidos.detenerMusicaPartida();
+            sonidos.detenerEfectoCaida(); // Por si cerró la ventana justo mientras caía
+        }
+
+        // 3. Destruimos la ventana gráfica
+        if (frame != null) {
             frame.dispose();
+        }
     }
     public void reiniciarNivel(){
         iniciarNivel();
@@ -403,7 +421,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 break;
             case KeyEvent.VK_ESCAPE:
                 if (rankingGuardado){
-                    sonidos.reproducirMusicaMenu();
                     stop();
                 }
             default:
@@ -445,5 +462,8 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
             default:
                 break;
         }
+    }
+    public boolean isEnEjecucion(){
+        return enEjecucion;
     }
 }
