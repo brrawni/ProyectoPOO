@@ -19,7 +19,8 @@ config.setSonidoGeneral(boolean)   activa/desactiva ambos a la vez
  */
 public class GestorConfiguracionSpaceInvaders extends GestorConfiguracionBase {
 
-    private static GestorConfiguracionSpaceInvaders instancia;
+    //se utiliza para que no ocupe mucho espacio en disco
+    //private static GestorConfiguracionSpaceInvaders instancia;
 
     // Campos propios de Space Invaders
     private String velocidad       = "MEDIA";

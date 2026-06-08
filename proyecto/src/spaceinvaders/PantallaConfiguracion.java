@@ -1,22 +1,26 @@
 package spaceinvaders;
 
-import motor.Videojuego;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import launcher.Boton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import launcher.Launcher;
-import motor.GestorConfiguracionBase;
 
-public class PantallaConfiguracion extends Videojuego {
+public class PantallaConfiguracion extends JFrame {
     private static final int ANCHO = 800;
     private static final int ALTO  = 600;
+    
+    private Launcher launcher;
+    private ConfigPanel panelConfiguracion;
+
+    private Launcher launcher;
+    private ConfigPanel panelConfiguracion;
 
     private BufferedImage buffer;
     private GestorConfiguracionSpaceInvaders config;
     private GestorSonidosSpaceInvaders gestorSonidos;
-    private Launcher launcher;
 
     // Arrays de opciones
     private String[] opcionVelocidad = {"LENTA", "MEDIA", "RAPIDA"};
@@ -53,49 +57,30 @@ public class PantallaConfiguracion extends Videojuego {
     private Boton btnGuardar, btnVolver, btnReset;
 
     public PantallaConfiguracion(Launcher launcher) {
-        super("Configuracion Space Invaders", ANCHO, ALTO);
         this.launcher = launcher;
-    }
+        
+        // Configuramos la ventana JFrame
+        setTitle("Configuración Space Invaders");
+        setSize(ANCHO, ALTO);
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-    @Override
-    public void gameStartup() {
-        buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
+        // Inicializamos la configuración
         config = GestorConfiguracionSpaceInvaders.getInstance();
         cargarValoresDesdeGestor();
         gestorSonidos = new GestorSonidosSpaceInvaders(config.isSonidoGeneralActivado());
         if (config.isSonidoGeneralActivado()) {
             gestorSonidos.reproducirMusica(archivoPistaSeleccionada());
         }
-        inicializarBotones();
 
-        // Mouse click
-        canvas.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int xLogico = (int)(e.getX() * ((double)ANCHO / canvas.getWidth()));
-                int yLogico = (int)(e.getY() * ((double)ALTO / canvas.getHeight()));
-                manejarClick(xLogico, yLogico);
-            }
-        });
+        // Creamos el panel de configuración
+        panelConfiguracion = new ConfigPanel();
+        add(panelConfiguracion);
+    }
 
-        // Captura de tecla para reasignar controles
-        canvas.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (esperandoTecla == null) return;
-                int codigo = e.getKeyCode();
-                switch (esperandoTecla) {
-                    case "izquierda": teclaIzquierda = codigo; break;
-                    case "derecha":   teclaDerecha = codigo; break;
-                    case "disparo":   teclaDisparo = codigo; break;
-                }
-                actualizarTextosBotones();
-                esperandoTecla = null;
-            }
-        });
-
-        canvas.setFocusable(true);
-        canvas.requestFocus();
+    public void run() {
+        setVisible(true);
     }
 
     private void cargarValoresDesdeGestor() {
@@ -240,66 +225,102 @@ public class PantallaConfiguracion extends Videojuego {
         return "alternativa".equals(opcionMusica[indiceMusica]) ? "musicaMenu_alternativa.wav" : "musicaMenu.wav"; //devuelve el nombre de archivo
     }   
 
-    @Override
-    public void gameUpdate(double delta) { }
-    
-    @Override
-    public void gameDraw(Graphics2D g) {
-        if (buffer == null) return;
-        Graphics2D g2d = buffer.createGraphics();
-
-        g2d.setColor(Color.DARK_GRAY);
-        g2d.fillRect(0, 0, ANCHO, ALTO);
-
-        g2d.setFont(new Font("Arial", Font.BOLD, 36));
-        g2d.setColor(Color.WHITE);
-        String titulo = "CONFIGURACION";
-        FontMetrics fm = g2d.getFontMetrics();
-        g2d.drawString(titulo, 400 - fm.stringWidth(titulo)/2, 60);
-
-        g2d.setFont(new Font("Arial", Font.PLAIN, 20));
-        
-        // Títulos de columnas
-        g2d.drawString("Velocidad:", 100, 130);
-        g2d.drawString("Controles:", 450, 130);
-        g2d.drawString("Apariencia:", 450, 310);
-
-        // Dibujar botones Columna Izquierda
-        btnVelIzq.dibujar(g2d);
-        btnVelDer.dibujar(g2d);
-        g2d.drawString(opcionVelocidad[indiceVelocidad], 175 - fm.stringWidth(opcionVelocidad[indiceVelocidad])/2, 178);
-        btnSonido.dibujar(g2d);
-        btnPantalla.dibujar(g2d);
-        btnMusica.dibujar(g2d);
-
-        // Dibujar botones Columna Derecha
-        btnTeclaIzq.dibujar(g2d);
-        btnTeclaDer.dibujar(g2d);
-        btnTeclaDisparo.dibujar(g2d);
-        btnSkinNave.dibujar(g2d);
-        btnSkinInv.dibujar(g2d);
-        btnSkinProy.dibujar(g2d);
-
-        // Si está esperando tecla, mostrar aviso
-        if (esperandoTecla != null) {
-            g2d.setColor(Color.YELLOW);
-            g2d.drawString("Presiona una tecla para: " + esperandoTecla, 450, 100);
+    // Clase interna para renderizar y manejar eventos
+    private class ConfigPanel extends JPanel {
+        public ConfigPanel() {
+            setBackground(Color.DARK_GRAY);
+            inicializarBotones();
+            configurarEventos();
         }
 
-        // Dibujar botones Inferiores
-        btnGuardar.dibujar(g2d);
-        btnReset.dibujar(g2d);
-        btnVolver.dibujar(g2d);
+        private void configurarEventos() {
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    manejarClick(e.getX(), e.getY());
+                }
+            });
 
-        g2d.dispose();
-        g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
-    }
-    
-    @Override
-    public void gameShutdown() {
-        if (gestorSonidos != null) {
-            gestorSonidos.limpiar();
+            addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (esperandoTecla == null) return;
+                    int codigo = e.getKeyCode();
+                    switch (esperandoTecla) {
+                        case "izquierda": teclaIzquierda = codigo; break;
+                        case "derecha":   teclaDerecha = codigo; break;
+                        case "disparo":   teclaDisparo = codigo; break;
+                    }
+                    actualizarTextosBotones();
+                    esperandoTecla = null;
+                    repaint();
+                }
+            });
+
+            addMouseMotionListener(new MouseMotionAdapter() {
+                @Override
+                public void mouseMoved(MouseEvent e) {
+                    for (Boton b : new Boton[]{btnVelIzq, btnVelDer, btnSonido, btnPantalla, btnMusica,
+                                               btnTeclaIzq, btnTeclaDer, btnTeclaDisparo,
+                                               btnSkinNave, btnSkinInv, btnSkinProy,
+                                               btnGuardar, btnReset, btnVolver}) {
+                        b.setHover(b.contienePunto(e.getX(), e.getY()));
+                    }
+                    repaint();
+                }
+            });
+
+            setFocusable(true);
         }
-        new MenuSpaceInvaders(launcher).run();
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(Graphics2D.KEY_ANTIALIASING, Graphics2D.VALUE_ANTIALIAS_ON);
+
+            g2d.setColor(Color.DARK_GRAY);
+            g2d.fillRect(0, 0, getWidth(), getHeight());
+
+            g2d.setFont(new Font("Arial", Font.BOLD, 36));
+            g2d.setColor(Color.WHITE);
+            String titulo = "CONFIGURACION";
+            FontMetrics fm = g2d.getFontMetrics();
+            g2d.drawString(titulo, getWidth()/2 - fm.stringWidth(titulo)/2, 60);
+
+            g2d.setFont(new Font("Arial", Font.PLAIN, 20));
+            
+            // Títulos de columnas
+            g2d.drawString("Velocidad:", 100, 130);
+            g2d.drawString("Controles:", 450, 130);
+            g2d.drawString("Apariencia:", 450, 310);
+
+            // Dibujar botones Columna Izquierda
+            btnVelIzq.dibujar(g2d);
+            btnVelDer.dibujar(g2d);
+            g2d.drawString(opcionVelocidad[indiceVelocidad], 175 - fm.stringWidth(opcionVelocidad[indiceVelocidad])/2, 178);
+            btnSonido.dibujar(g2d);
+            btnPantalla.dibujar(g2d);
+            btnMusica.dibujar(g2d);
+
+            // Dibujar botones Columna Derecha
+            btnTeclaIzq.dibujar(g2d);
+            btnTeclaDer.dibujar(g2d);
+            btnTeclaDisparo.dibujar(g2d);
+            btnSkinNave.dibujar(g2d);
+            btnSkinInv.dibujar(g2d);
+            btnSkinProy.dibujar(g2d);
+
+            // Si está esperando tecla, mostrar aviso
+            if (esperandoTecla != null) {
+                g2d.setColor(Color.YELLOW);
+                g2d.drawString("Presiona una tecla para: " + esperandoTecla, 450, 100);
+            }
+
+            // Dibujar botones Inferiores
+            btnGuardar.dibujar(g2d);
+            btnReset.dibujar(g2d);
+            btnVolver.dibujar(g2d);
+        }
     }
 }
