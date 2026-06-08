@@ -21,7 +21,7 @@ public class PantallaConfiguracion extends Videojuego {
     // Arrays de opciones
     private String[] opcionVelocidad = {"LENTA", "MEDIA", "RAPIDA"};
     private String[] opcionSkins = {"original", "alternativa"};
-    private String[] opcionMusica = {"original", "remix"};
+    private String[] opcionMusica = {"original", "alternativa"};
 
     // Índices y estados
     private int indiceVelocidad = 1;
@@ -106,7 +106,7 @@ public class PantallaConfiguracion extends Videojuego {
         teclaDisparo     = config.getTeclaDisparo();
 
         indiceVelocidad = ("LENTA".equals(config.getVelocidad())) ? 0 : ("RAPIDA".equals(config.getVelocidad())) ? 2 : 1;
-        indiceMusica    = ("remix".equals(config.getPistaMusical())) ? 1 : 0;
+        indiceMusica    = ("alternativa".equals(config.getPistaMusical())) ? 1 : 0;
         indiceSkinNave  = ("alternativa".equals(config.getSkinNave())) ? 1 : 0;
         indiceSkinInv   = ("alternativa".equals(config.getSkinInvasores())) ? 1 : 0;
         indiceSkinProy  = ("alternativa".equals(config.getSkinProyectil())) ? 1 : 0;
@@ -237,7 +237,7 @@ public class PantallaConfiguracion extends Videojuego {
     }
 
     private String archivoPistaSeleccionada() {
-        return "remix".equals(opcionMusica[indiceMusica]) ? "musicaMenu_alternativa.wav" : "musicaMenu.wav"; //devuelve el nombre de archivo
+        return "alternativa".equals(opcionMusica[indiceMusica]) ? "musicaMenu_alternativa.wav" : "musicaMenu.wav"; //devuelve el nombre de archivo
     }   
 
     @Override
