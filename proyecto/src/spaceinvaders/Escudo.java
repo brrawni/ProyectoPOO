@@ -3,6 +3,7 @@ package spaceinvaders;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import motor.Entidad;
+import java.awt.Rectangle;
 
 public class Escudo extends Entidad {
 
@@ -30,13 +31,13 @@ public class Escudo extends Entidad {
     }
 
     public boolean verificarImpactoProyectil(int px, int py, int pAncho, int pAlto) {
-        java.awt.Rectangle limiteProyectil = new java.awt.Rectangle(px, py, pAncho, pAlto);
+        Rectangle limiteProyectil = new Rectangle(px, py, pAncho, pAlto);
 
         for (int fila = 0; fila < FILAS; fila++) {
             for (int col = 0; col < COLUMNAS; col++) {
                 if (!segmentos[fila][col]) continue;
 
-                java.awt.Rectangle limiteSegmento = new java.awt.Rectangle(
+                Rectangle limiteSegmento = new Rectangle(
                         x + col  * TAMAÑO,
                         y + fila * TAMAÑO,
                         TAMAÑO, TAMAÑO
