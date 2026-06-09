@@ -1,8 +1,8 @@
 package spaceinvaders;
 
-import motor.GestorConfiguracionBase;
 import java.awt.event.KeyEvent;
 import java.util.Properties;
+import motor.GestorConfiguracionBase;
 
 /**
 Configuración de Space Invaders.
@@ -19,6 +19,7 @@ config.setSonidoGeneral(boolean)   activa/desactiva ambos a la vez
  */
 public class GestorConfiguracionSpaceInvaders extends GestorConfiguracionBase {
 
+    //se utiliza para que no ocupe mucho espacio en disco
     private static GestorConfiguracionSpaceInvaders instancia;
 
     // Campos propios de Space Invaders
@@ -36,6 +37,7 @@ public class GestorConfiguracionSpaceInvaders extends GestorConfiguracionBase {
         cargar();
     }
 
+    // Método para obtener la instancia única del gestor de configuración
     public static GestorConfiguracionSpaceInvaders getInstance() {
         if (instancia == null) instancia = new GestorConfiguracionSpaceInvaders();
         return instancia;

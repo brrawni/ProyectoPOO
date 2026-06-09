@@ -1,13 +1,12 @@
 package spaceinvaders;
 
-import motor.Videojuego;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import launcher.Boton;
 import javax.swing.JFrame;
+import launcher.Boton;
 import launcher.Launcher;
-import motor.GestorConfiguracionBase;
+import motor.Videojuego;
 
 public class PantallaConfiguracion extends Videojuego {
     private static final int ANCHO = 800;
