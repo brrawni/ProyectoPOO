@@ -1,7 +1,7 @@
 package Pong;
 
 import launcher.Boton;
-import ranking.GestorRanking;
+import motor.GestorRanking;
 
 import javax.swing.*;
 import java.awt.*;
@@ -127,6 +127,7 @@ public class MenuPong extends JFrame {
         setVisible(false);
         timer.stop();
         gestorSonidos.detenerMusica();
+          
 
         Pong pong = new Pong(config.getSkinCancha(), config.getSkinBarras(), config.getSkinPelota());
         pong.setPuntuacionMaxima(config.getPuntuacionMaxima());

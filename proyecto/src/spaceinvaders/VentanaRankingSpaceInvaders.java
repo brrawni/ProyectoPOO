@@ -1,7 +1,7 @@
 package spaceinvaders;
 
-import ranking.EntradaRanking;
-import ranking.GestorRanking;
+import motor.EntradaRanking;
+
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -12,7 +12,7 @@ public class VentanaRankingSpaceInvaders extends JDialog {
     public VentanaRankingSpaceInvaders(JFrame padre) {
         super(padre, "Ranking de Space Invaders", true);
 
-        GestorRanking gestorRanking = new GestorRanking();
+        RankingSpaceInvaders gestorRanking = new RankingSpaceInvaders();
         List<EntradaRanking> entradas = gestorRanking.obtenerTop10();
 
         setTitle("Ranking de Space Invaders");

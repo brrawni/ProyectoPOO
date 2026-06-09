@@ -1,7 +1,7 @@
 package LodeRunner;
 
 import motor.Videojuego;
-import ranking.EntradaRanking;
+import motor.EntradaRanking;
 
 import javax.swing.*;
 import java.awt.*;
