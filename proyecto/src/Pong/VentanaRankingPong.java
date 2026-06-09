@@ -1,7 +1,7 @@
 package Pong;
 
-import ranking.GestorRanking;
-import ranking.EntradaRanking;
+import motor.GestorRanking;
+import motor.EntradaRanking;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

@@ -1,8 +1,8 @@
 package Pong;
 
 import motor.Videojuego;
-import ranking.GestorRanking;
-import ranking.EntradaRanking;
+import motor.GestorRanking;
+import motor.EntradaRanking;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
