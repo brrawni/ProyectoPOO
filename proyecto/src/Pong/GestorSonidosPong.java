@@ -141,6 +141,7 @@ public class GestorSonidosPong {
         // Determinar archivo según la pista seleccionada
         String archivo = "musica_pong_" + pista + ".wav";
         
+        limpiarMusicaFondo();
         musicaFondo = cargarAudio(archivo);
         
         if (musicaFondo != null) {
@@ -156,6 +157,14 @@ public class GestorSonidosPong {
     public void detenerMusica() {
         if (musicaFondo != null && musicaFondo.isRunning()) {
             musicaFondo.stop();
+        }
+    }
+
+    private void limpiarMusicaFondo() {
+        detenerMusica();
+        if (musicaFondo != null) {
+            musicaFondo.close();
+            musicaFondo = null;
         }
     }
 
@@ -186,9 +195,23 @@ public class GestorSonidosPong {
     public void limpiar() {
         detenerMusica();
         
-        if (musicaFondo != null) musicaFondo.close();
-        if (sonidoRebote != null) sonidoRebote.close();
-        if (sonidoPunto != null) sonidoPunto.close();
-        if (sonidoGameOver != null) sonidoGameOver.close();
+        cerrarClip(musicaFondo);
+        cerrarClip(sonidoRebote);
+        cerrarClip(sonidoPunto);
+        cerrarClip(sonidoGameOver);
+
+        musicaFondo = null;
+        sonidoRebote = null;
+        sonidoPunto = null;
+        sonidoGameOver = null;
+    }
+
+    private void cerrarClip(Clip clip) {
+        if (clip != null) {
+            if (clip.isRunning()) {
+                clip.stop();
+            }
+            clip.close();
+        }
     }
 }

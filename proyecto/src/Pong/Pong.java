@@ -1,12 +1,13 @@
 package Pong;
 
 import motor.Videojuego;
-import ranking.GestorRanking;
-import ranking.EntradaRanking;
+import motor.GestorRanking;
+import motor.EntradaRanking;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.time.LocalDate;
+import javax.swing.SwingUtilities;
 
 /**
  * Clase principal del juego Pong. Extiende Videojuego (motor base de la cátedra).
@@ -88,6 +89,8 @@ public class Pong extends Videojuego {
             frame.setLayout(new BorderLayout());
             frame.add(canvas, BorderLayout.CENTER);
             frame.revalidate();
+            
+
         }
 
         // Buffer siempre en resolución lógica fija: la lógica del juego no cambia
@@ -97,6 +100,12 @@ public class Pong extends Videojuego {
         canvas.addKeyListener(controlTeclado);
         canvas.setFocusable(true);
         canvas.requestFocus();
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                cerrarPartida();
+            }
+        });
 
         gestorSonidos.cargarTodosSonidos();
         gestorSonidos.reproducirMusica(pistaMusical);
@@ -241,6 +250,12 @@ public class Pong extends Videojuego {
         if (buffer != null) buffer.flush();
     }
 
+    private void cerrarPartida() {
+        enEjecucion = false;
+        gestorSonidos.limpiar();
+        stop();
+    }
+
     private void actualizarMovimientoPaletas() {
         if (controlTeclado.isArriba1Presionada()) paleta1.moverArriba();
         if (controlTeclado.isAbajo1Presionada())  paleta1.moverAbajo();
@@ -284,6 +299,7 @@ public class Pong extends Videojuego {
         gestorRanking.agregarEntrada(entrada);
         gestorRanking.guardar();
         rankingGuardado = true;
+        SwingUtilities.invokeLater(() -> new VentanaRankingPong(gestorRanking, frame).setVisible(true));
     }
 
     public int getPuntajeJugador1()    { return puntajeJugador1; }

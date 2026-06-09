@@ -24,7 +24,7 @@ public class GestorSonidosLodeRunner {
         this.musicaPartida = cargarClip("juego.wav");
         this.musicaPartidaAlternativa = cargarClip("juego_alternativo.wav");
         this.efectoCaida = cargarClip("caida.wav");
-        reducirVolumen(this.musicaPartidaAlternativa, -20.0f); //bajamos el volumen de la musica alternativa por que esta muy alto
+        reducirVolumen(this.musicaPartidaAlternativa, -15.0f); //bajamos el volumen de la musica alternativa por que esta muy alto
         reducirVolumen(this.musicaMenu, -15.0f); //lo mismo para la musica del menu
     }
 

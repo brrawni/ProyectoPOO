@@ -1,7 +1,7 @@
 package LodeRunner;
 
 import launcher.Boton;
-import ranking.EntradaRanking;
+import motor.EntradaRanking;
 
 import javax.swing.*;
 import java.awt.*;
