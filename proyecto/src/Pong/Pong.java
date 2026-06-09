@@ -88,6 +88,8 @@ public class Pong extends Videojuego {
             frame.setLayout(new BorderLayout());
             frame.add(canvas, BorderLayout.CENTER);
             frame.revalidate();
+            
+
         }
 
         // Buffer siempre en resolución lógica fija: la lógica del juego no cambia
@@ -97,6 +99,12 @@ public class Pong extends Videojuego {
         canvas.addKeyListener(controlTeclado);
         canvas.setFocusable(true);
         canvas.requestFocus();
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                cerrarPartida();
+            }
+        });
 
         gestorSonidos.cargarTodosSonidos();
         gestorSonidos.reproducirMusica(pistaMusical);
@@ -239,6 +247,12 @@ public class Pong extends Videojuego {
     public void gameShutdown() {
         gestorSonidos.limpiar();
         if (buffer != null) buffer.flush();
+    }
+
+    private void cerrarPartida() {
+        enEjecucion = false;
+        gestorSonidos.limpiar();
+        stop();
     }
 
     private void actualizarMovimientoPaletas() {
