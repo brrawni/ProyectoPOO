@@ -44,26 +44,6 @@ public abstract class Entidad {
 
 }
 
-
-// 1. La Plataforma: El punto de arranque de toda la aplicación
-class Plataforma extends JFrame {
-
-    public Plataforma() {
-        setTitle("Consola de Videojuegos Retro");
-        setSize(400, 300);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        // Acá irían tus layouts y botones del catálogo
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Plataforma menu = new Plataforma();
-            menu.setVisible(true);
-        });
-    }
-}
-
 // 2. El Bucle Puro (Clase abstracta de la cátedra)
 abstract class GameLoop {
     protected boolean runFlag = false;
