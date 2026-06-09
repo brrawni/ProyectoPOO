@@ -1,6 +1,7 @@
 package LodeRunner;
 
 import ranking.EntradaRanking;
+import ranking.GestorRanking;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -9,7 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class RankingLR {
+public class RankingLR{
     private List<EntradaRanking> entradas = new ArrayList<>();
     private static final String RUTA     = "ranking_loderunner.txt";
     private static final int    MAX      = 10;
