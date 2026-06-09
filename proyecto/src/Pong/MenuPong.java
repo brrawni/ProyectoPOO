@@ -1,7 +1,7 @@
 package Pong;
 
 import launcher.Boton;
-import ranking.GestorRanking;
+import motor.GestorRanking;
 
 import javax.swing.*;
 import java.awt.*;
