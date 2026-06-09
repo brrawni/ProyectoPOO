@@ -38,6 +38,11 @@ public class GestorRanking {
         return entradas;
     }
 
+    public void limpiar() {
+        entradas.clear();
+        guardar();
+    }
+
     // Carga el ranking desde el archivo, si existe
     public void cargar() {
         entradas.clear();
