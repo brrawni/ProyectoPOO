@@ -1,7 +1,7 @@
 package Pong;
 
 import launcher.Boton;
-import motor.GestorRanking;
+import motor.GestorRankingBase;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,7 +24,7 @@ public class MenuPong extends JFrame {
 
     private Boton[] botones;
     private ConfiguracionPong config;
-    private GestorRanking gestorRanking;
+    private GestorRankingBase gestorRanking;
     private GestorSonidosPong gestorSonidos;
     private JFrame launcher;
 
@@ -32,7 +32,7 @@ public class MenuPong extends JFrame {
         super("Pong - Menu Principal");
         this.launcher      = launcher;
         this.config        = new ConfiguracionPong();
-        this.gestorRanking = new GestorRanking(RANKING_PONG);
+        this.gestorRanking = new GestorRankingBase(RANKING_PONG);
 
         config.cargar();
         this.gestorSonidos = new GestorSonidosPong(config.isSonidoActivado());

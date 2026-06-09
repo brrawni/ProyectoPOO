@@ -1,6 +1,6 @@
 package Pong;
 
-import motor.GestorRanking;
+import motor.GestorRankingBase;
 import motor.EntradaRanking;
 
 import javax.swing.*;
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class VentanaRankingPong extends JDialog {
     // Referencia al gestor de ranking (gestiona carga/guardado)
-    private GestorRanking gestorRanking;
+    private GestorRankingBase gestorRanking;
     private DefaultTableModel modelo;
 
     /**
@@ -29,7 +29,7 @@ public class VentanaRankingPong extends JDialog {
      * @param gestorRanking Objeto que gestiona las entradas del ranking
      * @param padre Frame padre (la ventana del menú)
      */
-    public VentanaRankingPong(GestorRanking gestorRanking, JFrame padre) {
+    public VentanaRankingPong(GestorRankingBase gestorRanking, JFrame padre) {
         // Crear diálogo modal
         super(padre, "Ranking de Pong", true);
         this.gestorRanking = gestorRanking;

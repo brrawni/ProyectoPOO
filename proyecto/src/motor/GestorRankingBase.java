@@ -16,16 +16,16 @@ import java.util.List;
  * Clase base para rankings de los juegos.
  * Gestiona archivo, carga, guardado, orden y limite de mejores puntajes.
  */
-public abstract class GestorRankingBase {
+public class GestorRankingBase {
     protected List<EntradaRanking> entradas = new ArrayList<>();
     private final String ruta;
     private final int maxEntradas;
 
-    protected GestorRankingBase(String ruta) {
+    public GestorRankingBase(String ruta) {
         this(ruta, 10);
     }
 
-    protected GestorRankingBase(String ruta, int maxEntradas) {
+    public GestorRankingBase(String ruta, int maxEntradas) {
         this.ruta = ruta;
         this.maxEntradas = maxEntradas;
         cargar();

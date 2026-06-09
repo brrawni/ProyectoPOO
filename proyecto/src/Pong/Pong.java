@@ -1,7 +1,7 @@
 package Pong;
 
 import motor.Videojuego;
-import motor.GestorRanking;
+import motor.GestorRankingBase;
 import motor.EntradaRanking;
 
 import java.awt.*;
@@ -34,7 +34,7 @@ public class Pong extends Videojuego {
     private ControlTeclado controlTeclado;
     private BufferedImage buffer;
 
-    private GestorRanking gestorRanking;
+    private GestorRankingBase gestorRanking;
     private boolean rankingGuardado = false;
 
     private GestorSonidosPong gestorSonidos;
@@ -50,14 +50,14 @@ public class Pong extends Videojuego {
 
     public Pong(String nombreTema) {
         super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
-        this.gestorRanking = new GestorRanking(RANKING_PONG);
+        this.gestorRanking = new GestorRankingBase(RANKING_PONG);
         this.gestorSonidos = new GestorSonidosPong(sonidoActivado);
         this.tema = new TemasPong(nombreTema);
     }
 
     public Pong(String skinCancha, String skinBarras, String skinPelota) {
         super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
-        this.gestorRanking = new GestorRanking(RANKING_PONG);
+        this.gestorRanking = new GestorRankingBase(RANKING_PONG);
         this.gestorSonidos = new GestorSonidosPong(sonidoActivado);
         this.tema = new TemasPong(skinCancha, skinBarras, skinPelota);
     }
