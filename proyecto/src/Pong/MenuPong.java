@@ -127,6 +127,7 @@ public class MenuPong extends JFrame {
         setVisible(false);
         timer.stop();
         gestorSonidos.detenerMusica();
+          
 
         Pong pong = new Pong(config.getSkinCancha(), config.getSkinBarras(), config.getSkinPelota());
         pong.setPuntuacionMaxima(config.getPuntuacionMaxima());
