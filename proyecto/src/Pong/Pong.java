@@ -7,6 +7,7 @@ import ranking.EntradaRanking;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.time.LocalDate;
+import javax.swing.SwingUtilities;
 
 /**
  * Clase principal del juego Pong. Extiende Videojuego (motor base de la cátedra).
@@ -298,6 +299,7 @@ public class Pong extends Videojuego {
         gestorRanking.agregarEntrada(entrada);
         gestorRanking.guardar();
         rankingGuardado = true;
+        SwingUtilities.invokeLater(() -> new VentanaRankingPong(gestorRanking, frame).setVisible(true));
     }
 
     public int getPuntajeJugador1()    { return puntajeJugador1; }

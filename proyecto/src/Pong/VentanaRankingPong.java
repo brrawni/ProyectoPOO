@@ -22,6 +22,7 @@ import java.util.List;
 public class VentanaRankingPong extends JDialog {
     // Referencia al gestor de ranking (gestiona carga/guardado)
     private GestorRanking gestorRanking;
+    private DefaultTableModel modelo;
 
     /**
      * Constructor: crea la ventana modal del ranking
@@ -49,7 +50,7 @@ public class VentanaRankingPong extends JDialog {
         String[] columnas = {"Posicion", "Nombre", "Nivel", "Puntaje", "Fecha"};
 
         // Crear modelo de tabla
-        DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
+        modelo = new DefaultTableModel(columnas, 0) {
             // Hacer la tabla no editable
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -57,6 +58,7 @@ public class VentanaRankingPong extends JDialog {
             }
         };
 
+        gestorRanking.cargar();
         // Obtener las 10 mejores entradas del ranking
         List<EntradaRanking> mejores = gestorRanking.obtenerTop10();
 
@@ -112,8 +114,8 @@ public class VentanaRankingPong extends JDialog {
                     JOptionPane.YES_NO_OPTION
             );
             if (confirmacion == JOptionPane.YES_OPTION) {
-                //gestorRanking.limpiar();
-                dispose(); // Cerrar ventana
+                gestorRanking.limpiar();
+                actualizarTabla();
             }
         });
 
@@ -129,5 +131,26 @@ public class VentanaRankingPong extends JDialog {
         // Configurar posición y visibilidad
         setLocationRelativeTo(padre); // Centrar sobre el padre
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    }
+
+    private void actualizarTabla() {
+        modelo.setRowCount(0);
+        List<EntradaRanking> mejores = gestorRanking.obtenerTop10();
+
+        int posicion = 1;
+        for (EntradaRanking entrada : mejores) {
+            modelo.addRow(new Object[]{
+                    posicion,
+                    entrada.getNombre(),
+                    entrada.getNivel(),
+                    entrada.getPuntaje(),
+                    entrada.getFecha()
+            });
+            posicion++;
+        }
+
+        if (mejores.isEmpty()) {
+            modelo.addRow(new Object[]{"", "Sin registros", "", "", ""});
+        }
     }
 }
