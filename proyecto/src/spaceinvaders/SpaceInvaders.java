@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
 import motor.Videojuego;
-import ranking.EntradaRanking;
-import ranking.GestorRanking;
+import motor.EntradaRanking;
+
 import launcher.Launcher;
 
 
@@ -36,7 +36,7 @@ public class SpaceInvaders extends Videojuego {
     private static final int ALTO_PANTALLA = 600;
 
     //atributos para ranking
-    private GestorRanking gestorRanking = new GestorRanking();
+    private RankingSpaceInvaders gestorRanking = new RankingSpaceInvaders();
     private boolean rankingGuardado = false;
     private String nombreJugador = "";
     private boolean ingresandoNombre = false;
