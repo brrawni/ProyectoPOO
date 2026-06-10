@@ -104,7 +104,6 @@ public class PanelRankingSpaceInvaders extends JPanel {
         List<EntradaRanking> top10 = ranking.obtenerTop10();
         if (top10.isEmpty()) {
             g2.drawString("NO HAY PUNTAJES AUN.", 240, 250);
-            g2.drawString("SE EL PRIMERO!", 270, 300);
         } else {
             int yPos = 140;
             for (int i = 0; i < top10.size(); i++) {
