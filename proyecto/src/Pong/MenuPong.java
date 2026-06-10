@@ -1,14 +1,13 @@
 package Pong;
 
-import launcher.Boton;
-import motor.GestorRankingBase;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import javax.swing.*;
+import launcher.Boton;
 import motor.EntradaRanking;
+import motor.GestorRankingBase;
 
 /**
  * Menu principal de Pong.

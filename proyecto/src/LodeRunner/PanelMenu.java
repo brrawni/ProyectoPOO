@@ -4,11 +4,13 @@ import launcher.Boton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
-public class PanelMenu extends JPanel {
+public class PanelMenu extends JPanel implements KeyListener {
     private GestorSonidosLodeRunner gestorSonidosLodeRunner;
     private GestorPantallas gestor; // Referencia al gestor para pedirle cambios de pantalla
     private Boton btnJugar;
@@ -19,7 +21,7 @@ public class PanelMenu extends JPanel {
     public PanelMenu(GestorPantallas gestor) {
         ConfiguracionLR config = new ConfiguracionLR();
         config.cargar();
-        gestorSonidosLodeRunner = new GestorSonidosLodeRunner(config.isSonidoGeneralActivado(), config.getPistaMusical());
+        gestorSonidosLodeRunner = new GestorSonidosLodeRunner(config.isSonidoGeneralActivado(), config.isMusicaDeFondoActivada(), config.getPistaMusical());
         gestorSonidosLodeRunner.reproducirMusicaMenu();
         this.gestor = gestor;
         this.setBackground(Color.BLACK);
@@ -51,6 +53,10 @@ public class PanelMenu extends JPanel {
         btnVolver = new Boton(300, 440, 200, 50, "VOLVER");
 
         configurarEventosMouse();
+
+        this.setFocusable(true);
+        this.requestFocusInWindow();
+        this.addKeyListener(this);
     }
 
     private void configurarEventosMouse() {
@@ -97,4 +103,14 @@ public class PanelMenu extends JPanel {
         btnRanking.dibujar(g2);
         btnVolver.dibujar(g2);
     }
+    public void keyPressed(java.awt.event.KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            // Detenemos la música del menú antes de iniciar el juego
+            gestorSonidosLodeRunner.detenerMusicaMenu();
+            LodeRunnerMain juego = new LodeRunnerMain();
+            juego.run();
+        }
+    }
+    public void keyReleased(java.awt.event.KeyEvent e) {} //no hace nada
+    public void keyTyped(java.awt.event.KeyEvent e) {} ///no hace nada
 }

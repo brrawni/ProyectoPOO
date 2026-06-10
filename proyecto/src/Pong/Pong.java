@@ -1,13 +1,12 @@
 package Pong;
 
-import motor.Videojuego;
-import motor.GestorRankingBase;
-import motor.EntradaRanking;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.time.LocalDate;
 import java.util.List;
+import motor.EntradaRanking;
+import motor.GestorRankingBase;
+import motor.Videojuego;
 
 /**
  * Clase principal del juego Pong. Extiende Videojuego (motor base de la cátedra).
