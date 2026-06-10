@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import launcher.Boton;
 import javax.swing.SwingUtilities;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import launcher.Launcher;
 
 public class MenuSpaceInvaders extends Videojuego {
@@ -18,11 +19,15 @@ public class MenuSpaceInvaders extends Videojuego {
     private Boton[] botones;
     private GestorSonidosSpaceInvaders gestorSonidos;
     private GestorConfiguracionSpaceInvaders config;
+    private JPanel cardPanel;
+    private CardLayout cardLayout;
+    private PanelRankingSpaceInvaders panelRanking;
 
     private int[][] estrellas;
     private int siguientePantalla = 0; // 0=salir, 1=jugar
     private Launcher launcher;
     private boolean mostrandoConfiguracion = false;
+    private boolean mostrandoRanking = false;
 
     private String[] opcionVelocidad = {"LENTA", "MEDIA", "RAPIDA"};
     private String[] opcionSkins = {"original", "alternativa"};
@@ -68,9 +73,29 @@ public class MenuSpaceInvaders extends Videojuego {
         inicializarEstrellas();
         inicializarBotonesMenu();
         configurarEventos();
+        prepararCardLayout();
 
         canvas.setFocusable(true);
         canvas.requestFocus();
+    }
+
+    private void prepararCardLayout() {
+        cardLayout = new CardLayout();
+        cardPanel = new JPanel(cardLayout);
+
+        frame.getContentPane().remove(canvas);
+        cardPanel.add(canvas, "GAME");
+
+        panelRanking = new PanelRankingSpaceInvaders(cardLayout, cardPanel, () -> {
+            mostrandoRanking = false;
+            canvas.requestFocus();
+            canvas.requestFocusInWindow();
+        });
+        cardPanel.add(panelRanking, "RANKING");
+
+        frame.getContentPane().add(cardPanel);
+        frame.revalidate();
+        frame.repaint();
     }
 
     private void configurarModoPantallaInicial() {
@@ -170,7 +195,11 @@ public class MenuSpaceInvaders extends Videojuego {
                         mostrarConfiguracion();
                         break;
                     case 2:
-                        SwingUtilities.invokeLater(() -> new VentanaRankingSpaceInvaders(frame).setVisible(true));
+                        panelRanking.actualizarRanking();
+                        mostrandoRanking = true;
+                        cardLayout.show(cardPanel, "RANKING");
+                        cardPanel.revalidate();
+                        cardPanel.repaint();
                         break;
                     case 3:
                         siguientePantalla = 0;
@@ -326,6 +355,7 @@ public class MenuSpaceInvaders extends Videojuego {
     @Override
     public void gameDraw(Graphics2D g) {
         if (buffer == null) return;
+        if (mostrandoRanking) return;
         if (mostrandoConfiguracion) {
             dibujarConfiguracion(g);
         } else {
