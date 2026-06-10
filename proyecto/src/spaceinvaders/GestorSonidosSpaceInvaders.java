@@ -1,16 +1,16 @@
 package spaceinvaders;
 
-import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import javax.sound.sampled.*;
 
 public class GestorSonidosSpaceInvaders {
     private Clip musicaMenu;
     private Clip musicaPartida;
     private String pistaActualMenu;
     private boolean sonidoActivado;
-    private static final String RUTA_AUDIO = "proyecto/resources/sonido/spaceinvaders/";
+    
 
     public GestorSonidosSpaceInvaders(boolean sonidoActivado) {
         this.sonidoActivado = sonidoActivado;
@@ -19,7 +19,7 @@ public class GestorSonidosSpaceInvaders {
     private Clip cargarAudio(String ruta) {
     try {
         String rutaClasspath = "/sonido/spaceinvaders/" + ruta;
-        java.io.InputStream recurso = getClass().getResourceAsStream(rutaClasspath);
+        InputStream recurso = getClass().getResourceAsStream(rutaClasspath);
         
         if (recurso == null) {
             System.out.println("no encontrado en classpath: " + rutaClasspath);
@@ -27,7 +27,7 @@ public class GestorSonidosSpaceInvaders {
         }
 
         AudioInputStream audio = AudioSystem.getAudioInputStream(
-            new java.io.BufferedInputStream(recurso)
+            new BufferedInputStream(recurso)
         );
         Clip clip = AudioSystem.getClip();
         clip.open(audio);
@@ -57,7 +57,7 @@ public class GestorSonidosSpaceInvaders {
             if (event.getType() == LineEvent.Type.STOP) {
                 clip.close();
             }
-        });
+        }); //libera recursos cuando termina de reproducirse
     }
 
     public void reproducirMusicaMenu() {
