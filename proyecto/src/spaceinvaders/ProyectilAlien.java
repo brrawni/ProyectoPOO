@@ -50,7 +50,7 @@ public class ProyectilAlien extends Proyectil {
     @Override
     public void dibujar(Graphics2D g) {
         if (estaActivo()) {
-            if ("alternativa".equals(GestorConfiguracionSpaceInvaders.getInstance().getSkinProyectil())) {
+            if ("alternativa".equals(GestorConfiguracionSpaceInvaders.getInstance().getSkinProyectil())) { //solo cambia de color el proyectil
                 g.setColor(Color.MAGENTA);
                 g.fillOval(x, y, ancho, alto);
             } else {
