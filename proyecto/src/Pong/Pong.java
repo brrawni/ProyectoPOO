@@ -47,18 +47,19 @@ public class Pong extends Videojuego {
     // Flag de pantalla completa: se establece desde MenuPong antes de run()
     private boolean pantallaCompleta = false;
 
-    public Pong(String nombreTema) {
+    private Pong(TemasPong tema) {
         super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
         this.gestorRanking = new GestorRankingBase(RANKING_PONG);
         this.gestorSonidos = new GestorSonidosPong(sonidoActivado);
-        this.tema = new TemasPong(nombreTema);
+        this.tema = tema;
+    }
+
+    public Pong(String nombreTema) {
+        this(new TemasPong(nombreTema));
     }
 
     public Pong(String skinCancha, String skinBarras, String skinPelota) {
-        super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
-        this.gestorRanking = new GestorRankingBase(RANKING_PONG);
-        this.gestorSonidos = new GestorSonidosPong(sonidoActivado);
-        this.tema = new TemasPong(skinCancha, skinBarras, skinPelota);
+        this(new TemasPong(skinCancha, skinBarras, skinPelota));
     }
 
     public void setModoJuego(int modo) {

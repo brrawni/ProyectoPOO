@@ -21,10 +21,10 @@ public class ControlTeclado implements KeyListener {
     private boolean abajo2 = false;
     
     // Teclas configurables (en el futuro se pueden cargar desde configuración)
-    private int teclaArriba1 = KeyEvent.VK_UP;
-    private int teclaAbajo1 = KeyEvent.VK_DOWN;
-    private int teclaArriba2 = KeyEvent.VK_W;
-    private int teclaAbajo2 = KeyEvent.VK_S;
+    private static final int TECLA_ARRIBA_1 = KeyEvent.VK_UP;
+    private static final int TECLA_ABAJO_1 = KeyEvent.VK_DOWN;
+    private static final int TECLA_ARRIBA_2 = KeyEvent.VK_W;
+    private static final int TECLA_ABAJO_2 = KeyEvent.VK_S;
     private String textoIngresado = "";
     private boolean enterPresionado = false;
     private static final int MAX_TEXTO = 12;
@@ -37,18 +37,18 @@ public class ControlTeclado implements KeyListener {
         int codigo = e.getKeyCode();
         
         // Jugador 1
-        if (codigo == teclaArriba1) {
+        if (codigo == TECLA_ARRIBA_1) {
             arriba1 = true;
         }
-        if (codigo == teclaAbajo1) {
+        if (codigo == TECLA_ABAJO_1) {
             abajo1 = true;
         }
         
         // Jugador 2
-        if (codigo == teclaArriba2) {
+        if (codigo == TECLA_ARRIBA_2) {
             arriba2 = true;
         }
-        if (codigo == teclaAbajo2) {
+        if (codigo == TECLA_ABAJO_2) {
             abajo2 = true;
         }
         if (codigo == KeyEvent.VK_ENTER) {
@@ -67,18 +67,18 @@ public class ControlTeclado implements KeyListener {
         int codigo = e.getKeyCode();
         
         // Jugador 1
-        if (codigo == teclaArriba1) {
+        if (codigo == TECLA_ARRIBA_1) {
             arriba1 = false;
         }
-        if (codigo == teclaAbajo1) {
+        if (codigo == TECLA_ABAJO_1) {
             abajo1 = false;
         }
         
         // Jugador 2
-        if (codigo == teclaArriba2) {
+        if (codigo == TECLA_ARRIBA_2) {
             arriba2 = false;
         }
-        if (codigo == teclaAbajo2) {
+        if (codigo == TECLA_ABAJO_2) {
             abajo2 = false;
         }
     }
@@ -109,40 +109,6 @@ public class ControlTeclado implements KeyListener {
 
     public boolean isAbajo2Presionada() {
         return abajo2;
-    }
-
-    // Setters para configurar las teclas personalizadas
-    public void setTeclaArriba1(int tecla) {
-        this.teclaArriba1 = tecla;
-    }
-
-    public void setTeclaAbajo1(int tecla) {
-        this.teclaAbajo1 = tecla;
-    }
-
-    public void setTeclaArriba2(int tecla) {
-        this.teclaArriba2 = tecla;
-    }
-
-    public void setTeclaAbajo2(int tecla) {
-        this.teclaAbajo2 = tecla;
-    }
-
-    // Getters para obtener las teclas configuradas
-    public int getTeclaArriba1() {
-        return teclaArriba1;
-    }
-
-    public int getTeclaAbajo1() {
-        return teclaAbajo1;
-    }
-
-    public int getTeclaArriba2() {
-        return teclaArriba2;
-    }
-
-    public int getTeclaAbajo2() {
-        return teclaAbajo2;
     }
 
     public String getTextoIngresado() {
