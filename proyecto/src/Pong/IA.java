@@ -18,9 +18,6 @@ package Pong;
 public class IA {
     private Paleta paletaCPU;
 
-    // Velocidad de la IA bastante menor a la pelota para que sea beatable desde el inicio
-    private static final float VELOCIDAD_IA = 2.8f;
-
     // Margen amplio: la IA tolera estar más lejos de la pelota antes de moverse
     private static final int MARGEN = 10;
 
@@ -28,23 +25,15 @@ public class IA {
     private int errorY = 0;
     private int contadorFrames = 0;
 
-    public IA(Paleta paletaCPU) {
-        this.paletaCPU = paletaCPU;
-    }
+    private final int altoVentana;
 
-    /**
-     * Actualiza la posición de la paleta de la CPU.
-     * @param pelota La pelota del juego (necesita su posición Y y velocidadX)
-     */
+    public IA(Paleta paletaCPU, int altoVentana) {
+        this.paletaCPU   = paletaCPU;
+        this.altoVentana = altoVentana;
+    }
     public void actualizar(Pelota pelota) {
-        // La IA solo reacciona activamente cuando la pelota viene hacia ella (lado derecho).
-        // Cuando la pelota se aleja, la IA vuelve lentamente al centro.
-        // Esto le da al jugador tiempo para preparar un tiro difícil.
-        if (pelota.getVelocidadX() > 0) {
-            moverHaciaPelota(pelota);
-        } else {
-            moverHaciaCentro();
-        }
+        if (pelota.getVelocidadX() > 0) moverHaciaPelota(pelota);
+        else moverHaciaCentro(altoVentana);
     }
 
     // Mueve la paleta hacia la posición Y de la pelota (con velocidad limitada y error)
@@ -72,17 +61,11 @@ public class IA {
     // Cuando la pelota se aleja, la IA deriva hacia el centro de la pantalla
     private void moverHaciaCentro(int altoVentana) {
         int centroPaleta = paletaCPU.obtenerY() + paletaCPU.obtenerAlto() / 2;
-        int centroVentana = 300; // mitad de 600px
-
+        int centroVentana = altoVentana / 2;
         if (centroPaleta < centroVentana - MARGEN) {
             paletaCPU.moverAbajo();
         } else if (centroPaleta > centroVentana + MARGEN) {
             paletaCPU.moverArriba();
         }
-    }
-
-    // Sobrecarga para llamarlo sin parámetro desde Pong.java (usa 300 como centro fijo)
-    private void moverHaciaCentro() {
-        moverHaciaCentro(600);
     }
 }

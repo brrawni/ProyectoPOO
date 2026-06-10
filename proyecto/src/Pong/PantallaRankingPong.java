@@ -56,6 +56,24 @@ public class PantallaRankingPong {
         btnVolverRanking.dibujar(bg);
     }
 
+        public void renderizarPostPartida(Graphics2D bg, int anchoLogico, int altoLogico) {
+        gestorRanking.cargar();
+
+        bg.setColor(new Color(255, 220, 80));
+        bg.setFont(new Font("Arial", Font.BOLD, 34));
+        FontMetrics fm = bg.getFontMetrics();
+        String titulo = "MEJORES PUNTAJES";
+        bg.drawString(titulo, (anchoLogico - fm.stringWidth(titulo)) / 2, 155);
+
+        dibujarTablaRanking(bg, 215);
+
+        bg.setColor(Color.WHITE);
+        bg.setFont(new Font("Arial", Font.PLAIN, 18));
+        String volver = "Cerra la ventana para volver al menu";
+        fm = bg.getFontMetrics();
+        bg.drawString(volver, (anchoLogico - fm.stringWidth(volver)) / 2, altoLogico - 45);
+    }
+    
     private void dibujarTablaRanking(Graphics2D bg, int yInicial) {
         List<EntradaRanking> top10 = gestorRanking.obtenerTop10();
         bg.setFont(new Font("Monospaced", Font.BOLD, 22));
@@ -68,7 +86,7 @@ public class PantallaRankingPong {
         }
 
         bg.setColor(new Color(170, 210, 255));
-        bg.drawString("POS  NOMBRE      PUNTOS  FECHA", 150, yInicial);
+        bg.drawString("POS  NOMBRE      RESULT  PUNTOS  FECHA", 120, yInicial);
 
         bg.setColor(Color.WHITE);
         int y = yInicial + 40;
@@ -77,12 +95,17 @@ public class PantallaRankingPong {
             String nombre = entrada.getNombre();
             if (nombre.length() > 10) nombre = nombre.substring(0, 10);
 
-            String linea = String.format("%2d.  %-10s  %5d   %s",
+            // nivel guarda el puntaje del perdedor, así reconstruimos el resultado
+            int puntajeGanador  = entrada.getPuntaje() / 10 + entrada.getNivel();
+            String resultado = puntajeGanador + "-" + entrada.getNivel();
+
+            String linea = String.format("%2d.  %-10s  %-6s  %5d   %s",
                     i + 1,
                     nombre,
+                    resultado,
                     entrada.getPuntaje(),
                     entrada.getFecha());
-            bg.drawString(linea, 150, y);
+            bg.drawString(linea, 120, y);
             y += 32;
         }
     }
