@@ -137,8 +137,8 @@ Cada juego tiene su propia pantalla de configuración accesible desde su menú. 
 - Modo ventana / pantalla completa
 - Sonido activado / desactivado
 - Skins de personajes y elementos
-- Teclas de control personalizables
 - Selección de pista musical
+- Teclas Personalizables (Space Inavders y Lode Runner)
 - Velocidad de los invasores (Space Invaders)
 - Puntaje límite de la partida (Pong)
 - Botón **RESET** para restaurar valores por defecto
@@ -191,8 +191,8 @@ GestorConfiguracionBase   ← configuración base compartida
 | Integrante | Juego |
 |-----------|-------|
 | Bruno | Space Invaders |
-| [Compañero 2] | Lode Runner |
-| [Compañero 3] | Pong |
+| Tomas | Lode Runner |
+| Franco | Pong |
 
 ---
 
