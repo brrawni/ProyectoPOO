@@ -1,0 +1,313 @@
+@startuml
+title Paquete Pong - Diagrama UML actual
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package Pong {
+
+class Pong {
+    - ANCHO_LOGICO : int
+    - ALTO_LOGICO : int
+    - RANKING_PONG : String
+    - paleta1 : Paleta
+    - paleta2 : Paleta
+    - pelota : Pelota
+    - puntajeJugador1 : int
+    - puntajeJugador2 : int
+    - puntuacionMaxima : int
+    - juegoTerminado : boolean
+    - ganador : String
+    - controlTeclado : ControlTeclado
+    - buffer : BufferedImage
+    - gestorRanking : GestorRankingBase
+    - rankingGuardado : boolean
+    - gestorSonidos : GestorSonidosPong
+    - tema : TemasPong
+    - pistaMusical : String
+    - sonidoActivado : boolean
+    - modoJuego : int
+    - ia : IA
+    - pantallaCompleta : boolean
+    + Pong(nombreTema : String)
+    + Pong(skinCancha : String, skinBarras : String, skinPelota : String)
+    + setModoJuego(modo : int) : void
+    + setPantallaCompleta(pantallaCompleta : boolean) : void
+    + setPistaMusical(pistaMusical : String) : void
+    + setSonidoActivado(sonidoActivado : boolean) : void
+    + gameStartup() : void
+    + gameUpdate(delta : double) : void
+    + gameDraw(g : Graphics2D) : void
+    + gameShutdown() : void
+    + getPuntajeJugador1() : int
+    + getPuntajeJugador2() : int
+    + getPuntuacionMaxima() : int
+    + setPuntuacionMaxima(puntuacion : int) : void
+    + isJuegoTerminado() : boolean
+    + getGanador() : String
+    + getGestorSonidos() : GestorSonidosPong
+    + getTema() : TemasPong
+    + cambiarTema(nombreTema : String) : void
+    + cambiarSkins(skinCancha : String, skinBarras : String, skinPelota : String) : void
+}
+
+class Paleta {
+    - velocidad : float
+    - esJugador1 : boolean
+    - altoVentana : int
+    - tema : TemasPong
+    + Paleta(x : int, y : int, ancho : int, alto : int, esJugador1 : boolean)
+    + setTema(tema : TemasPong) : void
+    + moverArriba() : void
+    + moverAbajo() : void
+    + setAltoVentana(altoVentana : int) : void
+    + incrementarVelocidad() : void
+    + getVelocidad() : float
+    + setVelocidad(velocidad : float) : void
+    + isJugador1() : boolean
+    + mover() : void
+    + detectarColision() : boolean
+    + dibujar(g : Graphics2D) : void
+}
+
+class Pelota {
+    - velocidadX : float
+    - velocidadY : float
+    - velocidadBase : float
+    - velocidadActual : float
+    - rebotesSinAnotar : int
+    - anchoVentana : int
+    - altoVentana : int
+    - tema : TemasPong
+    - VELOCIDAD_INICIAL : float
+    - INCREMENTO_VELOCIDAD : float
+    - REBOTES_PARA_ACELERAR : int
+    + Pelota(x : int, y : int, ancho : int, alto : int, anchoVentana : int, altoVentana : int)
+    + setTema(tema : TemasPong) : void
+    + mover() : void
+    + detectarColisionPaleta(paleta : Paleta) : boolean
+    + rebotar(paleta : Paleta) : void
+    + rebotar() : void
+    + resetear(posX : int, posY : int, paraJugador : int) : void
+    + getVelocidadActual() : float
+    + getVelocidadX() : float
+    + getRebotesSinAnotar() : int
+    + detectarColision() : boolean
+    + dibujar(g : Graphics2D) : void
+}
+
+class IA {
+    - paletaCPU : Paleta
+    - VELOCIDAD_IA : float
+    - MARGEN : int
+    - errorY : int
+    - contadorFrames : int
+    + IA(paletaCPU : Paleta)
+    + actualizar(pelota : Pelota) : void
+}
+
+class ControlTeclado {
+    - arriba1 : boolean
+    - abajo1 : boolean
+    - arriba2 : boolean
+    - abajo2 : boolean
+    - teclaArriba1 : int
+    - teclaAbajo1 : int
+    - teclaArriba2 : int
+    - teclaAbajo2 : int
+    - textoIngresado : String
+    - enterPresionado : boolean
+    - MAX_TEXTO : int
+    + keyPressed(e : KeyEvent) : void
+    + keyReleased(e : KeyEvent) : void
+    + keyTyped(e : KeyEvent) : void
+    + isArriba1Presionada() : boolean
+    + isAbajo1Presionada() : boolean
+    + isArriba2Presionada() : boolean
+    + isAbajo2Presionada() : boolean
+    + setTeclaArriba1(tecla : int) : void
+    + setTeclaAbajo1(tecla : int) : void
+    + setTeclaArriba2(tecla : int) : void
+    + setTeclaAbajo2(tecla : int) : void
+    + getTeclaArriba1() : int
+    + getTeclaAbajo1() : int
+    + getTeclaArriba2() : int
+    + getTeclaAbajo2() : int
+    + getTextoIngresado() : String
+    + isEnterPresionado() : boolean
+    + resetEnter() : void
+    + resetEntrada() : void
+}
+
+class ConfiguracionPong {
+    - skinBarras : String
+    - skinCancha : String
+    - skinPelota : String
+    - teclaArriba1 : String
+    - teclaAbajo1 : String
+    - teclaArriba2 : String
+    - teclaAbajo2 : String
+    - puntuacionMaxima : int
+    + ConfiguracionPong()
+    + guardar() : void
+    + cargar() : void
+    + restablecer() : void
+    + isSonidoActivado() : boolean
+    + setSonidoActivado(v : boolean) : void
+    + getSkinBarras() : String
+    + setSkinBarras(v : String) : void
+    + getSkinCancha() : String
+    + setSkinCancha(v : String) : void
+    + getSkinPelota() : String
+    + setSkinPelota(v : String) : void
+    + getTeclaArriba1() : String
+    + setTeclaArriba1(v : String) : void
+    + getTeclaAbajo1() : String
+    + setTeclaAbajo1(v : String) : void
+    + getTeclaArriba2() : String
+    + setTeclaArriba2(v : String) : void
+    + getTeclaAbajo2() : String
+    + setTeclaAbajo2(v : String) : void
+    + getPuntuacionMaxima() : int
+    + setPuntuacionMaxima(v : int) : void
+}
+
+class GestorSonidosPong {
+    - musicaFondo : Clip
+    - sonidoRebote : Clip
+    - sonidoPunto : Clip
+    - sonidoGameOver : Clip
+    - sonidoActivado : boolean
+    - RUTA_AUDIO : String
+    + GestorSonidosPong(sonidoActivado : boolean)
+    + cargarTodosSonidos() : void
+    + reproducirRebote() : void
+    + reproducirPunto() : void
+    + reproducirGameOver() : void
+    + reproducirMusica(pista : String) : void
+    + detenerMusica() : void
+    + setSonidoActivado(activado : boolean) : void
+    + isSonidoActivado() : boolean
+    + limpiar() : void
+}
+
+class MenuPong {
+    - ANCHO : int
+    - ALTO : int
+    - RANKING_PONG : String
+    - canvas : JPanel
+    - timer : Timer
+    - buffer : BufferedImage
+    - botones : Boton[]
+    - config : ConfiguracionPong
+    - gestorRanking : GestorRankingBase
+    - gestorSonidos : GestorSonidosPong
+    - launcher : JFrame
+    - mostrandoConfiguracion : boolean
+    - mostrandoRanking : boolean
+    - skinsBarras : String[]
+    - skinsCancha : String[]
+    - skinsPelota : String[]
+    - pistas : String[]
+    - puntuaciones : int[]
+    - sonidoActivado : boolean
+    - pantallaCompleta : boolean
+    + MenuPong(launcher : JFrame)
+}
+
+class TemasPong {
+    - colorFondo : Color
+    - colorTexto : Color
+    - colorLinea : Color
+    - colorLinea2 : Color
+    - skinCancha : String
+    - skinBarras : String
+    - skinPelota : String
+    + TemasPong(nombreTema : String)
+    + TemasPong(skinCancha : String, skinBarras : String, skinPelota : String)
+    + cambiarTema(nombreTema : String) : void
+    + cambiarSkinCancha(nombreSkin : String) : void
+    + cambiarSkinBarras(nombreSkin : String) : void
+    + cambiarSkinPelota(nombreSkin : String) : void
+    + getColorFondo() : Color
+    + getColorPaleta() : Color
+    + getColorPelota() : Color
+    + getColorTexto() : Color
+    + getColorLinea() : Color
+    + getColorLinea2() : Color
+    + getTemaActual() : Tema
+    + getNombreTema() : String
+    + getSkinCancha() : String
+    + getSkinBarras() : String
+    + getSkinPelota() : String
+    + getTemasDisponibles() : String[]
+}
+
+enum Tema {
+    ORIGINAL
+    MODERNO
+    OSCURO
+}
+
+TemasPong +-- Tema
+
+}
+
+package motor {
+abstract class Videojuego
+abstract class Entidad
+class GestorConfiguracionBase
+class GestorRankingBase
+class EntradaRanking
+}
+
+package java_awt_swing {
+class JFrame
+class JPanel
+class Timer
+class Graphics2D
+class Color
+class BufferedImage
+interface KeyListener
+class KeyEvent
+class Clip
+}
+
+package launcher {
+class Boton
+}
+
+Videojuego <|-- Pong
+Entidad <|-- Paleta
+Entidad <|-- Pelota
+GestorConfiguracionBase <|-- ConfiguracionPong
+JFrame <|-- MenuPong
+KeyListener <|.. ControlTeclado
+
+Pong *-- "2" Paleta
+Pong *-- "1" Pelota
+Pong *-- ControlTeclado
+Pong *-- IA
+Pong *-- GestorSonidosPong
+Pong *-- TemasPong
+Pong --> GestorRankingBase
+Pong --> EntradaRanking
+
+IA --> Paleta
+IA --> Pelota
+
+Paleta --> TemasPong
+Pelota --> TemasPong
+Pelota --> Paleta
+
+MenuPong *-- ConfiguracionPong
+MenuPong *-- GestorSonidosPong
+MenuPong --> GestorRankingBase
+MenuPong --> Pong
+MenuPong --> Boton
+MenuPong --> EntradaRanking
+
+ConfiguracionPong --> GestorConfiguracionBase
+GestorSonidosPong --> Clip
+
+@enduml
