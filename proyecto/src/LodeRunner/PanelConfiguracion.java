@@ -4,13 +4,14 @@ import launcher.Boton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class PanelConfiguracion extends JPanel{
+public class PanelConfiguracion extends JPanel implements KeyListener {
     private GestorPantallas gestor;
     private ConfiguracionLR config;
-
     // Declaramos todos los botones que vamos a usar
     private Boton btnSonido;
     private Boton btnMusica;
@@ -46,6 +47,16 @@ public class PanelConfiguracion extends JPanel{
         btnRestaurar = new Boton(150, 340, 220, 50, "RESTAURAR DEFECTO");
         btnPista = new Boton(430, 340, 220, 50, obtenerPistaMusical());
         btnVolver    = new Boton(290, 460, 220, 50, "VOLVER Y GUARDAR");
+
+        this.setFocusable(true);
+        this.addKeyListener(this);
+
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentShown(java.awt.event.ComponentEvent e) {
+                requestFocusInWindow();
+            }
+        });
 
         configurarEventosMouse();
     }
@@ -157,4 +168,41 @@ public class PanelConfiguracion extends JPanel{
         btnRestaurar.dibujar(g2);
         btnVolver.dibujar(g2);
     }
+    public void keyPressed(java.awt.event.KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_Q) {
+                // Guardamos la configuración antes de salir
+                if (config.isEfectosDeSonidoActivados()) {
+                    // Si estaba activada, la desactivamos y guardamos
+                    config.setEfectosDeSonidoActivados(false);
+                    btnSonido.setTexto(obtenerTextoSonido());
+                    config.guardar();
+                    refrescarTextosBotones();
+                }
+                else {
+                    // Si estaba desactivado, lo activamos y guardamos
+                    config.setEfectosDeSonidoActivados(true);
+                    btnSonido.setTexto(obtenerTextoSonido());
+                    config.guardar();
+                    refrescarTextosBotones();
+                }
+            }
+            else if (e.getKeyCode() == KeyEvent.VK_W) {
+                if (config.isMusicaDeFondoActivada()) {
+                    // Si estaba activada, la desactivamos y guardamos
+                    config.setMusicaDeFondoActivada(false);
+                    btnMusica.setTexto(obtenerTextoMusica());
+                    config.guardar();
+                    refrescarTextosBotones();
+                }
+                else {
+                    // Si estaba desactivada, la activamos y guardamos
+                    config.setMusicaDeFondoActivada(true);
+                    btnMusica.setTexto(obtenerTextoMusica());
+                    config.guardar();
+                    refrescarTextosBotones();
+                }
+            }
+    }
+    public void keyReleased(java.awt.event.KeyEvent e) {} //no hace nada
+    public void keyTyped(java.awt.event.KeyEvent e) {} ///no hace nada
 }
