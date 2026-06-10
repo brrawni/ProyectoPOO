@@ -1,10 +1,9 @@
 package spaceinvaders;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.List;
 import motor.Proyectil;
-import java.awt.image.BufferedImage;
-import java.awt.Color;
 
 public class ProyectilCanon extends Proyectil {
 
@@ -48,7 +47,7 @@ public class ProyectilCanon extends Proyectil {
         //contra nave nodriza
         NaveNodriza nave = juego.getNaveNodriza();
         if (nave.esVisible() && obtenerLimites().intersects(nave.obtenerLimites())) {
-            juego.sumarPuntaje(nave.calcularPuntos(juego.getContadorDisparos()));
+            juego.sumarPuntaje(nave.obtenerPuntaje());
             nave.morir();
             desactivar();
             return;

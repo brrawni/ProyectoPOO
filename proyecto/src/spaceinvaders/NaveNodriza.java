@@ -63,7 +63,8 @@ public class NaveNodriza extends Enemigo {
         }
         // resto de disparos según tabla original
         int[] tabla = {100, 50, 150, 100, 100, 50, 100, 300, 100, 100, 150, 50};
-        return tabla[disparos % tabla.length];
+
+        return tabla[(disparos - 1) % tabla.length];
     }
 
     @Override
