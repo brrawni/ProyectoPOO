@@ -471,8 +471,8 @@ class Heroe extends PersonajeLodeRunner{
     public void dibujar(Graphics2D g){
         String claveAnimacion = estadoActual + frameActual + "_" + skin;
         GestorRecursos gestor = GestorRecursos.getInstance();
-        BufferedImage imagenActual = (BufferedImage) gestor.getImgHeroe().get(claveAnimacion);
         gestor.cargarSkin(skin);
+        BufferedImage imagenActual = (BufferedImage) gestor.getImgHeroe().get(claveAnimacion);
         if (imagenActual != null){
             int width = this.ancho;
             int heigth = this.alto;
@@ -510,7 +510,18 @@ class Heroe extends PersonajeLodeRunner{
             }
             frameActual = 1;
         }
-
+        if (frameActual > 3 && estadoActual.equals("corriendo") && !"original".equals(skin)){
+            frameActual = 1;
+        }
+        else if (frameActual > 2 && estadoActual.equals("escalera") && !"original".equals(skin)){
+            frameActual = 1;
+        }
+        else if (frameActual > 3 && estadoActual.equals("barra") && !"original".equals(skin)){
+            frameActual = 1;
+        }
+        else if (frameActual > 1 && estadoActual.equals("cayendo") && !"original".equals(skin)){
+            frameActual = 1;
+        }
     }
     public void cavarIzquierda(){
         int columnaCentro = (this.x + this.ancho / 2) / 32;

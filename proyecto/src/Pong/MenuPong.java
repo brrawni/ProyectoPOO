@@ -127,27 +127,43 @@ public class MenuPong extends JFrame {
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                int mx = escalarX(e.getX());
+                int my = escalarY(e.getY());
                 if (mostrandoRanking) {
-                    manejarClickRanking(e.getX(), e.getY());
+                    manejarClickRanking(mx, my);
                 } else if (mostrandoConfiguracion) {
-                    manejarClickConfiguracion(e.getX(), e.getY());
+                    manejarClickConfiguracion(mx, my);
                 } else {
-                    manejarClickMenu(e.getX(), e.getY());
+                    manejarClickMenu(mx, my);
                 }
             }
         });
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
+                int mx = escalarX(e.getX());
+                int my = escalarY(e.getY());
                 if (mostrandoRanking) {
-                    actualizarHoverRanking(e.getX(), e.getY());
+                    actualizarHoverRanking(mx, my);
                 } else if (mostrandoConfiguracion) {
-                    actualizarHoverConfiguracion(e.getX(), e.getY());
+                    actualizarHoverConfiguracion(mx, my);
                 } else {
-                    for (Boton b : botones) b.setHover(b.contienePunto(e.getX(), e.getY()));
+                    for (Boton b : botones) b.setHover(b.contienePunto(mx, my));
                 }
             }
         });
+    }
+
+    /** Convierte coordenada X real del canvas a coordenada lógica 800x600 */
+    private int escalarX(int x) {
+        int w = canvas.getWidth();
+        return (w > 0) ? x * ANCHO / w : x;
+    }
+
+    /** Convierte coordenada Y real del canvas a coordenada lógica 800x600 */
+    private int escalarY(int y) {
+        int h = canvas.getHeight();
+        return (h > 0) ? y * ALTO / h : y;
     }
 
     private void manejarClickMenu(int mx, int my) {
@@ -292,10 +308,22 @@ public class MenuPong extends JFrame {
 
     private void aplicarModoPantalla() {
         if (pantallaCompleta) {
+            // Liberamos el tamaño fijo para que BorderLayout estire el canvas
+            canvas.setPreferredSize(null);
+            canvas.setMinimumSize(null);
+            getContentPane().removeAll();
+            getContentPane().add(canvas, BorderLayout.CENTER);
             setExtendedState(JFrame.MAXIMIZED_BOTH);
+            revalidate();
+            repaint();
         } else {
+            // Restauramos el tamaño fijo al volver a modo ventana
+            canvas.setPreferredSize(new Dimension(ANCHO, ALTO));
+            canvas.setMinimumSize(null);
+            getContentPane().removeAll();
+            getContentPane().add(canvas, BorderLayout.CENTER);
             setExtendedState(JFrame.NORMAL);
-            setSize(ANCHO, ALTO);
+            pack();
             setLocationRelativeTo(null);
         }
     }
@@ -363,7 +391,7 @@ public class MenuPong extends JFrame {
         bg.drawString(pie, (ANCHO - fm.stringWidth(pie)) / 2, ALTO - 20);
 
         bg.dispose();
-        g.drawImage(buffer, 0, 0, null);
+        g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
     }
 
     private void renderizarRanking(Graphics2D g) {
@@ -385,7 +413,7 @@ public class MenuPong extends JFrame {
         btnVolverRanking.dibujar(bg);
 
         bg.dispose();
-        g.drawImage(buffer, 0, 0, null);
+        g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
     }
 
     private void dibujarTablaRanking(Graphics2D bg, int yInicial) {
@@ -448,7 +476,7 @@ public class MenuPong extends JFrame {
         btnVolver.dibujar(bg);
 
         bg.dispose();
-        g.drawImage(buffer, 0, 0, null);
+        g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
     }
 
     private void actualizarSonidoMenu() {
