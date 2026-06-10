@@ -1,13 +1,13 @@
 package Pong;
 
 import motor.Videojuego;
-import ranking.GestorRanking;
-import ranking.EntradaRanking;
+import motor.GestorRankingBase;
+import motor.EntradaRanking;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.time.LocalDate;
-import javax.swing.SwingUtilities;
+import java.util.List;
 
 /**
  * Clase principal del juego Pong. Extiende Videojuego (motor base de la cátedra).
@@ -34,7 +34,7 @@ public class Pong extends Videojuego {
     private ControlTeclado controlTeclado;
     private BufferedImage buffer;
 
-    private GestorRanking gestorRanking;
+    private GestorRankingBase gestorRanking;
     private boolean rankingGuardado = false;
 
     private GestorSonidosPong gestorSonidos;
@@ -50,14 +50,14 @@ public class Pong extends Videojuego {
 
     public Pong(String nombreTema) {
         super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
-        this.gestorRanking = new GestorRanking(RANKING_PONG);
+        this.gestorRanking = new GestorRankingBase(RANKING_PONG);
         this.gestorSonidos = new GestorSonidosPong(sonidoActivado);
         this.tema = new TemasPong(nombreTema);
     }
 
     public Pong(String skinCancha, String skinBarras, String skinPelota) {
         super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
-        this.gestorRanking = new GestorRanking(RANKING_PONG);
+        this.gestorRanking = new GestorRankingBase(RANKING_PONG);
         this.gestorSonidos = new GestorSonidosPong(sonidoActivado);
         this.tema = new TemasPong(skinCancha, skinBarras, skinPelota);
     }
@@ -196,6 +196,13 @@ public class Pong extends Videojuego {
             bg.setColor(new Color(0, 0, 0, 180));
             bg.fillRect(0, 0, ANCHO_LOGICO, ALTO_LOGICO);
 
+            if (rankingGuardado) {
+                dibujarRankingFinal(bg);
+                bg.dispose();
+                escalarBuffer(g);
+                return;
+            }
+
             bg.setColor(tema.getColorTexto());
             bg.setFont(new Font("Arial", Font.BOLD, 60));
             FontMetrics fm = bg.getFontMetrics();
@@ -209,24 +216,18 @@ public class Pong extends Videojuego {
 
             bg.setFont(new Font("Arial", Font.PLAIN, 20));
             bg.setColor(Color.WHITE);
-            if (!rankingGuardado) {
-                fm = bg.getFontMetrics();
-                String pedirNombre = "Ingresa tu nombre:";
-                bg.drawString(pedirNombre, (ANCHO_LOGICO - fm.stringWidth(pedirNombre)) / 2, ALTO_LOGICO / 2 + 70);
+            fm = bg.getFontMetrics();
+            String pedirNombre = "Ingresa tu nombre:";
+            bg.drawString(pedirNombre, (ANCHO_LOGICO - fm.stringWidth(pedirNombre)) / 2, ALTO_LOGICO / 2 + 70);
 
-                String nombre = controlTeclado.getTextoIngresado() + "|";
-                fm = bg.getFontMetrics();
-                bg.drawString(nombre, (ANCHO_LOGICO - fm.stringWidth(nombre)) / 2, ALTO_LOGICO / 2 + 105);
+            String nombre = controlTeclado.getTextoIngresado() + "|";
+            fm = bg.getFontMetrics();
+            bg.drawString(nombre, (ANCHO_LOGICO - fm.stringWidth(nombre)) / 2, ALTO_LOGICO / 2 + 105);
 
-                bg.setColor(Color.YELLOW);
-                String guardar = "Presiona ENTER para guardar en el ranking";
-                fm = bg.getFontMetrics();
-                bg.drawString(guardar, (ANCHO_LOGICO - fm.stringWidth(guardar)) / 2, ALTO_LOGICO / 2 + 140);
-            } else {
-                fm = bg.getFontMetrics();
-                String guardado = "Puntaje guardado. Cerra la ventana para volver al menu";
-                bg.drawString(guardado, (ANCHO_LOGICO - fm.stringWidth(guardado)) / 2, ALTO_LOGICO / 2 + 80);
-            }
+            bg.setColor(Color.YELLOW);
+            String guardar = "Presiona ENTER para guardar en el ranking";
+            fm = bg.getFontMetrics();
+            bg.drawString(guardar, (ANCHO_LOGICO - fm.stringWidth(guardar)) / 2, ALTO_LOGICO / 2 + 140);
         }
 
         bg.dispose();
@@ -238,6 +239,16 @@ public class Pong extends Videojuego {
         int h = canvas.getHeight();
         if (w <= 0 || h <= 0) {
             // Canvas todavía no tiene tamaño real (primer frame): dibujar 1:1
+            g.drawImage(buffer, 0, 0, null);
+        } else {
+            g.drawImage(buffer, 0, 0, w, h, null);
+        }
+    }
+
+    private void escalarBuffer(Graphics2D g) {
+        int w = canvas.getWidth();
+        int h = canvas.getHeight();
+        if (w <= 0 || h <= 0) {
             g.drawImage(buffer, 0, 0, null);
         } else {
             g.drawImage(buffer, 0, 0, w, h, null);
@@ -299,7 +310,49 @@ public class Pong extends Videojuego {
         gestorRanking.agregarEntrada(entrada);
         gestorRanking.guardar();
         rankingGuardado = true;
-        SwingUtilities.invokeLater(() -> new VentanaRankingPong(gestorRanking, frame).setVisible(true));
+    }
+
+    private void dibujarRankingFinal(Graphics2D bg) {
+        gestorRanking.cargar();
+
+        bg.setColor(new Color(255, 220, 80));
+        bg.setFont(new Font("Arial", Font.BOLD, 34));
+        FontMetrics fm = bg.getFontMetrics();
+        String titulo = "MEJORES PUNTAJES";
+        bg.drawString(titulo, (ANCHO_LOGICO - fm.stringWidth(titulo)) / 2, 155);
+
+        List<EntradaRanking> top10 = gestorRanking.obtenerTop10();
+        bg.setFont(new Font("Monospaced", Font.BOLD, 20));
+
+        if (top10.isEmpty()) {
+            bg.setColor(Color.WHITE);
+            bg.drawString("NO HAY PUNTAJES AUN.", 265, 270);
+        } else {
+            bg.setColor(new Color(170, 210, 255));
+            bg.drawString("POS  NOMBRE      PUNTOS  FECHA", 150, 215);
+
+            bg.setColor(Color.WHITE);
+            int y = 250;
+            for (int i = 0; i < top10.size(); i++) {
+                EntradaRanking entrada = top10.get(i);
+                String nombre = entrada.getNombre();
+                if (nombre.length() > 10) nombre = nombre.substring(0, 10);
+
+                String linea = String.format("%2d.  %-10s  %5d   %s",
+                        i + 1,
+                        nombre,
+                        entrada.getPuntaje(),
+                        entrada.getFecha());
+                bg.drawString(linea, 150, y);
+                y += 28;
+            }
+        }
+
+        bg.setColor(Color.WHITE);
+        bg.setFont(new Font("Arial", Font.PLAIN, 18));
+        String volver = "Cerra la ventana para volver al menu";
+        fm = bg.getFontMetrics();
+        bg.drawString(volver, (ANCHO_LOGICO - fm.stringWidth(volver)) / 2, 555);
     }
 
     public int getPuntajeJugador1()    { return puntajeJugador1; }

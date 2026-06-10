@@ -52,7 +52,7 @@ public class GestorSonidosPong {
             
             // Si el archivo no existe, imprimir advertencia y devolver null
             if (!archivoAudio.exists()) {
-                System.out.println("⚠️ Archivo de audio no encontrado: " + ruta);
+                System.out.println("Archivo de audio no encontrado: " + ruta);
                 return null;
             }
 
@@ -68,13 +68,13 @@ public class GestorSonidosPong {
             return clip;
 
         } catch (UnsupportedAudioFileException e) {
-            System.out.println("❌ Formato de audio no soportado: " + ruta);
+            System.out.println("Formato de audio no soportado: " + ruta);
             return null;
         } catch (IOException e) {
-            System.out.println("❌ Error al leer archivo de audio: " + ruta);
+            System.out.println("Error al leer archivo de audio: " + ruta);
             return null;
         } catch (LineUnavailableException e) {
-            System.out.println("❌ Línea de audio no disponible");
+            System.out.println("Línea de audio no disponible");
             return null;
         }
     }
@@ -85,18 +85,18 @@ public class GestorSonidosPong {
      */
     public void cargarTodosSonidos() {
         if (!sonidoActivado) {
-            System.out.println("ℹ️ Sonido desactivado en configuración");
+            System.out.println("Sonido desactivado en configuración");
             return;
         }
 
-        System.out.println("🔊 Cargando archivos de audio...");
+        System.out.println("Cargando archivos de audio");
         
         // Cargar música de fondo
         sonidoRebote = cargarAudio("rebote_pelota.wav");
         sonidoPunto = cargarAudio("punto_anotado.wav");
         sonidoGameOver = cargarAudio("game_over.wav");
         
-        System.out.println("✅ Sonidos cargados (si los archivos existen)");
+        System.out.println("Sonidos cargados (si los archivos existen)");
     }
 
     /**

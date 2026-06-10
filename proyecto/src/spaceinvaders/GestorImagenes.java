@@ -2,14 +2,16 @@ package spaceinvaders;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
 public class GestorImagenes {
-    // Singleton para cargar y almacenar imágenes en memoria
+    //singleton para cargar y almacenar imágenes en memoria, evitando cargar el mismo archivo varias veces.
     private static GestorImagenes instancia;
-    private Map<String, BufferedImage> cache = new HashMap<>();
+    //tabla hash para almacenar imágenes cargadas, con la ruta como clave
+    private final Map<String, BufferedImage> cache = new HashMap<>(); 
 
     private GestorImagenes() { }
 
@@ -21,9 +23,7 @@ public class GestorImagenes {
     public BufferedImage cargar(String ruta) {
         if (cache.containsKey(ruta)) return cache.get(ruta);
         try {
-            java.io.File file = new java.io.File(
-                    System.getProperty("user.dir") + "/proyecto/resources" + ruta
-            );
+            File file = new java.io.File(System.getProperty("user.dir") + "/proyecto/resources" + ruta);
             if (file.exists()) {
                 BufferedImage img = ImageIO.read(file);
                 cache.put(ruta, img);

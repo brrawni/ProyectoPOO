@@ -1,16 +1,15 @@
 package spaceinvaders;
 
-import spaceinvaders.GestorImagenes;
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import motor.Enemigo;
 
 public class NaveNodriza extends Enemigo {
     private int contadorDisparos;
     private boolean visible = false;
     private int ticksDestruido = 0;
-    private static final int TICKS_ANIMACION_DESTRUCCION = 12;
+    private static final int TICKS_ANIMACION_DESTRUCCION = 12; 
 
     public NaveNodriza(Nivel nivel) {
         super(-50, 40, 60, 30, 2.0f); //arranca fuera de pantalla
