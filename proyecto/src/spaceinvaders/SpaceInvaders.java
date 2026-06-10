@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import launcher.Launcher;
 import motor.EntradaRanking;
 import motor.Videojuego;
@@ -13,7 +14,7 @@ import motor.Videojuego;
 public class SpaceInvaders extends Videojuego {
     private ControlTeclado teclado;
     private BufferedImage buffer;
-    private Launcher launcher;
+    private final Launcher launcher;
     //entidades principales del juego
     private FormacionAlien formacion;
     private CanonJugador canon;
@@ -40,7 +41,7 @@ public class SpaceInvaders extends Videojuego {
     private String nombreJugador = "";
     private boolean ingresandoNombre = false;
     private int ticksGameOver = 0;
-    private static final int TICKS_ANTES_VOLVER_AL_MENU = 300; // ~5 segundos a 60 FPS
+    private static final int TICKS_ANTES_VOLVER_AL_MENU = 300; // ~5 segundos
 
     public SpaceInvaders(Launcher launcher) {
         super("Space Invaders", ANCHO_PANTALLA, ALTO_PANTALLA);
@@ -103,10 +104,10 @@ public class SpaceInvaders extends Videojuego {
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO_PANTALLA, ALTO_PANTALLA, BufferedImage.TYPE_INT_ARGB);
     
-        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance();
+        GestorConfiguracionSpaceInvaders config = GestorConfiguracionSpaceInvaders.getInstance(); //carga config
 
         if (config.isPantallaCompleta()) {
-            javax.swing.SwingUtilities.invokeLater(() -> {
+            SwingUtilities.invokeLater(() -> {
                 frame.dispose();
                 frame.setUndecorated(true);
                 frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -114,14 +115,14 @@ public class SpaceInvaders extends Videojuego {
                 canvas.requestFocus();
             });
         } else {
-            javax.swing.SwingUtilities.invokeLater(() -> {
+            SwingUtilities.invokeLater(() -> {
                 frame.setSize(ANCHO_PANTALLA, ALTO_PANTALLA);
                 frame.setLocationRelativeTo(null);
                 canvas.requestFocus();
             });
         }
 
-        // Crear escudos UNA SOLA VEZ al iniciar el juego (persisten con daño acumulado entre niveles)
+        //crea escudos la primera vez, se mantienen con el daño almacenado
         escudos = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             escudos.add(new Escudo(150 + i * 150, ALTO_PANTALLA - 150));
@@ -218,7 +219,7 @@ public class SpaceInvaders extends Videojuego {
         g2d.drawString("Vidas: "   + canon.obtenerVidas(), ANCHO_PANTALLA - 100, 20);
         g2d.drawString("Nivel: "   + nivelActual, ANCHO_PANTALLA / 2 - 30, 20);
 
-    // Game over se dibuja ANTES del dispose
+        //Game over se dibuja antes del dispose
         if (!enEjecucion) {
             dibujarGameOver(g2d);
         }
@@ -257,11 +258,11 @@ public class SpaceInvaders extends Videojuego {
         if (!rankingGuardado) {
             g2d.setFont(new Font("Arial", Font.PLAIN, 20));
             g2d.setColor(Color.WHITE);
-            g2d.drawString("Ingresá tu nombre:", ANCHO_PANTALLA/2 - 100, 220);
+            g2d.drawString("Ingresa tu nombre:", ANCHO_PANTALLA/2 - 100, 220);
             g2d.drawString(teclado.getTextoIngresado() + "|", ANCHO_PANTALLA/2 - 100, 250);
             g2d.drawString("Puntaje: " + puntaje + "  Nivel: " + nivelActual, ANCHO_PANTALLA/2 - 100, 290);
             g2d.setColor(Color.YELLOW);
-            g2d.drawString("Presioná ENTER para guardar", ANCHO_PANTALLA/2 - 100, 330);
+            g2d.drawString("Presiona ENTER para guardar", ANCHO_PANTALLA/2 - 100, 330);
 
             if (teclado.isEnterPresionado() && !teclado.getTextoIngresado().isEmpty()) {
                 gestorRanking.agregarEntrada(
