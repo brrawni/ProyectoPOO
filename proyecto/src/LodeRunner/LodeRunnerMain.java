@@ -64,7 +64,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                 stop();
             }
         });
-        nivelActual = 3;
+        nivelActual = 1;
         vidasHeroe = 5;
         config.cargar();
         sonidos = new GestorSonidosLodeRunner(config.isEfectosDeSonidoActivados(), config.isMusicaDeFondoActivada() ,config.getPistaMusical());
