@@ -1,10 +1,10 @@
 package spaceinvaders;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import motor.Jugador;
-import java.awt.image.BufferedImage;
-import java.awt.Color;
 
 public class CanonJugador extends Jugador {
     private SpaceInvaders juego; // Referencia al juego para acceder a la formación de aliens
@@ -14,6 +14,8 @@ public class CanonJugador extends Jugador {
     private FormacionAlien formacion; // Para acceder a los aliens y detectar colisiones
     private int ticksMovimiento = 0; // Para controlar la velocidad de movimiento del cañón
     private int vida; // Vida del jugador
+
+    
 
     public CanonJugador(int x, int y, int ancho, int alto, int vidas) {
         super(x, y, ancho, alto, vidas);
@@ -30,7 +32,7 @@ public class CanonJugador extends Jugador {
     } // Mueve el cañón hacia la derecha
     public void moverIzquierda() { 
         if(x>0) x-=4;
-     }// Mueve el cañón hacia la izquierda
+    }// Mueve el cañón hacia la izquierda
 
     // Setters para inyectar dependencias
     public void setEscudos(List<Escudo> escudos){ this.escudos = escudos; }

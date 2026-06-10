@@ -1,14 +1,14 @@
 package spaceinvaders;
 
-import motor.Videojuego;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import launcher.Boton;
-import javax.swing.SwingUtilities;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import launcher.Boton;
 import launcher.Launcher;
+import motor.Videojuego;
 
 public class MenuSpaceInvaders extends Videojuego {
 
@@ -25,13 +25,13 @@ public class MenuSpaceInvaders extends Videojuego {
 
     private int[][] estrellas;
     private int siguientePantalla = 0; // 0=salir, 1=jugar
-    private Launcher launcher;
+    private final Launcher launcher;
     private boolean mostrandoConfiguracion = false;
     private boolean mostrandoRanking = false;
 
-    private String[] opcionVelocidad = {"LENTA", "MEDIA", "RAPIDA"};
-    private String[] opcionSkins = {"original", "alternativa"};
-    private String[] opcionMusica = {"original", "alternativa"};
+    private final String[] opcionVelocidad = {"LENTA", "MEDIA", "RAPIDA"};
+    private final String[] opcionSkins = {"original", "alternativa"};
+    private final String[] opcionMusica = {"original", "alternativa"};
 
     private int indiceVelocidad = 1;
     private int indiceSkinNave = 0;
@@ -58,6 +58,7 @@ public class MenuSpaceInvaders extends Videojuego {
         this.launcher = launcher;
     }
 
+    //metodo para que el Launcher sepa a que juego volver cuando se cierra el menu o se inicia la partida
     @Override
     public void gameStartup() {
         buffer = new BufferedImage(ANCHO, ALTO, BufferedImage.TYPE_INT_ARGB);
@@ -79,6 +80,7 @@ public class MenuSpaceInvaders extends Videojuego {
         canvas.requestFocus();
     }
 
+    //prepara el CardLayout para poder mostrar el ranking sin salir del menu
     private void prepararCardLayout() {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
@@ -98,19 +100,20 @@ public class MenuSpaceInvaders extends Videojuego {
         frame.repaint();
     }
 
+    //configura el modo de pantalla (completo o ventana) al iniciar el menu, basado en la configuración guardada
     private void configurarModoPantallaInicial() {
         if (config.isPantallaCompleta()) {
             SwingUtilities.invokeLater(() -> {
                 frame.dispose();
                 frame.setUndecorated(true);
-                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH); //maximiza el frame para cubrir toda la pantalla
                 frame.setVisible(true);
                 canvas.requestFocus();
             });
         } else {
             SwingUtilities.invokeLater(() -> {
                 frame.setSize(ANCHO, ALTO);
-                frame.setLocationRelativeTo(null);
+                frame.setLocationRelativeTo(null); //centra el frame en la pantalla
                 canvas.requestFocus();
             });
         }
@@ -152,6 +155,7 @@ public class MenuSpaceInvaders extends Videojuego {
             }
         });
 
+        //evento para detectar el movimiento del mouse y actualizar el estado hover de los botones
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
@@ -255,6 +259,7 @@ public class MenuSpaceInvaders extends Videojuego {
         btnSkinProy = new Boton(450, 420, 250, 40, "Skin Laser: " + opcionSkins[indiceSkinProy]);
     }
 
+    //maneja los clicks en la pantalla de configuracion, actualizando las variables correspondientes y aplicando cambios inmediatos para opciones como sonido o pantalla completa
     private void manejarClickConfiguracion(int x, int y) {
         boolean previaPantallaCompleta = pantallaCompleta;
 
@@ -301,6 +306,7 @@ public class MenuSpaceInvaders extends Videojuego {
         canvas.requestFocus();
     }
 
+    //dibuja los botones de configuracion y actualiza su estado hover
     private void actualizarHoverConfiguracion(int x, int y) {
         Boton[] botonesConfiguracion = {
             btnVelIzq, btnVelDer, btnSonido, btnPantalla, btnMusica,
@@ -406,7 +412,7 @@ public class MenuSpaceInvaders extends Videojuego {
 
         btnVelIzq.dibujar(g2d);
         btnVelDer.dibujar(g2d);
-        g2d.drawString(opcionVelocidad[indiceVelocidad], 175 - fm.stringWidth(opcionVelocidad[indiceVelocidad])/2, 178);
+        g2d.drawString(opcionVelocidad[indiceVelocidad], 230 - fm.stringWidth(opcionVelocidad[indiceVelocidad])/2, 178);
         btnSonido.dibujar(g2d);
         btnPantalla.dibujar(g2d);
         btnMusica.dibujar(g2d);
