@@ -3,7 +3,6 @@ package Pong;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.time.LocalDate;
-import java.util.List;
 import motor.EntradaRanking;
 import motor.GestorRankingBase;
 import motor.Videojuego;

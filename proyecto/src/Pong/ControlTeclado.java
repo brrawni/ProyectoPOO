@@ -20,7 +20,7 @@ public class ControlTeclado implements KeyListener {
     private boolean arriba2 = false;
     private boolean abajo2 = false;
     
-    // Teclas configurables (en el futuro se pueden cargar desde configuración)
+   
     private static final int TECLA_ARRIBA_1 = KeyEvent.VK_UP;
     private static final int TECLA_ABAJO_1 = KeyEvent.VK_DOWN;
     private static final int TECLA_ARRIBA_2 = KeyEvent.VK_W;
@@ -84,7 +84,7 @@ public class ControlTeclado implements KeyListener {
     }
 
     /**
-     * Se llama cuando se escribe una tecla (no usado en este caso)
+     * Se llama cuando se escribe una tecla
      */
     @Override
     public void keyTyped(KeyEvent e) {

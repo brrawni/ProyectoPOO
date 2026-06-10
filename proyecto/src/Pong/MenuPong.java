@@ -9,7 +9,7 @@ import motor.GestorRankingBase;
 
 /**
  * Menu principal de Pong.
- * Usa JFrame propio + Timer de Swing. No extiende Videojuego.
+ 
  */
 @SuppressWarnings("serial")
 public class MenuPong extends JFrame {
