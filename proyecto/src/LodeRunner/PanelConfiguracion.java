@@ -61,7 +61,6 @@ public class PanelConfiguracion extends JPanel implements KeyListener {
         configurarEventosMouse();
     }
 
-    // --- MÉTODOS AUXILIARES PARA EL TEXTO DE LOS BOTONES ---
     private String obtenerTextoSonido() {
         return "Sonido: " + (config.isEfectosDeSonidoActivados() ? "ON" : "OFF");
     }
@@ -76,7 +75,6 @@ public class PanelConfiguracion extends JPanel implements KeyListener {
     }
     private String obtenerPistaMusical(){ return "Pista: " + config.getPistaMusical().toUpperCase(); }
 
-    // --- ACTUALIZAR TODOS LOS BOTONES A LA VEZ ---
     private void refrescarTextosBotones() {
         btnSonido.setTexto(obtenerTextoSonido());
         btnMusica.setTexto(obtenerTextoMusica());

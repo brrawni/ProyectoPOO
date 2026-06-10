@@ -54,7 +54,6 @@ public class GestorSonidosLodeRunner {
 
         detenerMusicaMenu();
 
-        // Elegimos dinámicamente cuál clip reproducir según la configuración de la cátedra
         Clip musicaA_Reproducir = null;
         if (pistaSeleccionada.equals("original")) {
             musicaA_Reproducir = musicaPartida;
@@ -76,7 +75,6 @@ public class GestorSonidosLodeRunner {
         }
     }
 
-    // METODOS PARA EFECTOS DE SONIDO CORTOS (SFX)
     public void reproducirEfectoCavar() {
         reproducirEfecto("cavar.wav");
     }

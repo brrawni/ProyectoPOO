@@ -43,7 +43,7 @@ public class PanelMenu extends JPanel implements KeyListener {
 
             @Override
             public void windowLostFocus(java.awt.event.WindowEvent e) {
-                // Cuando el menú pierde el foco (ej: se abre el juego), no hacemos nada
+                // Cuando el menú pierde el foco, no hacemos nada
             }
         });
 
