@@ -65,12 +65,6 @@ public class Paleta extends Entidad {
         this.altoVentana = altoVentana;
     }
 
-    /**
-     * Incrementa la velocidad de la paleta (para dificultad progresiva)
-     */
-    public void incrementarVelocidad() {
-        this.velocidad += 0.5f;
-    }
 
     /**
      * Obtiene la velocidad actual

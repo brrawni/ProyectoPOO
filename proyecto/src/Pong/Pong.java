@@ -34,6 +34,7 @@ public class Pong extends Videojuego {
     private BufferedImage buffer;
 
     private GestorRankingBase gestorRanking;
+    private PantallaRankingPong pantallaRanking;
     private boolean rankingGuardado = false;
 
     private GestorSonidosPong gestorSonidos;
@@ -49,8 +50,9 @@ public class Pong extends Videojuego {
 
     private Pong(TemasPong tema) {
         super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
-        this.gestorRanking = new GestorRankingBase(RANKING_PONG);
-        this.gestorSonidos = new GestorSonidosPong(sonidoActivado);
+        this.gestorRanking  = new GestorRankingBase(RANKING_PONG);
+        this.pantallaRanking = new PantallaRankingPong(ANCHO_LOGICO, ALTO_LOGICO, gestorRanking);
+        this.gestorSonidos  = new GestorSonidosPong(sonidoActivado);
         this.tema = tema;
     }
 
@@ -132,7 +134,7 @@ public class Pong extends Videojuego {
         pelota.setTema(tema);
 
         if (modoJuego == 1) {
-            ia = new IA(paleta2);
+            ia = new IA(paleta2, ALTO_LOGICO);;
             paleta2.setVelocidad(3.6f);
         }
 
@@ -167,6 +169,7 @@ public class Pong extends Videojuego {
                 ganador = (puntajeJugador1 >= puntuacionMaxima) ? "Jugador 1" : "Jugador 2";
                 gestorSonidos.reproducirGameOver();
                 gestorSonidos.detenerMusica();
+                controlTeclado.resetEntrada();
             }
         } else if (juegoTerminado && !rankingGuardado) {
             guardarRankingSiCorresponde();
@@ -205,7 +208,7 @@ public class Pong extends Videojuego {
             bg.fillRect(0, 0, ANCHO_LOGICO, ALTO_LOGICO);
 
             if (rankingGuardado) {
-                dibujarRankingFinal(bg);
+                pantallaRanking.renderizarPostPartida(bg, ANCHO_LOGICO, ALTO_LOGICO);
                 bg.dispose();
                 escalarBuffer(g);
                 return;
@@ -225,32 +228,28 @@ public class Pong extends Videojuego {
             bg.setFont(new Font("Arial", Font.PLAIN, 20));
             bg.setColor(Color.WHITE);
             fm = bg.getFontMetrics();
-            String pedirNombre = "Ingresa tu nombre:";
-            bg.drawString(pedirNombre, (ANCHO_LOGICO - fm.stringWidth(pedirNombre)) / 2, ALTO_LOGICO / 2 + 70);
-
-            String nombre = controlTeclado.getTextoIngresado() + "|";
-            fm = bg.getFontMetrics();
-            bg.drawString(nombre, (ANCHO_LOGICO - fm.stringWidth(nombre)) / 2, ALTO_LOGICO / 2 + 105);
-
-            bg.setColor(Color.YELLOW);
-            String guardar = "Presiona ENTER para guardar en el ranking";
-            fm = bg.getFontMetrics();
-            bg.drawString(guardar, (ANCHO_LOGICO - fm.stringWidth(guardar)) / 2, ALTO_LOGICO / 2 + 140);
+            if (modoJuego == 1 && ganador.equals("Jugador 2")) {
+                // Ganó la CPU, se guarda automáticamente
+                String msg = "La CPU gano esta vez...";
+                bg.drawString(msg, (ANCHO_LOGICO - fm.stringWidth(msg)) / 2, ALTO_LOGICO / 2 + 90);
+            } else {
+                // Ganó un humano, pedir nombre
+                String pedirNombre = "Ingresa tu nombre:";
+                bg.drawString(pedirNombre, (ANCHO_LOGICO - fm.stringWidth(pedirNombre)) / 2, ALTO_LOGICO / 2 + 70);
+                String nombre = controlTeclado.getTextoIngresado() + "|";
+                fm = bg.getFontMetrics();
+                bg.drawString(nombre, (ANCHO_LOGICO - fm.stringWidth(nombre)) / 2, ALTO_LOGICO / 2 + 105);
+                bg.setColor(Color.YELLOW);
+                String guardar = "Presiona ENTER para guardar en el ranking";
+                fm = bg.getFontMetrics();
+                bg.drawString(guardar, (ANCHO_LOGICO - fm.stringWidth(guardar)) / 2, ALTO_LOGICO / 2 + 140);
+            }
         }
 
         bg.dispose();
 
-        // ── Escalar buffer al tamaño real del canvas ──────────────────────
-        // En modo ventana canvas.getWidth/Height() == 800x600 → sin cambio.
-        // En pantalla completa se estira para llenar la pantalla entera.
-        int w = canvas.getWidth();
-        int h = canvas.getHeight();
-        if (w <= 0 || h <= 0) {
-            // Canvas todavía no tiene tamaño real (primer frame): dibujar 1:1
-            g.drawImage(buffer, 0, 0, null);
-        } else {
-            g.drawImage(buffer, 0, 0, w, h, null);
-        }
+        escalarBuffer(g);
+    
     }
 
     private void escalarBuffer(Graphics2D g) {
@@ -301,6 +300,12 @@ public class Pong extends Videojuego {
     }
 
     private void guardarRankingSiCorresponde() {
+        // Si ganó la CPU no hace falta que nadie escriba nada
+        if (modoJuego == 1 && ganador.equals("Jugador 2")) {
+            guardarEnRanking("CPU");
+            return;
+        }
+        // Si ganó un humano, esperar que escriba su nombre
         if (controlTeclado.isEnterPresionado()) {
             String nombre = controlTeclado.getTextoIngresado();
             if (!nombre.isEmpty()) {
@@ -313,55 +318,16 @@ public class Pong extends Videojuego {
     }
 
     private void guardarEnRanking(String nombreJugador) {
-        int puntajeFinal = Math.max(puntajeJugador1, puntajeJugador2);
-        EntradaRanking entrada = new EntradaRanking(nombreJugador, 1, puntajeFinal, LocalDate.now());
+        int puntajeGanador  = Math.max(puntajeJugador1, puntajeJugador2);
+        int puntajePerdedor = Math.min(puntajeJugador1, puntajeJugador2);
+        int puntajeRanking  = (puntajeGanador - puntajePerdedor) * 10;
+        // nivel lo reutilizamos para guardar el puntaje del perdedor (ej: ganó 11-7)
+        EntradaRanking entrada = new EntradaRanking(nombreJugador, puntajePerdedor, puntajeRanking, LocalDate.now());
         gestorRanking.agregarEntrada(entrada);
         gestorRanking.guardar();
         rankingGuardado = true;
     }
 
-    private void dibujarRankingFinal(Graphics2D bg) {
-        gestorRanking.cargar();
-
-        bg.setColor(new Color(255, 220, 80));
-        bg.setFont(new Font("Arial", Font.BOLD, 34));
-        FontMetrics fm = bg.getFontMetrics();
-        String titulo = "MEJORES PUNTAJES";
-        bg.drawString(titulo, (ANCHO_LOGICO - fm.stringWidth(titulo)) / 2, 155);
-
-        List<EntradaRanking> top10 = gestorRanking.obtenerTop10();
-        bg.setFont(new Font("Monospaced", Font.BOLD, 20));
-
-        if (top10.isEmpty()) {
-            bg.setColor(Color.WHITE);
-            bg.drawString("NO HAY PUNTAJES AUN.", 265, 270);
-        } else {
-            bg.setColor(new Color(170, 210, 255));
-            bg.drawString("POS  NOMBRE      PUNTOS  FECHA", 150, 215);
-
-            bg.setColor(Color.WHITE);
-            int y = 250;
-            for (int i = 0; i < top10.size(); i++) {
-                EntradaRanking entrada = top10.get(i);
-                String nombre = entrada.getNombre();
-                if (nombre.length() > 10) nombre = nombre.substring(0, 10);
-
-                String linea = String.format("%2d.  %-10s  %5d   %s",
-                        i + 1,
-                        nombre,
-                        entrada.getPuntaje(),
-                        entrada.getFecha());
-                bg.drawString(linea, 150, y);
-                y += 28;
-            }
-        }
-
-        bg.setColor(Color.WHITE);
-        bg.setFont(new Font("Arial", Font.PLAIN, 18));
-        String volver = "Cerra la ventana para volver al menu";
-        fm = bg.getFontMetrics();
-        bg.drawString(volver, (ANCHO_LOGICO - fm.stringWidth(volver)) / 2, 555);
-    }
 
     public int getPuntajeJugador1()    { return puntajeJugador1; }
     public int getPuntajeJugador2()    { return puntajeJugador2; }

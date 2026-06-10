@@ -7,17 +7,7 @@ import java.io.IOException;
 /**
  * Clase para gestionar sonidos y música en Pong.
  * Permite cargar y reproducir archivos de audio WAV.
- * 
- * Sonidos según la consigna:
- * - Música de fondo durante el juego
- * - Efectos de sonido para rebotes y puntuaciones
- * 
- * Archivos esperados en carpeta: resources/audio/
- * - musica_pong_original.wav (pista musical por defecto)
- * - musica_pong_8bit.wav (pista alternativa)
- * - rebote_pelota.wav (efecto al rebotar)
- * - punto_anotado.wav (efecto al anotar punto)
- * - game_over.wav (efecto al terminar)
+ 
  */
 public class GestorSonidosPong {
     // Clips de audio para diferentes sonidos
@@ -91,7 +81,6 @@ public class GestorSonidosPong {
 
         System.out.println("Cargando archivos de audio");
         
-        // Cargar música de fondo
         sonidoRebote = cargarAudio("rebote_pelota.wav");
         sonidoPunto = cargarAudio("punto_anotado.wav");
         sonidoGameOver = cargarAudio("game_over.wav");
@@ -147,7 +136,7 @@ public class GestorSonidosPong {
         if (musicaFondo != null) {
             // Reproducir en loop infinito (valor negativo = infinito)
             musicaFondo.loop(Clip.LOOP_CONTINUOUSLY);
-            System.out.println("🎵 Reproduciendo música: " + pista);
+            System.out.println("Reproduciendo música: " + pista);
         }
     }
 
