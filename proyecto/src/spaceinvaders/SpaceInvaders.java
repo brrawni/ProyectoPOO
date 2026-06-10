@@ -5,10 +5,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
-import motor.Videojuego;
-import motor.EntradaRanking;
-
 import launcher.Launcher;
+import motor.EntradaRanking;
+import motor.Videojuego;
 
 
 public class SpaceInvaders extends Videojuego {
@@ -179,7 +178,7 @@ public class SpaceInvaders extends Videojuego {
         
         // controlar aparición de la nave nodriza
         ticksNaveNodriza++;
-        if(ticksNaveNodriza >= 1800) { // Aparece cada 10 segundos
+        if(ticksNaveNodriza >= 1800) { // aparece cada 30 segundos
             nodriza.aparecer(); // Aparece desde la izquierda
             ticksNaveNodriza = 0;
         }
@@ -228,8 +227,8 @@ public class SpaceInvaders extends Videojuego {
         g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
     }
 
-    public NaveNodriza getNaveNodriza()  { return nodriza; }
-    public int getContadorDisparos()     { return contadorDisparos; }
+    public NaveNodriza getNaveNodriza() { return nodriza; }
+    public int getContadorDisparos() { return contadorDisparos; }
     public void sumarPuntaje(int puntos) { puntaje += puntos; }
     public GestorSonidosSpaceInvaders getGestorSonidos() { return gestorSonidos; }
 

@@ -13,16 +13,17 @@ public class GestorSonidosLodeRunner {
     private String pistaSeleccionada;
     private Clip musicaMenu;
     private boolean sonidoActivado;
+    private boolean musicaActivada;
     private static final String RUTA = "/sonido/loderunner/";
     private Clip efectoCaida;
 
-    public GestorSonidosLodeRunner(boolean sonidoActivado, String pistaSeleccionada){
+    public GestorSonidosLodeRunner(boolean sonidoActivado, boolean musicaActivada, String pistaSeleccionada){
         this.sonidoActivado = sonidoActivado;
         this.pistaSeleccionada = pistaSeleccionada;
+        this.musicaActivada = musicaActivada;
         //inicializar las musicas
         this.musicaMenu = cargarClip("menu.wav");
-        this.musicaPartida = cargarClip("juego.wav");
-        this.musicaPartidaAlternativa = cargarClip("juego_alternativo.wav");
+        this.musicaPartida = cargarClip("juego.wav");this.musicaPartidaAlternativa = cargarClip("juego_alternativo.wav");
         this.efectoCaida = cargarClip("caida.wav");
         reducirVolumen(this.musicaPartidaAlternativa, -15.0f); //bajamos el volumen de la musica alternativa por que esta muy alto
         reducirVolumen(this.musicaMenu, -15.0f); //lo mismo para la musica del menu
@@ -42,14 +43,14 @@ public class GestorSonidosLodeRunner {
         }
     }
     public void reproducirMusicaMenu() {
-        if (sonidoActivado && musicaMenu != null) {
+        if (musicaActivada && musicaMenu != null) {
             detenerMusicaPartida(); // Nos aseguramos de que no se superpongan
             musicaMenu.setFramePosition(0); // Reinicia la canción al principio
             musicaMenu.loop(Clip.LOOP_CONTINUOUSLY); // Reproduce en bucle infinito
         }
     }
     public void reproducirMusicaPartida() {
-        if (!sonidoActivado) return;
+        if (!musicaActivada) return;
 
         detenerMusicaMenu();
 
