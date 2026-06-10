@@ -83,13 +83,21 @@ public class Pong extends Videojuego {
         // Si es pantalla completa, hacer que el canvas llene todo el frame.
         // Esto debe ocurrir antes de que el frame se muestre (invokeLater en JGame lo garantiza).
         if (pantallaCompleta) {
-            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-            // Quitar el layout por defecto y hacer que el canvas llene el frame
-            frame.setLayout(new BorderLayout());
-            frame.add(canvas, BorderLayout.CENTER);
-            frame.revalidate();
-            
+            // Quitamos el tamaño preferido fijo para que BorderLayout pueda
+            // estirar el canvas a todo el frame. Sin esto, JPanel se queda
+            // en 800x600 en la esquina aunque la ventana esté maximizada.
+            canvas.setPreferredSize(null);
+            canvas.setMinimumSize(null);
 
+            // El content pane de JFrame ya usa BorderLayout por defecto.
+            // Solo necesitamos re-añadir el canvas como CENTER (lo reemplaza
+            // en caso de que ya estuviera añadido sin restricción de posición).
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(canvas, BorderLayout.CENTER);
+
+            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+            frame.revalidate();
+            frame.repaint();
         }
 
         // Buffer siempre en resolución lógica fija: la lógica del juego no cambia
