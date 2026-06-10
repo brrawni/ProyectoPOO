@@ -2,7 +2,7 @@ package spaceinvaders;
 
 public class Nivel {
 
-    private int   numero;
+    private final int   numero;
     private float velocidadAlien;
     private int   filaInicio;
     private int   filas;
@@ -45,7 +45,7 @@ public class Nivel {
                 probabilidadDisparo = 0.025f;
                 velocidadProyectil  = 6.5f;
                 break;
-            default:
+            default: //niveles 5 en adelante
                 velocidadAlien      = Math.min(2.0f + numero * 0.5f, 8.0f);
                 filas               = Math.min(3 + numero, 6);
                 columnas            = Math.min(6 + numero, 11);
