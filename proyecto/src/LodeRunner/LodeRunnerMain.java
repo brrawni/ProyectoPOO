@@ -318,7 +318,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         // 1. Frenamos el bucle del juego
         enEjecucion = false;
 
-        // 2. ¡CORTAMOS LA MÚSICA DE GOLPE!
         if (sonidos != null) {
             sonidos.detenerMusicaPartida();
             sonidos.detenerEfectoCaida(); // Por si cerró la ventana justo mientras caía

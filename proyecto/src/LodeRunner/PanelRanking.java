@@ -17,7 +17,6 @@ public class PanelRanking extends JPanel {
     private GestorPantallas gestor;
     private Boton btnVolver;
 
-    // Instanciamos tu clase gestora de datos
     private RankingLR rankingLR;
 
     public PanelRanking(GestorPantallas gestor) {
@@ -31,7 +30,6 @@ public class PanelRanking extends JPanel {
 
         configurarEventosMouse();
 
-        // ¡TRUCO PRO! Esto hace que el archivo TXT se vuelva a leer
         // automáticamente justo en el milisegundo en que el jugador entra a esta pantalla.
         this.addComponentListener(new ComponentAdapter() {
             @Override
@@ -64,12 +62,10 @@ public class PanelRanking extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // --- DIBUJAR EL TÍTULO ---
         g2.setColor(Color.YELLOW);
         g2.setFont(new Font("Arial", Font.BOLD, 45));
         g2.drawString("MEJORES PUNTAJES", 170, 70);
 
-        // --- DIBUJAR LA LISTA DE PUNTAJES DESDE EL ARCHIVO ---
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Monospaced", Font.BOLD, 26));
 
@@ -80,20 +76,18 @@ public class PanelRanking extends JPanel {
             g2.drawString("NO HAY PUNTAJES AÚN.", 240, 250);
             g2.drawString("¡SÉ EL PRIMERO!", 270, 300);
         } else {
-            int yPos = 140; // Altura de la primera línea
+            int yPos = 140;
 
             // Iteramos sobre la lista real
             for (int i = 0; i < top10.size(); i++) {
                 EntradaRanking entrada = top10.get(i);
 
-                // Recortamos el nombre por si alguien puso un nombre muy largo
                 // para que no desalinee las columnas
                 String nombre = entrada.getNombre();
                 if (nombre.length() > 8) {
                     nombre = nombre.substring(0, 8);
                 }
 
-                // Formateador de texto tipo C/C++:
                 // %2d = número de 2 cifras (para alinear el 10 con el 1)
                 // %-8s = Texto alineado a la izquierda rellenado con espacios hasta 8 caracteres
                 // %06d = Puntaje con 6 ceros a la izquierda (Ej: 005000)
@@ -105,7 +99,6 @@ public class PanelRanking extends JPanel {
             }
         }
 
-        // --- DIBUJAR BOTÓN ---
         btnVolver.dibujar(g2);
     }
 }
