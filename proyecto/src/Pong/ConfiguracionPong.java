@@ -3,23 +3,7 @@ package Pong;
 import motor.GestorConfiguracionBase;
 import java.util.Properties;
 
-/**
- * Configuración de Pong.
- *
- * Hereda de GestorConfiguracionBase los campos comunes:
- *   pantallaCompleta, efectosSonido, musicaFondo, pistaMusical.
- *
- * Pong, al igual que Lode Runner, muestra un único toggle "Sonido activado"
- * que en la consigna no distingue entre efectos y música. Por eso
- * VentanaConfiguracionPong usa el método de conveniencia isSonidoGeneralActivado()
- * / setSonidoGeneral(boolean), que vienen de la base.
- * Los setters individuales (setEfectosSonidoActivados / setMusicaFondoActivada)
- * también están disponibles si en el futuro se quiere separarlos.
- *
- * Alias mantenido:
- *   isSonidoActivado() / setSonidoActivado()  →  delegan al toggle unificado
- *   para no romper la VentanaConfiguracionPong actual.
- */
+
 public class ConfiguracionPong extends GestorConfiguracionBase {
 
     // Campos propios de Pong
@@ -42,8 +26,7 @@ public class ConfiguracionPong extends GestorConfiguracionBase {
         props.setProperty("skinCancha",       skinCancha);
         props.setProperty("skinPelota",       skinPelota);
         props.setProperty("puntuacionMaxima", String.valueOf(puntuacionMaxima));
-        // La base agrega pantallaCompleta + efectosSonido + musicaFondo
-        // + pistaMusical y escribe el archivo en disco
+
         super.guardarBase(props);
     }
 
@@ -74,22 +57,10 @@ public class ConfiguracionPong extends GestorConfiguracionBase {
         guardar();
     }
 
-    // ── Alias de compatibilidad con VentanaConfiguracionPong ─────────
-    //
-    // VentanaConfiguracionPong usa config.isSonidoActivado() y
-    // config.setSonidoActivado(). Esos métodos delegan al toggle
-    // unificado de la base (efectosSonido + musicaFondo juntos).
-
-    /**
-     * Alias de isSonidoGeneralActivado() para compatibilidad con VentanaConfiguracionPong.
-     */
     public boolean isSonidoActivado() {
         return isSonidoGeneralActivado();
     }
 
-    /**
-     * Alias de setSonidoGeneral(boolean) para compatibilidad con VentanaConfiguracionPong.
-     */
     public void setSonidoActivado(boolean v) {
         setSonidoGeneral(v);
     }
@@ -114,5 +85,4 @@ public class ConfiguracionPong extends GestorConfiguracionBase {
         this.puntuacionMaxima = v;
     }
 
-    // pistaMusical → heredado; getPistaMusical() / setPistaMusical() ya están en la base.
 }

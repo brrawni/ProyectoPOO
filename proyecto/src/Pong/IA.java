@@ -1,20 +1,6 @@
 package Pong;
 
-/**
- * IA para el modo Humano vs CPU.
- *
- * Diseño según la consigna: la dificultad no se elige, se experimenta.
- * A medida que la pelota acelera (más rebotes), la IA empieza a no poder seguirla
- * porque su velocidad de paleta es fija y menor a la velocidad máxima de la pelota.
- *
- * Funcionamiento:
- * - La IA mueve la paleta hacia la posición Y de la pelota cada frame.
- * - Pero su velocidad está limitada a VELOCIDAD_IA (3.0), menor que la velocidad
- *   inicial de la pelota (4.0) y mucho menor que la velocidad máxima tras varios rebotes.
- * - Además, solo reacciona cuando la pelota viene hacia ella (velocidadX > 0),
- *   lo que le da al jugador ventana para engañarla.
- * - Tiene un pequeño margen de error aleatorio para que no sea perfecta ni al inicio.
- */
+
 public class IA {
     private Paleta paletaCPU;
 
