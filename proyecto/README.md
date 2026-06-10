@@ -55,11 +55,9 @@ Eliminá todas las oleadas de aliens antes de que lleguen al suelo.
 
 Controles por defecto:
 
-| Acción | Tecla |
-|--------|-------|
-| Mover izquierda | ← Flecha izquierda |
-| Mover derecha | → Flecha derecha |
-| Disparar | Barra espaciadora |
+Mover izquierda | ← Flecha izquierda 
+Mover derecha | → Flecha derecha 
+Disparar | Barra espaciadora 
 
 Mecánicas:
 - Solo podés tener un proyectil activo a la vez
@@ -70,12 +68,10 @@ Mecánicas:
 
 Puntuación:
 
-| Alien | Puntos |
-|-------|--------|
-| Calamar (fila inferior) | 10 pts |
-| Cangrejo (filas centrales) | 20 pts |
-| Pulpo (filas superiores) | 30 pts |
-| Nave nodriza | 50 a 300 pts |
+Calamar (fila inferior) | 10 pts 
+Cangrejo (filas centrales) | 20 pts 
+Pulpo (filas superiores) | 30 pts 
+Nave nodriza | 50 a 300 pts 
 
 ---
 
