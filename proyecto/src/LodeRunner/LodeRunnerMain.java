@@ -67,7 +67,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         nivelActual = 1;
         vidasHeroe = 5;
         config.cargar();
-        sonidos = new GestorSonidosLodeRunner(config.isEfectosDeSonidoActivados(), config.getPistaMusical());
+        sonidos = new GestorSonidosLodeRunner(config.isEfectosDeSonidoActivados(), config.isMusicaDeFondoActivada() ,config.getPistaMusical());
         sonidos.reproducirMusicaPartida();
         iniciarNivel();
     }
@@ -88,8 +88,8 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
             limiteGuardias += 2;
         }
         while (guardiasCreados < limiteGuardias) {
-            int colRand = (int)(Math.random() * 14); // Columnas de 0 a 13
-            int filaRand = (int)(Math.random() * 8); // Filas de 0 a 7 (evitamos el fondo)
+            int colRand = (int)(Math.random() * 25); // Columnas de 0 a 25
+            int filaRand = (int)(Math.random() * 15); // Filas de 0 a 15 (evitamos el fondo)
 
             // Verificamos los 3 bloques involucrados en el cuerpo del guardia
             int bloqueCabeza = escenario.obtenerTipoBloqueEn(filaRand, colRand);
@@ -106,8 +106,8 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         //Añadir lingotes
         int orosCreados = 0;
         while (orosCreados < 15) {
-            int columnaRand = (int)(Math.random() * 14); // Columnas del mapa
-            int filaRand = (int)(Math.random() * 9);    // Filas del mapa (sin llegar al fondo)
+            int columnaRand = (int)(Math.random() * 25); // Columnas del mapa
+            int filaRand = (int)(Math.random() * 15);    // Filas del mapa (sin llegar al fondo)
 
             int bloqueActual = escenario.obtenerTipoBloqueEn(filaRand, columnaRand);
             int bloqueDeAbajo = escenario.obtenerTipoBloqueEn(filaRand + 1, columnaRand);
@@ -330,6 +330,8 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         }
     }
     public void reiniciarNivel(){
+        if (puntaje > 0)
+            puntaje -= 500; //si se pierde una vida, se pierden 500 puntos
         iniciarNivel();
     }
     public void finDeJuego(Graphics2D g){
