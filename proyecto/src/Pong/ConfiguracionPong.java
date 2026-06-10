@@ -90,14 +90,6 @@ public class ConfiguracionPong extends GestorConfiguracionBase {
         guardar();
     }
 
-    /**
-     * @deprecated Usar restablecer(). Mantenido por compatibilidad con VentanaConfiguracionPong.
-     */
-    @Deprecated
-    public void setearPorDefecto() {
-        restablecer();
-    }
-
     // ── Alias de compatibilidad con VentanaConfiguracionPong ─────────
     //
     // VentanaConfiguracionPong usa config.isSonidoActivado() y
