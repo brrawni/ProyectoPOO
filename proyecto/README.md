@@ -82,10 +82,9 @@ Recolectá todo el oro del nivel mientras evitás a los guardias.
 **Controles por defecto:**
 
 | Acción | Tecla |
-|--------|-------|
+|-------|------|
 | Mover | Flechas direccionales |
-| Cavar izquierda | Q |
-| Cavar derecha | W |
+| Cavar | Space|
 | Iniciar juego | Enter |
 
 **Mecánicas:**
@@ -96,11 +95,11 @@ Recolectá todo el oro del nivel mientras evitás a los guardias.
 - Mínimo 3 niveles con diseños únicos
 
 **Puntuación:**
-- Recolectar oro
-- Atrapar guardias
-- Completar el nivel
-- Tiempo sobrante al terminar
-
+- Recolectar oro: 50
+- Atrapar guardias: 150
+- Completar el nivel: 300
+- Tiempo sobrante al terminar: 60 por minuto sobrante
+- Penalizacion de 500 puntos por perder una vida
 ---
 
 ### Pong
