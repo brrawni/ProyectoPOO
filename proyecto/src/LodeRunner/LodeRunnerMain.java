@@ -392,6 +392,18 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         g2d.drawString("Presione ESCAPE para volver al menu principal", 800/2 - 200, 520);
     }
     public void keyPressed(KeyEvent e){
+        String teclaPulsada = KeyEvent.getKeyText(e.getKeyCode()).toUpperCase();
+        if (teclaPulsada.equals(config.getTeclaCavar().toUpperCase())) {
+            if (enEjecucion) {
+                sonidos.reproducirEfectoCavar();
+            }
+            if (mirandoIzq) {
+                heroe.cavarIzquierda();
+            } else if (mirandoDer) {
+                heroe.cavarDerecha();
+            }
+            // Cortamos la ejecución aquí para que no entre al switch
+        }
         switch(e.getKeyCode()){
             case KeyEvent.VK_ENTER:
                 enterPresionado = true;
