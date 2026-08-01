@@ -16,15 +16,10 @@ public class TemasPong {
     private Color colorFondo;
     private Color colorTexto;
     private Color colorLinea;
-    private Color colorLinea2;
 
     private String skinCancha;
     private String skinBarras;
     private String skinPelota;
-
-    public TemasPong(String nombreTema) {
-        this(nombreTema, "original", "original");
-    }
 
     public TemasPong(String skinCancha, String skinBarras, String skinPelota) {
         cambiarSkinCancha(skinCancha);
@@ -38,28 +33,21 @@ public class TemasPong {
                 colorFondo = Color.BLACK;
                 colorTexto = Color.WHITE;
                 colorLinea = new Color(100, 100, 100);
-                colorLinea2 = new Color(50, 50, 50);
                 break;
             case MODERNO:
                 colorFondo = new Color(15, 15, 35);
                 colorTexto = new Color(0, 255, 200);
                 colorLinea = new Color(0, 200, 255);
-                colorLinea2 = new Color(255, 0, 200);
                 break;
             case OSCURO:
                 colorFondo = new Color(25, 25, 35);
                 colorTexto = new Color(180, 180, 180);
                 colorLinea = new Color(80, 80, 100);
-                colorLinea2 = new Color(60, 60, 80);
                 break;
         }
     }
 
-    public void cambiarTema(String nombreTema) {
-        cambiarSkinCancha(nombreTema);
-    }
-
-    public void cambiarSkinCancha(String nombreSkin) {
+    private void cambiarSkinCancha(String nombreSkin) {
         try {
             Tema tema = Tema.valueOf(nombreSkin.toUpperCase());
             skinCancha = tema.name().toLowerCase();
@@ -72,7 +60,7 @@ public class TemasPong {
         }
     }
 
-    public void cambiarSkinBarras(String nombreSkin) {
+    private void cambiarSkinBarras(String nombreSkin) {
         if ("moderno".equals(nombreSkin) || "delgado".equals(nombreSkin)) {
             skinBarras = nombreSkin;
         } else {
@@ -80,7 +68,7 @@ public class TemasPong {
         }
     }
 
-    public void cambiarSkinPelota(String nombreSkin) {
+    private void cambiarSkinPelota(String nombreSkin) {
         if ("cuadrada".equals(nombreSkin) || "triangulo".equals(nombreSkin)) {
             skinPelota = nombreSkin;
         } else {
@@ -122,22 +110,6 @@ public class TemasPong {
         return colorLinea;
     }
 
-    public Color getColorLinea2() {
-        return colorLinea2;
-    }
-
-    public Tema getTemaActual() {
-        return Tema.valueOf(skinCancha.toUpperCase());
-    }
-
-    public String getNombreTema() {
-        return skinCancha;
-    }
-
-    public String getSkinCancha() {
-        return skinCancha;
-    }
-
     public String getSkinBarras() {
         return skinBarras;
     }
@@ -146,7 +118,4 @@ public class TemasPong {
         return skinPelota;
     }
 
-    public static String[] getTemasDisponibles() {
-        return new String[]{"original", "moderno", "oscuro"};
-    }
 }

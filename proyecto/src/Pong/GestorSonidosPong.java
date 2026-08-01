@@ -36,35 +36,31 @@ public class GestorSonidosPong {
      * @return El Clip cargado, o null si hay error
      */
     private Clip cargarAudio(String ruta) {
+        Clip clip = null;
         try {
             String rutaClasspath = RUTA_AUDIO + ruta;
             InputStream recursoAudio = getClass().getResourceAsStream(rutaClasspath);
 
             if (recursoAudio == null) {
                 System.out.println("Archivo de audio no encontrado en classpath: " + rutaClasspath);
-                return null;
+            } else {
+                // El buffer permite que AudioSystem lea correctamente recursos dentro de un JAR.
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                    new BufferedInputStream(recursoAudio)
+                );
+
+                clip = AudioSystem.getClip();
+                clip.open(audioInputStream);
             }
-
-            // El buffer permite que AudioSystem lea correctamente recursos dentro de un JAR.
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
-                new BufferedInputStream(recursoAudio)
-            );
-
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-
-            return clip;
 
         } catch (UnsupportedAudioFileException e) {
             System.out.println("Formato de audio no soportado: " + ruta);
-            return null;
         } catch (IOException e) {
             System.out.println("Error al leer archivo de audio: " + ruta);
-            return null;
         } catch (LineUnavailableException e) {
             System.out.println("Linea de audio no disponible");
-            return null;
         }
+        return clip;
     }
 
     /**
@@ -74,46 +70,45 @@ public class GestorSonidosPong {
     public void cargarTodosSonidos() {
         if (!sonidoActivado) {
             System.out.println("Sonido desactivado en configuracion");
-            return;
+        } else {
+            System.out.println("Cargando archivos de audio");
+
+            sonidoRebote = cargarAudio("rebote_pelota.wav");
+            sonidoPunto = cargarAudio("punto_anotado.wav");
+            sonidoGameOver = cargarAudio("game_over.wav");
+
+            System.out.println("Sonidos cargados (si los archivos existen)");
         }
-
-        System.out.println("Cargando archivos de audio");
-
-        sonidoRebote = cargarAudio("rebote_pelota.wav");
-        sonidoPunto = cargarAudio("punto_anotado.wav");
-        sonidoGameOver = cargarAudio("game_over.wav");
-
-        System.out.println("Sonidos cargados (si los archivos existen)");
     }
 
     /**
      * Reproduce el sonido de rebote cuando la pelota golpea una paleta o borde
      */
     public void reproducirRebote() {
-        if (!sonidoActivado || sonidoRebote == null) return;
-
-        sonidoRebote.setFramePosition(0);
-        sonidoRebote.start();
+        if (sonidoActivado && sonidoRebote != null) {
+            sonidoRebote.setFramePosition(0);
+            sonidoRebote.start();
+        }
     }
 
     /**
      * Reproduce el sonido cuando alguien anota un punto
      */
     public void reproducirPunto() {
-        if (!sonidoActivado || sonidoPunto == null) return;
-
-        sonidoPunto.setFramePosition(0);
-        sonidoPunto.start();
+        if (sonidoActivado && sonidoPunto != null) {
+            sonidoPunto.setFramePosition(0);
+            sonidoPunto.start();
+        }
     }
 
     /**
      * Reproduce el sonido de Game Over al terminar la partida
      */
     public void reproducirGameOver() {
-        if (!sonidoActivado || sonidoGameOver == null) return;
-
-        sonidoGameOver.setFramePosition(0);
-        sonidoGameOver.start();
+        if (sonidoActivado && sonidoGameOver != null) {
+            sonidoGameOver.setFramePosition(0);
+            sonidoGameOver.start();
+        }
     }
 
     /**
@@ -121,16 +116,16 @@ public class GestorSonidosPong {
      * @param pista Nombre de la pista: "original" u otra
      */
     public void reproducirMusica(String pista) {
-        if (!sonidoActivado) return;
+        if (sonidoActivado) {
+            String archivo = "musica_pong_" + pista + ".wav";
 
-        String archivo = "musica_pong_" + pista + ".wav";
+            limpiarMusicaFondo();
+            musicaFondo = cargarAudio(archivo);
 
-        limpiarMusicaFondo();
-        musicaFondo = cargarAudio(archivo);
-
-        if (musicaFondo != null) {
-            musicaFondo.loop(Clip.LOOP_CONTINUOUSLY);
-            System.out.println("Reproduciendo musica: " + pista);
+            if (musicaFondo != null) {
+                musicaFondo.loop(Clip.LOOP_CONTINUOUSLY);
+                System.out.println("Reproduciendo musica: " + pista);
+            }
         }
     }
 
@@ -161,13 +156,6 @@ public class GestorSonidosPong {
         if (!activado) {
             detenerMusica();
         }
-    }
-
-    /**
-     * @return true si el sonido esta activado
-     */
-    public boolean isSonidoActivado() {
-        return sonidoActivado;
     }
 
     /**
