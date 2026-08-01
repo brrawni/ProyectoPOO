@@ -46,75 +46,78 @@ public class GestorSonidosSpaceInvaders {
 }
 
     public void reproducirEfecto(String ruta) {
-        if (!sonidoActivado) return;
-
-        Clip clip = cargarAudio(ruta);
-        if (clip == null) return;
-
-        clip.setFramePosition(0);
-        clip.start();
-        clip.addLineListener(event -> {
-            if (event.getType() == LineEvent.Type.STOP) {
-                clip.close();
+        if (sonidoActivado) {
+            Clip clip = cargarAudio(ruta);
+            if (clip != null) {
+                clip.setFramePosition(0);
+                clip.start();
+                clip.addLineListener(event -> {
+                    if (event.getType() == LineEvent.Type.STOP) {
+                        clip.close();
+                    }
+                }); //libera recursos cuando termina de reproducirse
             }
-        }); //libera recursos cuando termina de reproducirse
+        }
     }
 
     public void reproducirMusicaMenu() {
-        if (!sonidoActivado) return;
-
-        if (musicaMenu != null && musicaMenu.isRunning()) {
-            return;
-        }
-
-        musicaMenu = cargarAudio("musicaMenu.wav");
-        if (musicaMenu != null) {
-            musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
-            pistaActualMenu = "musicaMenu.wav";
+        if (sonidoActivado) {
+            boolean yaReproduciendo = musicaMenu != null && musicaMenu.isRunning();
+            if (!yaReproduciendo) {
+                musicaMenu = cargarAudio("musicaMenu.wav");
+                if (musicaMenu != null) {
+                    musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
+                    pistaActualMenu = "musicaMenu.wav";
+                }
+            }
         }
     }
 
     public void reproducirMusica(String pista) {
-        if (!sonidoActivado) return;
-        // Si ya se está reproduciendo la misma pista, no hacer nada
-        if (musicaMenu != null && pista.equals(pistaActualMenu)) {
-            if (musicaMenu.isRunning()) return;
-            // Si existe pero está parada, volver a reproducir sin recargar
-            musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
-            return;
-        }
+        if (sonidoActivado) {
+            // Si ya se está reproduciendo la misma pista, no hacer nada
+            boolean mismaPista = musicaMenu != null && pista.equals(pistaActualMenu);
+            if (mismaPista) {
+                boolean estaParada = musicaMenu != null && !musicaMenu.isRunning();
+                if (estaParada) {
+                    // Si existe pero está parada, volver a reproducir sin recargar
+                    musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
+                }
+            } else {
+                // Si hay otra pista cargada, liberarla
+                if (musicaMenu != null) {
+                    musicaMenu.stop();
+                    musicaMenu.close();
+                    musicaMenu = null;
+                    pistaActualMenu = null;
+                }
 
-        // Si hay otra pista cargada, liberarla
-        if (musicaMenu != null) {
-            musicaMenu.stop();
-            musicaMenu.close();
-            musicaMenu = null;
-            pistaActualMenu = null;
-        }
-
-        musicaMenu = cargarAudio(pista);
-        if (musicaMenu != null) {
-            musicaMenu.loop(Clip.LOOP_CONTINUOUSLY); //reproduce la música en bucle
-            pistaActualMenu = pista;
-            System.out.println("reproduciendo " + pista);
-        } else {
-            System.out.println("No se pudo cargar pista: " + pista);
+                musicaMenu = cargarAudio(pista);
+                if (musicaMenu != null) {
+                    musicaMenu.loop(Clip.LOOP_CONTINUOUSLY); //reproduce la música en bucle
+                    pistaActualMenu = pista;
+                    System.out.println("reproduciendo " + pista);
+                } else {
+                    System.out.println("No se pudo cargar pista: " + pista);
+                }
+            }
         }
     }
 
     public void reproducirMusicaPartida(String pista) {
-        if (!sonidoActivado) return;
-        if (musicaPartida != null && musicaPartida.isRunning()) {
-            musicaPartida.stop();
-            musicaPartida.close();
-            musicaPartida = null;
-        }
-        musicaPartida = cargarAudio(pista);
-        if (musicaPartida != null) {
-            musicaPartida.loop(Clip.LOOP_CONTINUOUSLY);
-            System.out.println("reproduciendo musicaPartida: " + pista);
-        } else {
-            System.out.println("No se pudo cargar musicaPartida: " + pista);
+        if (sonidoActivado) {
+            if (musicaPartida != null && musicaPartida.isRunning()) {
+                musicaPartida.stop();
+                musicaPartida.close();
+                musicaPartida = null;
+            }
+            musicaPartida = cargarAudio(pista);
+            if (musicaPartida != null) {
+                musicaPartida.loop(Clip.LOOP_CONTINUOUSLY);
+                System.out.println("reproduciendo musicaPartida: " + pista);
+            } else {
+                System.out.println("No se pudo cargar musicaPartida: " + pista);
+            }
         }
     }
 

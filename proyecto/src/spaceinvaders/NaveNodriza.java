@@ -36,14 +36,15 @@ public class NaveNodriza extends Enemigo {
     }
 
     public void actualizar() {
-        if (ticksDestruido > 0) {
+        boolean debePausarAnimacion = ticksDestruido > 0;
+        if (debePausarAnimacion) {
             ticksDestruido--;
             if (ticksDestruido == 0) {
                 visible = false;
             }
-            return;
+        } else {
+            mover();
         }
-        mover();
     }
 
     @Override
@@ -92,34 +93,34 @@ public class NaveNodriza extends Enemigo {
 
     @Override
     public void dibujar(Graphics2D g) {
-        if (!visible || (!vivo && !estaDestruyendose())) return;
-
-        GestorImagenes gestor = GestorImagenes.getInstance();
-        if (estaDestruyendose()) {
-            BufferedImage img = gestor.cargar("/img/spaceinvaders/destruido.png");
-            if (img != null) {
-                g.drawImage(img, x, y, ancho, alto, null);
+        boolean puedeDibujar = visible && (vivo || estaDestruyendose());
+        if (puedeDibujar) {
+            GestorImagenes gestor = GestorImagenes.getInstance();
+            if (estaDestruyendose()) {
+                BufferedImage img = gestor.cargar("/img/spaceinvaders/destruido.png");
+                if (img != null) {
+                    g.drawImage(img, x, y, ancho, alto, null);
+                } else {
+                    g.setColor(Color.ORANGE);
+                    g.fillRect(x, y, ancho, alto);
+                }
             } else {
-                g.setColor(Color.ORANGE);
-                g.fillRect(x, y, ancho, alto);
-            }
-            return;
-        }
+                String skin = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
+                String sufijo = "alternativa".equals(skin) ? "nodriza_alternativa.png" : "navenodriza.png";
+                String ruta = "/img/spaceinvaders/" + sufijo;
 
-        String skin = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
-        String sufijo = "alternativa".equals(skin) ? "nodriza_alternativa.png" : "navenodriza.png";
-        String ruta = "/img/spaceinvaders/" + sufijo;
-
-        BufferedImage img = gestor.cargar(ruta);
-        if (img != null) {
-            //si es skin original, colorea la imagen
-            if ("original".equals(skin)) {
-                img = gestor.colorear(img, Color.WHITE);
+                BufferedImage img = gestor.cargar(ruta);
+                if (img != null) {
+                    //si es skin original, colorea la imagen
+                    if ("original".equals(skin)) {
+                        img = gestor.colorear(img, Color.WHITE);
+                    }
+                    g.drawImage(img, x, y, ancho, alto, null);
+                } else {
+                    g.setColor(Color.WHITE);
+                    g.fillRect(x, y, ancho, alto);
+                }
             }
-            g.drawImage(img, x, y, ancho, alto, null);
-        } else {
-            g.setColor(Color.WHITE);
-            g.fillRect(x, y, ancho, alto);
         }
     }
 }

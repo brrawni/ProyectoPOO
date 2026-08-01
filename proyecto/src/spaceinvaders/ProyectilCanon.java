@@ -21,43 +21,57 @@ public class ProyectilCanon extends Proyectil {
     // El gameloop llama esto cada frame
     public void actualizar() {
         y += dy;
-        if (y < 0) {
+        boolean debeDesactivar = y < 0;
+        if (debeDesactivar) {
             desactivar();
-            return;
+        } else {
+            verificarImpacto();
         }
-        verificarImpacto();
     }
 
 
     public void verificarImpacto() {
+        boolean impactoDetectado = false;
+
         //contra aliens
-        for (Alien[] fila : formacion.getAliens()) {
-            for (Alien alien : fila) {
-                if (alien != null && alien.estaVivo()
-                        && obtenerLimites().intersects(alien.obtenerLimites())) {
-                    juego.sumarPuntaje(alien.obtenerPuntaje());
-                    juego.getGestorSonidos().reproducirEfecto("explosion.wav"); //sonido de explosion
-                    alien.morir();
-                    desactivar();
-                    return;
+        if (!impactoDetectado) {
+            for (Alien[] fila : formacion.getAliens()) {
+                for (Alien alien : fila) {
+                    if (alien != null && alien.estaVivo()
+                            && obtenerLimites().intersects(alien.obtenerLimites())) {
+                        juego.sumarPuntaje(alien.obtenerPuntaje());
+                        juego.getGestorSonidos().reproducirEfecto("explosion.wav"); //sonido de explosion
+                        alien.morir();
+                        desactivar();
+                        impactoDetectado = true;
+                        break;
+                    }
+                }
+                if (impactoDetectado) {
+                    break;
                 }
             }
         }
 
         //contra nave nodriza
-        NaveNodriza nave = juego.getNaveNodriza();
-        if (nave.esVisible() && obtenerLimites().intersects(nave.obtenerLimites())) {
-            juego.sumarPuntaje(nave.obtenerPuntaje());
-            nave.morir();
-            desactivar();
-            return;
+        if (!impactoDetectado) {
+            NaveNodriza nave = juego.getNaveNodriza();
+            if (nave.esVisible() && obtenerLimites().intersects(nave.obtenerLimites())) {
+                juego.sumarPuntaje(nave.obtenerPuntaje());
+                nave.morir();
+                desactivar();
+                impactoDetectado = true;
+            }
         }
 
         //contra escudos
-        for (Escudo escudo : escudos) {
-            if (escudo.verificarImpactoProyectil(x, y, ancho, alto)) {
-                desactivar();
-                return;
+        if (!impactoDetectado) {
+            for (Escudo escudo : escudos) {
+                if (escudo.verificarImpactoProyectil(x, y, ancho, alto)) {
+                    desactivar();
+                    impactoDetectado = true;
+                    break;
+                }
             }
         }
     }

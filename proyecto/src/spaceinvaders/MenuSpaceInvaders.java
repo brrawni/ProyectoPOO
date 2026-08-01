@@ -174,15 +174,17 @@ public class MenuSpaceInvaders extends Videojuego {
         canvas.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (!mostrandoConfiguracion || esperandoTecla == null) return;
-                int codigo = e.getKeyCode();
-                switch (esperandoTecla) {
-                    case "izquierda": teclaIzquierda = codigo; break;
-                    case "derecha":   teclaDerecha = codigo; break;
-                    case "disparo":   teclaDisparo = codigo; break;
+                boolean puedeProcesarTecla = mostrandoConfiguracion && esperandoTecla != null;
+                if (puedeProcesarTecla) {
+                    int codigo = e.getKeyCode();
+                    switch (esperandoTecla) {
+                        case "izquierda": teclaIzquierda = codigo; break;
+                        case "derecha":   teclaDerecha = codigo; break;
+                        case "disparo":   teclaDisparo = codigo; break;
+                    }
+                    actualizarTextosConfiguracion();
+                    esperandoTecla = null;
                 }
-                actualizarTextosConfiguracion();
-                esperandoTecla = null;
             }
         });
     }
@@ -210,7 +212,7 @@ public class MenuSpaceInvaders extends Videojuego {
                         stop();
                         break;
                 }
-                return;
+                break;
             }
         }
     }
@@ -360,12 +362,13 @@ public class MenuSpaceInvaders extends Videojuego {
 
     @Override
     public void gameDraw(Graphics2D g) {
-        if (buffer == null) return;
-        if (mostrandoRanking) return;
-        if (mostrandoConfiguracion) {
-            dibujarConfiguracion(g);
-        } else {
-            dibujarMenu(g);
+        boolean puedeDibujar = buffer != null && !mostrandoRanking;
+        if (puedeDibujar) {
+            if (mostrandoConfiguracion) {
+                dibujarConfiguracion(g);
+            } else {
+                dibujarMenu(g);
+            }
         }
     }
 
