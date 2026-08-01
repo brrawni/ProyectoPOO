@@ -51,10 +51,6 @@ public class PantallaConfiguracionPong {
         crearBotones();
     }
 
-    public boolean isPantallaCompleta() {
-        return pantallaCompleta;
-    }
-
     public Accion manejarClick(int mx, int my) {
         boolean pantallaAnterior = pantallaCompleta;
         Accion accion = Accion.NINGUNA;

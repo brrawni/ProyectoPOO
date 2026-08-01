@@ -18,7 +18,11 @@ public class IA {
         this.altoVentana = altoVentana;
     }
     public void actualizar(Pelota pelota) {
-        if (pelota.getVelocidadX() > 0) moverHaciaPelota(pelota);
+        boolean pelotaVieneHaciaCPU = paletaCPU.isJugador1()
+                ? pelota.getVelocidadX() < 0
+                : pelota.getVelocidadX() > 0;
+
+        if (pelotaVieneHaciaCPU) moverHaciaPelota(pelota);
         else moverHaciaCentro(altoVentana);
     }
 

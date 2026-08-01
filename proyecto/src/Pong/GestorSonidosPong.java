@@ -164,13 +164,6 @@ public class GestorSonidosPong {
     }
 
     /**
-     * @return true si el sonido esta activado
-     */
-    public boolean isSonidoActivado() {
-        return sonidoActivado;
-    }
-
-    /**
      * Limpia todos los recursos de audio
      * Se llama al cerrar el juego
      */
