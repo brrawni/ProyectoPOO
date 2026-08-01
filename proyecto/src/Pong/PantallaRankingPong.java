@@ -56,7 +56,7 @@ public class PantallaRankingPong {
         btnVolverRanking.dibujar(bg);
     }
 
-        public void renderizarPostPartida(Graphics2D bg, int anchoLogico, int altoLogico) {
+    public void renderizarPostPartida(Graphics2D bg, int anchoLogico, int altoLogico) {
         gestorRanking.cargar();
 
         bg.setColor(new Color(255, 220, 80));
@@ -66,12 +66,6 @@ public class PantallaRankingPong {
         bg.drawString(titulo, (anchoLogico - fm.stringWidth(titulo)) / 2, 155);
 
         dibujarTablaRanking(bg, 215);
-
-        bg.setColor(Color.WHITE);
-        bg.setFont(new Font("Arial", Font.PLAIN, 18));
-        String volver = "Cerra la ventana para volver al menu";
-        fm = bg.getFontMetrics();
-        bg.drawString(volver, (anchoLogico - fm.stringWidth(volver)) / 2, altoLogico - 45);
     }
     
     private void dibujarTablaRanking(Graphics2D bg, int yInicial) {

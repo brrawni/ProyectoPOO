@@ -1,254 +1,298 @@
 package Pong;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.time.LocalDate;
-import motor.EntradaRanking;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import motor.GestorRankingBase;
 import motor.Videojuego;
 
 /**
- * Clase principal del juego Pong. Extiende Videojuego (motor base de la cátedra).
- * Gestiona el loop del juego: paletas, pelota, colisiones, puntuación, sonido y ranking.
- *
- * Resolución lógica fija 800x600. En pantalla completa el buffer se escala para
- * llenar el canvas, de modo que la lógica (posiciones, colisiones) no cambia.
+ * Coordinador principal del videojuego Pong.
+ * Administra la ventana, el canvas, los estados y delega cada pantalla.
  */
 public class Pong extends Videojuego {
+    private enum EstadoPong {
+        MENU,
+        CONFIGURACION,
+        RANKING,
+        JUGANDO
+    }
+
     private static final int ANCHO_LOGICO = 800;
-    private static final int ALTO_LOGICO  = 600;
+    private static final int ALTO_LOGICO = 600;
     private static final String RANKING_PONG = "ranking_pong.txt";
 
-    private Paleta paleta1;
-    private Paleta paleta2;
-    private Pelota pelota;
-
-    private int puntajeJugador1 = 0;
-    private int puntajeJugador2 = 0;
-    private int puntuacionMaxima = 11;
-    private boolean juegoTerminado = false;
-    private String ganador = "";
-
-    private ControlTeclado controlTeclado;
-    private BufferedImage buffer;
-
-    private GestorRankingBase gestorRanking;
-    private PantallaRankingPong pantallaRanking;
-    private boolean rankingGuardado = false;
+    private final JFrame launcher;
+    private final ConfiguracionPong config;
+    private final GestorRankingBase gestorRanking;
+    private final PantallaMenuPong pantallaMenu;
+    private final PantallaConfiguracionPong pantallaConfiguracion;
+    private final PantallaRankingPong pantallaRanking;
 
     private GestorSonidosPong gestorSonidos;
-    private TemasPong tema;
-    private String pistaMusical = "original";
-    private boolean sonidoActivado = true;
+    private BufferedImage buffer;
+    private EstadoPong estadoActual = EstadoPong.MENU;
+    private PartidaPong partida;
 
-    private int modoJuego = 2;
-    private IA ia;
-
-    // Flag de pantalla completa: se establece desde MenuPong antes de run()
-    private boolean pantallaCompleta = false;
-
-    private Pong(TemasPong tema) {
+    public Pong(JFrame launcher) {
         super("Pong - ClassicGame Edition", ANCHO_LOGICO, ALTO_LOGICO);
-        this.gestorRanking  = new GestorRankingBase(RANKING_PONG);
+        this.launcher = launcher;
+        this.config = new ConfiguracionPong();
+        this.config.cargar();
+        this.gestorRanking = new GestorRankingBase(RANKING_PONG);
+        this.pantallaMenu = new PantallaMenuPong(ANCHO_LOGICO, ALTO_LOGICO);
+        this.pantallaConfiguracion = new PantallaConfiguracionPong(ANCHO_LOGICO, ALTO_LOGICO, config);
         this.pantallaRanking = new PantallaRankingPong(ANCHO_LOGICO, ALTO_LOGICO, gestorRanking);
-        this.gestorSonidos  = new GestorSonidosPong(sonidoActivado);
-        this.tema = tema;
-    }
-
-    public Pong(String nombreTema) {
-        this(new TemasPong(nombreTema));
-    }
-
-    public Pong(String skinCancha, String skinBarras, String skinPelota) {
-        this(new TemasPong(skinCancha, skinBarras, skinPelota));
-    }
-
-    public void setModoJuego(int modo) {
-        this.modoJuego = modo;
-    }
-
-    public void setPantallaCompleta(boolean pantallaCompleta) {
-        this.pantallaCompleta = pantallaCompleta;
-    }
-
-    public void setPistaMusical(String pistaMusical) {
-        this.pistaMusical = pistaMusical;
-    }
-
-    public void setSonidoActivado(boolean sonidoActivado) {
-        this.sonidoActivado = sonidoActivado;
-        this.gestorSonidos.setSonidoActivado(sonidoActivado);
+        this.gestorSonidos = new GestorSonidosPong(config.isSonidoActivado());
     }
 
     @Override
     public void gameStartup() {
-        // Si es pantalla completa, hacer que el canvas llene todo el frame.
-        // Esto debe ocurrir antes de que el frame se muestre (invokeLater en JGame lo garantiza).
-        if (pantallaCompleta) {
-            // Quitamos el tamaño preferido fijo para que BorderLayout pueda
-            // estirar el canvas a todo el frame. Sin esto, JPanel se queda
-            // en 800x600 en la esquina aunque la ventana esté maximizada.
-            canvas.setPreferredSize(null);
-            canvas.setMinimumSize(null);
-
-            // El content pane de JFrame ya usa BorderLayout por defecto.
-            // Solo necesitamos re-añadir el canvas como CENTER (lo reemplaza
-            // en caso de que ya estuviera añadido sin restricción de posición).
-            frame.getContentPane().removeAll();
-            frame.getContentPane().add(canvas, BorderLayout.CENTER);
-
-            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-            frame.revalidate();
-            frame.repaint();
-        }
-
-        // Buffer siempre en resolución lógica fija: la lógica del juego no cambia
         buffer = new BufferedImage(ANCHO_LOGICO, ALTO_LOGICO, BufferedImage.TYPE_INT_RGB);
-
-        controlTeclado = new ControlTeclado();
-        canvas.addKeyListener(controlTeclado);
+        configurarListeners();
+        aplicarModoPantalla(config.isPantallaCompleta());
+        actualizarSonidoMenu();
+        enEjecucion = true;
         canvas.setFocusable(true);
         canvas.requestFocus();
-        frame.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent e) {
-                cerrarPartida();
-            }
-        });
-
-        gestorSonidos.cargarTodosSonidos();
-        gestorSonidos.reproducirMusica(pistaMusical);
-
-        int altoPaleta  = 100;
-        int anchoPaleta = 15;
-        paleta1 = new Paleta(10, ALTO_LOGICO / 2 - altoPaleta / 2, anchoPaleta, altoPaleta, true);
-        paleta2 = new Paleta(ANCHO_LOGICO - 10 - anchoPaleta, ALTO_LOGICO / 2 - altoPaleta / 2, anchoPaleta, altoPaleta, false);
-
-        paleta1.setTema(tema);
-        paleta2.setTema(tema);
-        paleta1.setAltoVentana(ALTO_LOGICO);
-        paleta2.setAltoVentana(ALTO_LOGICO);
-
-        pelota = new Pelota(ANCHO_LOGICO / 2 - 5, ALTO_LOGICO / 2 - 5, 10, 10, ANCHO_LOGICO, ALTO_LOGICO);
-        pelota.setTema(tema);
-
-        if (modoJuego == 1) {
-            ia = new IA(paleta2, ALTO_LOGICO);;
-            paleta2.setVelocidad(3.6f);
-        }
-
-        enEjecucion = true;
-        juegoTerminado = false;
     }
 
     @Override
     public void gameUpdate(double delta) {
-        if (!juegoTerminado && enEjecucion) {
-            actualizarMovimientoPaletas();
-            pelota.mover();
-
-            if (pelota.detectarColisionPaleta(paleta1)) {
-                pelota.rebotar(paleta1);
-                gestorSonidos.reproducirRebote();
+        if (estadoActual == EstadoPong.JUGANDO && partida != null) {
+            partida.actualizar(delta);
+            if (partida.debeVolverAlMenu()) {
+                volverAlMenuDesdePartida();
             }
-            if (pelota.detectarColisionPaleta(paleta2)) {
-                pelota.rebotar(paleta2);
-                gestorSonidos.reproducirRebote();
-            }
-
-            if (pelota.obtenerY() <= 0 || pelota.obtenerY() + pelota.obtenerAlto() >= ALTO_LOGICO) {
-                pelota.rebotar();
-                gestorSonidos.reproducirRebote();
-            }
-
-            verificarAnotacion();
-
-            if (puntajeJugador1 >= puntuacionMaxima || puntajeJugador2 >= puntuacionMaxima) {
-                juegoTerminado = true;
-                ganador = (puntajeJugador1 >= puntuacionMaxima) ? "Jugador 1" : "Jugador 2";
-                gestorSonidos.reproducirGameOver();
-                gestorSonidos.detenerMusica();
-                controlTeclado.resetEntrada();
-            }
-        } else if (juegoTerminado && !rankingGuardado) {
-            guardarRankingSiCorresponde();
         }
     }
 
     @Override
     public void gameDraw(Graphics2D g) {
-        // ── Dibujar todo en el buffer lógico 800x600 ──────────────────────
+        if (buffer == null) return;
+
         Graphics2D bg = buffer.createGraphics();
         bg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        bg.setColor(tema.getColorFondo());
-        bg.fillRect(0, 0, ANCHO_LOGICO, ALTO_LOGICO);
-
-        bg.setColor(tema.getColorLinea());
-        for (int i = 0; i < ALTO_LOGICO; i += 20) {
-            bg.drawLine(ANCHO_LOGICO / 2, i, ANCHO_LOGICO / 2, i + 10);
-        }
-
-        paleta1.dibujar(bg);
-        paleta2.dibujar(bg);
-        pelota.dibujar(bg);
-
-        bg.setColor(tema.getColorTexto());
-        bg.setFont(new Font("Arial", Font.BOLD, 36));
-        bg.drawString(String.valueOf(puntajeJugador1), ANCHO_LOGICO / 4, 50);
-        bg.drawString(String.valueOf(puntajeJugador2), 3 * ANCHO_LOGICO / 4, 50);
-
-        bg.setFont(new Font("Arial", Font.PLAIN, 14));
-        bg.drawString("Jugador 1", ANCHO_LOGICO / 4 - 30, 75);
-        bg.drawString(modoJuego == 1 ? "CPU" : "Jugador 2", 3 * ANCHO_LOGICO / 4 - 30, 75);
-
-        if (juegoTerminado) {
-            bg.setColor(new Color(0, 0, 0, 180));
-            bg.fillRect(0, 0, ANCHO_LOGICO, ALTO_LOGICO);
-
-            if (rankingGuardado) {
-                pantallaRanking.renderizarPostPartida(bg, ANCHO_LOGICO, ALTO_LOGICO);
-                bg.dispose();
-                escalarBuffer(g);
-                return;
-            }
-
-            bg.setColor(tema.getColorTexto());
-            bg.setFont(new Font("Arial", Font.BOLD, 60));
-            FontMetrics fm = bg.getFontMetrics();
-            String txt = "GAME OVER";
-            bg.drawString(txt, (ANCHO_LOGICO - fm.stringWidth(txt)) / 2, ALTO_LOGICO / 2 - 40);
-
-            bg.setFont(new Font("Arial", Font.BOLD, 32));
-            fm = bg.getFontMetrics();
-            String ganadorTxt = ganador + " gana!";
-            bg.drawString(ganadorTxt, (ANCHO_LOGICO - fm.stringWidth(ganadorTxt)) / 2, ALTO_LOGICO / 2 + 20);
-
-            bg.setFont(new Font("Arial", Font.PLAIN, 20));
-            bg.setColor(Color.WHITE);
-            fm = bg.getFontMetrics();
-            if (modoJuego == 1 && ganador.equals("Jugador 2")) {
-                // Ganó la CPU, se guarda automáticamente
-                String msg = "La CPU gano esta vez...";
-                bg.drawString(msg, (ANCHO_LOGICO - fm.stringWidth(msg)) / 2, ALTO_LOGICO / 2 + 90);
-            } else {
-                // Ganó un humano, pedir nombre
-                String pedirNombre = "Ingresa tu nombre:";
-                bg.drawString(pedirNombre, (ANCHO_LOGICO - fm.stringWidth(pedirNombre)) / 2, ALTO_LOGICO / 2 + 70);
-                String nombre = controlTeclado.getTextoIngresado() + "|";
-                fm = bg.getFontMetrics();
-                bg.drawString(nombre, (ANCHO_LOGICO - fm.stringWidth(nombre)) / 2, ALTO_LOGICO / 2 + 105);
-                bg.setColor(Color.YELLOW);
-                String guardar = "Presiona ENTER para guardar en el ranking";
-                fm = bg.getFontMetrics();
-                bg.drawString(guardar, (ANCHO_LOGICO - fm.stringWidth(guardar)) / 2, ALTO_LOGICO / 2 + 140);
-            }
+        switch (estadoActual) {
+            case MENU:
+                pantallaMenu.renderizar(bg);
+                break;
+            case CONFIGURACION:
+                pantallaConfiguracion.renderizar(bg);
+                break;
+            case RANKING:
+                pantallaRanking.renderizar(bg);
+                break;
+            case JUGANDO:
+                if (partida != null) {
+                    partida.renderizar(bg);
+                }
+                break;
         }
 
         bg.dispose();
-
         escalarBuffer(g);
-    
+    }
+
+    @Override
+    public void gameShutdown() {
+        limpiarPartidaActual();
+        if (gestorSonidos != null) gestorSonidos.limpiar();
+        if (buffer != null) buffer.flush();
+        if (launcher != null) {
+            SwingUtilities.invokeLater(() -> launcher.setVisible(true));
+        }
+    }
+
+    private void configurarListeners() {
+        canvas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int mx = escalarX(e.getX());
+                int my = escalarY(e.getY());
+                delegarClick(mx, my);
+            }
+        });
+
+        canvas.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int mx = escalarX(e.getX());
+                int my = escalarY(e.getY());
+                actualizarHover(mx, my);
+            }
+        });
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                cerrarPong();
+            }
+        });
+    }
+
+    private void delegarClick(int mx, int my) {
+        switch (estadoActual) {
+            case MENU:
+                procesarAccionMenu(pantallaMenu.manejarClick(mx, my));
+                break;
+            case CONFIGURACION:
+                procesarAccionConfiguracion(pantallaConfiguracion.manejarClick(mx, my));
+                break;
+            case RANKING:
+                procesarAccionRanking(pantallaRanking.manejarClick(mx, my));
+                break;
+            case JUGANDO:
+                break;
+        }
+        canvas.requestFocus();
+    }
+
+    private void procesarAccionMenu(PantallaMenuPong.Accion accion) {
+        switch (accion) {
+            case HUMANO_VS_HUMANO:
+                iniciarPartida(2);
+                break;
+            case HUMANO_VS_CPU:
+                iniciarPartida(1);
+                break;
+            case CONFIGURACION:
+                mostrarConfiguracion();
+                break;
+            case RANKING:
+                mostrarRanking();
+                break;
+            case VOLVER:
+                cerrarPong();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void procesarAccionConfiguracion(PantallaConfiguracionPong.Accion accion) {
+        if (accion == PantallaConfiguracionPong.Accion.GUARDAR
+                || accion == PantallaConfiguracionPong.Accion.CAMBIO_PANTALLA
+                || accion == PantallaConfiguracionPong.Accion.VOLVER) {
+            actualizarSonidoMenu();
+        }
+        if (accion == PantallaConfiguracionPong.Accion.CAMBIO_PANTALLA) {
+            aplicarModoPantalla(config.isPantallaCompleta());
+        }
+        if (accion == PantallaConfiguracionPong.Accion.VOLVER) {
+            estadoActual = EstadoPong.MENU;
+        }
+    }
+
+    private void procesarAccionRanking(boolean volverAlMenu) {
+        if (volverAlMenu) {
+            estadoActual = EstadoPong.MENU;
+            actualizarSonidoMenu();
+        }
+    }
+
+    private void actualizarHover(int mx, int my) {
+        switch (estadoActual) {
+            case MENU:
+                pantallaMenu.actualizarHover(mx, my);
+                break;
+            case CONFIGURACION:
+                pantallaConfiguracion.actualizarHover(mx, my);
+                break;
+            case RANKING:
+                pantallaRanking.actualizarHover(mx, my);
+                break;
+            case JUGANDO:
+                break;
+        }
+    }
+
+    private void mostrarConfiguracion() {
+        estadoActual = EstadoPong.CONFIGURACION;
+        pantallaConfiguracion.iniciar();
+    }
+
+    private void mostrarRanking() {
+        estadoActual = EstadoPong.RANKING;
+        pantallaRanking.iniciar();
+    }
+
+    private void iniciarPartida(int modoJuego) {
+        limpiarPartidaActual();
+        gestorSonidos.limpiar();
+        gestorSonidos.setSonidoActivado(config.isSonidoActivado());
+        gestorSonidos.cargarTodosSonidos();
+        gestorSonidos.reproducirMusica(config.getPistaMusical());
+
+        TemasPong tema = new TemasPong(config.getSkinCancha(), config.getSkinBarras(), config.getSkinPelota());
+        partida = new PartidaPong(
+                modoJuego,
+                config.getPuntuacionMaxima(),
+                tema,
+                gestorSonidos,
+                gestorRanking,
+                pantallaRanking);
+        partida.iniciar(canvas);
+        estadoActual = EstadoPong.JUGANDO;
+    }
+
+    private void volverAlMenuDesdePartida() {
+        limpiarPartidaActual();
+        estadoActual = EstadoPong.MENU;
+        actualizarSonidoMenu();
+    }
+
+    private void limpiarPartidaActual() {
+        if (partida != null) {
+            partida.limpiar();
+            partida = null;
+        }
+    }
+
+    private void cerrarPong() {
+        enEjecucion = false;
+        stop();
+    }
+
+    private void actualizarSonidoMenu() {
+        gestorSonidos.setSonidoActivado(config.isSonidoActivado());
+        gestorSonidos.detenerMusica();
+        if (config.isSonidoActivado() && estadoActual != EstadoPong.JUGANDO) {
+            gestorSonidos.reproducirMusica("menu");
+        }
+    }
+
+    private void aplicarModoPantalla(boolean pantallaCompleta) {
+        if (pantallaCompleta) {
+            canvas.setPreferredSize(null);
+            canvas.setMinimumSize(null);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(canvas, BorderLayout.CENTER);
+            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+            frame.revalidate();
+            frame.repaint();
+        } else {
+            canvas.setPreferredSize(new Dimension(ANCHO_LOGICO, ALTO_LOGICO));
+            canvas.setMinimumSize(null);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(canvas, BorderLayout.CENTER);
+            frame.setExtendedState(Frame.NORMAL);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+        }
+    }
+
+    private int escalarX(int x) {
+        int w = canvas.getWidth();
+        return (w > 0) ? x * ANCHO_LOGICO / w : x;
+    }
+
+    private int escalarY(int y) {
+        int h = canvas.getHeight();
+        return (h > 0) ? y * ALTO_LOGICO / h : y;
     }
 
     private void escalarBuffer(Graphics2D g) {
@@ -259,96 +303,5 @@ public class Pong extends Videojuego {
         } else {
             g.drawImage(buffer, 0, 0, w, h, null);
         }
-    }
-
-    @Override
-    public void gameShutdown() {
-        gestorSonidos.limpiar();
-        if (buffer != null) buffer.flush();
-    }
-
-    private void cerrarPartida() {
-        enEjecucion = false;
-        gestorSonidos.limpiar();
-        stop();
-    }
-
-    private void actualizarMovimientoPaletas() {
-        if (controlTeclado.isArriba1Presionada()) paleta1.moverArriba();
-        if (controlTeclado.isAbajo1Presionada())  paleta1.moverAbajo();
-
-        if (modoJuego == 2) {
-            if (controlTeclado.isArriba2Presionada()) paleta2.moverArriba();
-            if (controlTeclado.isAbajo2Presionada())  paleta2.moverAbajo();
-        } else {
-            if (ia != null) ia.actualizar(pelota);
-        }
-    }
-
-    private void verificarAnotacion() {
-        if (pelota.obtenerX() < 0) {
-            puntajeJugador2++;
-            gestorSonidos.reproducirPunto();
-            pelota.resetear(ANCHO_LOGICO / 2, ALTO_LOGICO / 2, 1);
-        }
-        if (pelota.obtenerX() > ANCHO_LOGICO) {
-            puntajeJugador1++;
-            gestorSonidos.reproducirPunto();
-            pelota.resetear(ANCHO_LOGICO / 2, ALTO_LOGICO / 2, 2);
-        }
-    }
-
-    private void guardarRankingSiCorresponde() {
-        // Si ganó la CPU no hace falta que nadie escriba nada
-        if (modoJuego == 1 && ganador.equals("Jugador 2")) {
-            guardarEnRanking("CPU");
-            return;
-        }
-        // Si ganó un humano, esperar que escriba su nombre
-        if (controlTeclado.isEnterPresionado()) {
-            String nombre = controlTeclado.getTextoIngresado();
-            if (!nombre.isEmpty()) {
-                guardarEnRanking(nombre);
-                controlTeclado.resetEntrada();
-            } else {
-                controlTeclado.resetEnter();
-            }
-        }
-    }
-
-    private void guardarEnRanking(String nombreJugador) {
-        int puntajeGanador  = Math.max(puntajeJugador1, puntajeJugador2);
-        int puntajePerdedor = Math.min(puntajeJugador1, puntajeJugador2);
-        int puntajeRanking  = (puntajeGanador - puntajePerdedor) * 10;
-        // nivel lo reutilizamos para guardar el puntaje del perdedor (ej: ganó 11-7)
-        EntradaRanking entrada = new EntradaRanking(nombreJugador, puntajePerdedor, puntajeRanking, LocalDate.now());
-        gestorRanking.agregarEntrada(entrada);
-        gestorRanking.guardar();
-        rankingGuardado = true;
-    }
-
-
-    public int getPuntajeJugador1()    { return puntajeJugador1; }
-    public int getPuntajeJugador2()    { return puntajeJugador2; }
-    public int getPuntuacionMaxima()   { return puntuacionMaxima; }
-    public void setPuntuacionMaxima(int puntuacion) { this.puntuacionMaxima = puntuacion; }
-    public boolean isJuegoTerminado()  { return juegoTerminado; }
-    public String getGanador()         { return ganador; }
-    public GestorSonidosPong getGestorSonidos() { return gestorSonidos; }
-    public TemasPong getTema()         { return tema; }
-    public void cambiarTema(String nombreTema) {
-        tema.cambiarTema(nombreTema);
-        paleta1.setTema(tema);
-        paleta2.setTema(tema);
-        pelota.setTema(tema);
-    }
-
-    public void cambiarSkins(String skinCancha, String skinBarras, String skinPelota) {
-        tema.cambiarSkinCancha(skinCancha);
-        tema.cambiarSkinBarras(skinBarras);
-        tema.cambiarSkinPelota(skinPelota);
-        paleta1.setTema(tema);
-        paleta2.setTema(tema);
-        pelota.setTema(tema);
     }
 }

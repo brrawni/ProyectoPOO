@@ -127,9 +127,7 @@ public class Pelota extends Entidad {
         inicializarDireccion(paraJugador);
     }
 
-    public float getVelocidadActual() { return velocidadActual; }
     public float getVelocidadX() { return velocidadX; } // Usado por la IA para saber si la pelota viene hacia ella
-    public int getRebotesSinAnotar() { return rebotesSinAnotar; }
 
     @Override
     public boolean detectarColision() { return false; }
