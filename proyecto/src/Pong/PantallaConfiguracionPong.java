@@ -79,6 +79,7 @@ public class PantallaConfiguracionPong {
 
         actualizarTextos();
         if (pantallaCompleta != pantallaAnterior && accion != Accion.VOLVER) {
+            guardarConfiguracion();
             accion = Accion.CAMBIO_PANTALLA;
         }
         return accion;
