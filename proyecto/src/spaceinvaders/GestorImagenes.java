@@ -21,7 +21,13 @@ public class GestorImagenes {
     }
 
     public BufferedImage cargar(String ruta) {
-        if (cache.containsKey(ruta)) return cache.get(ruta);
+        BufferedImage imagenDesdeCache = null;
+        if (cache.containsKey(ruta)) {
+            imagenDesdeCache = cache.get(ruta);
+        }
+        if (imagenDesdeCache != null) {
+            return imagenDesdeCache;
+        }
         try {
             File file = new java.io.File(System.getProperty("user.dir") + "/proyecto/resources" + ruta);
             if (file.exists()) {
@@ -38,21 +44,23 @@ public class GestorImagenes {
     }
 
     public BufferedImage colorear(BufferedImage img, Color nuevoColor) {
-        if (img == null) return null;
-        BufferedImage resultado = new BufferedImage(
-            img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB
-        );
-        for (int y = 0; y < img.getHeight(); y++) {
-            for (int x = 0; x < img.getWidth(); x++) {
-                int pixel = img.getRGB(x, y);
-                int alpha = (pixel >> 24) & 0xFF;
-                if (alpha > 0) {
-                    resultado.setRGB(x, y,
-                        (alpha << 24) |
-                        (nuevoColor.getRed()   << 16) |
-                        (nuevoColor.getGreen() << 8)  |
-                        nuevoColor.getBlue()
-                    );
+        BufferedImage resultado = null;
+        if (img != null) {
+            resultado = new BufferedImage(
+                img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB
+            );
+            for (int y = 0; y < img.getHeight(); y++) {
+                for (int x = 0; x < img.getWidth(); x++) {
+                    int pixel = img.getRGB(x, y);
+                    int alpha = (pixel >> 24) & 0xFF;
+                    if (alpha > 0) {
+                        resultado.setRGB(x, y,
+                            (alpha << 24) |
+                            (nuevoColor.getRed()   << 16) |
+                            (nuevoColor.getGreen() << 8)  |
+                            nuevoColor.getBlue()
+                        );
+                    }
                 }
             }
         }

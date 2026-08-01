@@ -159,73 +159,72 @@ public class SpaceInvaders extends Videojuego {
             if (rankingGuardado && ticksGameOver >= TICKS_ANTES_VOLVER_AL_MENU) {
                 stop();
             }
-            return;
+        } else {
+            teclado.procesarEntrada(canon);
+
+            // Actualizar el canon del jugador
+            canon.actualizar();
+            
+            // Mover la formación de aliens y actualizar su velocidad
+            formacion.moverTodos();
+            formacion.actualizarVelocidad();
+            formacion.actualizarProyectiles();
+
+            //disparo aleatorio de aliens
+            if(Math.random() < nivel.obtenerProbabilidadDisparo()){ //probabilidad de disparo de aliens (2% por frame creo)
+                formacion.disparoAleatorio(canon);
+            }
+            
+            // controlar aparición de la nave nodriza
+            ticksNaveNodriza++;
+            if(ticksNaveNodriza >= 1800) { // aparece cada 30 segundos
+                nodriza.aparecer(); // Aparece desde la izquierda
+                ticksNaveNodriza = 0;
+            }
+            nodriza.actualizar();
+
+            //verificar fin de juego
+            if(verificarFinJuego()) {
+                enEjecucion = false;
+            }
+
+            //verificar siguiente nivel
+            if(formacion.contarVivos() == 0) {
+                siguienteNivel();
+            }
         }
-
-        teclado.procesarEntrada(canon);
-
-        // Actualizar el canon del jugador
-        canon.actualizar();
-        
-        // Mover la formación de aliens y actualizar su velocidad
-        formacion.moverTodos();
-        formacion.actualizarVelocidad();
-        formacion.actualizarProyectiles();
-
-        //disparo aleatorio de aliens
-        if(Math.random() < nivel.obtenerProbabilidadDisparo()){ //probabilidad de disparo de aliens (2% por frame creo)
-            formacion.disparoAleatorio(canon);
-        }
-        
-        // controlar aparición de la nave nodriza
-        ticksNaveNodriza++;
-        if(ticksNaveNodriza >= 1800) { // aparece cada 30 segundos
-            nodriza.aparecer(); // Aparece desde la izquierda
-            ticksNaveNodriza = 0;
-        }
-        nodriza.actualizar();
-
-        //verificar fin de juego
-        if(verificarFinJuego()) {
-            enEjecucion = false;
-        }
-
-        //verificar siguiente nivel
-        if(formacion.contarVivos() == 0) {
-            siguienteNivel();
-        }
-
     }
 
     @Override
     public void gameDraw(Graphics2D g) {
-        if (buffer == null) return;
-        Graphics2D g2d = buffer.createGraphics();
+        if (buffer != null) {
+            Graphics2D g2d = buffer.createGraphics();
 
-        g2d.setColor(Color.BLACK);
-        g2d.fillRect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA);
+            g2d.setColor(Color.BLACK);
+            g2d.fillRect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA);
 
-        g2d.setColor(Color.WHITE);
-        canon.dibujar(g2d);
-        formacion.dibujarFormacion(g2d);
-        nodriza.dibujar(g2d);
+            g2d.setColor(Color.WHITE);
+            canon.dibujar(g2d);
+            formacion.dibujarFormacion(g2d);
+            nodriza.dibujar(g2d);
 
-        for (Escudo escudo : escudos) {
-            escudo.dibujar(g2d);
+            for (Escudo escudo : escudos) {
+                escudo.dibujar(g2d);
+            }
+
+            g2d.setColor(Color.WHITE);
+            g2d.drawString("Puntaje: " + puntaje, 20, 20);
+            g2d.drawString("Vidas: "   + canon.obtenerVidas(), ANCHO_PANTALLA - 100, 20);
+            g2d.drawString("Nivel: "   + nivelActual, ANCHO_PANTALLA / 2 - 30, 20);
+
+            //Game over se dibuja antes del dispose
+            if (!enEjecucion) {
+                dibujarGameOver(g2d);
+            }
+
+            g2d.dispose();
+            g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
         }
-
-        g2d.setColor(Color.WHITE);
-        g2d.drawString("Puntaje: " + puntaje, 20, 20);
-        g2d.drawString("Vidas: "   + canon.obtenerVidas(), ANCHO_PANTALLA - 100, 20);
-        g2d.drawString("Nivel: "   + nivelActual, ANCHO_PANTALLA / 2 - 30, 20);
-
-        //Game over se dibuja antes del dispose
-        if (!enEjecucion) {
-            dibujarGameOver(g2d);
-        }
-
-        g2d.dispose();
-        g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
     }
 
     public NaveNodriza getNaveNodriza() { return nodriza; }
