@@ -3,8 +3,10 @@ package Pong;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.time.LocalDate;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import motor.EntradaRanking;
 import motor.GestorRankingBase;
 import motor.Videojuego;
 
@@ -63,6 +65,7 @@ public class Pong extends Videojuego {
     public void gameUpdate(double delta) {
         if (estadoActual == EstadoPong.JUGANDO && partida != null) {
             partida.actualizar(delta);
+            guardarRankingSiCorresponde();
             if (partida.debeVolverAlMenu()) {
                 volverAlMenuDesdePartida();
             }
@@ -233,7 +236,6 @@ public class Pong extends Videojuego {
                 config.getPuntuacionMaxima(),
                 tema,
                 gestorSonidos,
-                gestorRanking,
                 pantallaRanking);
         partida.iniciar(canvas);
         estadoActual = EstadoPong.JUGANDO;
@@ -243,6 +245,19 @@ public class Pong extends Videojuego {
         limpiarPartidaActual();
         estadoActual = EstadoPong.MENU;
         actualizarSonidoMenu();
+    }
+
+    private void guardarRankingSiCorresponde() {
+        if (partida.hayResultadoRankingPendiente()) {
+            EntradaRanking entrada = new EntradaRanking(
+                    partida.getNombreResultadoRanking(),
+                    partida.getPuntajePerdedorResultado(),
+                    partida.getPuntajeRankingResultado(),
+                    LocalDate.now());
+            gestorRanking.agregarEntrada(entrada);
+            gestorRanking.guardar();
+            partida.marcarRankingGuardado();
+        }
     }
 
     private void limpiarPartidaActual() {
