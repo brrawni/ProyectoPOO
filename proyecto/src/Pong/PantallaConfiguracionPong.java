@@ -134,10 +134,13 @@ public class PantallaConfiguracionPong {
     }
 
     private int indiceDe(String[] opciones, String valor) {
+        int indice = 0;
         for (int i = 0; i < opciones.length; i++) {
-            if (opciones[i].equals(valor)) return i;
+            if (opciones[i].equals(valor)) {
+                indice = i;
+            }
         }
-        return 0;
+        return indice;
     }
 
     private void crearBotones() {

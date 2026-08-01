@@ -71,30 +71,30 @@ public class Pong extends Videojuego {
 
     @Override
     public void gameDraw(Graphics2D g) {
-        if (buffer == null) return;
+        if (buffer != null) {
+            Graphics2D bg = buffer.createGraphics();
+            bg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        Graphics2D bg = buffer.createGraphics();
-        bg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            switch (estadoActual) {
+                case MENU:
+                    pantallaMenu.renderizar(bg);
+                    break;
+                case CONFIGURACION:
+                    pantallaConfiguracion.renderizar(bg);
+                    break;
+                case RANKING:
+                    pantallaRanking.renderizar(bg);
+                    break;
+                case JUGANDO:
+                    if (partida != null) {
+                        partida.renderizar(bg);
+                    }
+                    break;
+            }
 
-        switch (estadoActual) {
-            case MENU:
-                pantallaMenu.renderizar(bg);
-                break;
-            case CONFIGURACION:
-                pantallaConfiguracion.renderizar(bg);
-                break;
-            case RANKING:
-                pantallaRanking.renderizar(bg);
-                break;
-            case JUGANDO:
-                if (partida != null) {
-                    partida.renderizar(bg);
-                }
-                break;
+            bg.dispose();
+            escalarBuffer(g);
         }
-
-        bg.dispose();
-        escalarBuffer(g);
     }
 
     @Override
