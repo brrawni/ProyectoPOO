@@ -51,10 +51,6 @@ public class PantallaConfiguracionPong {
         crearBotones();
     }
 
-    public boolean isPantallaCompleta() {
-        return pantallaCompleta;
-    }
-
     public Accion manejarClick(int mx, int my) {
         boolean pantallaAnterior = pantallaCompleta;
         Accion accion = Accion.NINGUNA;
@@ -83,6 +79,7 @@ public class PantallaConfiguracionPong {
 
         actualizarTextos();
         if (pantallaCompleta != pantallaAnterior && accion != Accion.VOLVER) {
+            guardarConfiguracion();
             accion = Accion.CAMBIO_PANTALLA;
         }
         return accion;
@@ -138,10 +135,13 @@ public class PantallaConfiguracionPong {
     }
 
     private int indiceDe(String[] opciones, String valor) {
+        int indice = 0;
         for (int i = 0; i < opciones.length; i++) {
-            if (opciones[i].equals(valor)) return i;
+            if (opciones[i].equals(valor)) {
+                indice = i;
+            }
         }
-        return 0;
+        return indice;
     }
 
     private void crearBotones() {

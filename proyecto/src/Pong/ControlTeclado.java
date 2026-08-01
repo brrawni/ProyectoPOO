@@ -8,8 +8,8 @@ import java.awt.event.KeyListener;
  * Implementa KeyListener para capturar eventos de teclado.
  * 
  * Controles por defecto:
- * - Jugador 1: Flecha Arriba / Flecha Abajo
- * - Jugador 2: W / S
+ * - Jugador 1 (derecha): Flecha Arriba / Flecha Abajo
+ * - Jugador 2 (izquierda): W / S
  */
 public class ControlTeclado implements KeyListener {
     // Estado de las teclas del Jugador 1

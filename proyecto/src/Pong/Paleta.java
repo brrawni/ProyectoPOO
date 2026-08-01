@@ -67,13 +67,6 @@ public class Paleta extends Entidad {
 
 
     /**
-     * Obtiene la velocidad actual
-     */
-    public float getVelocidad() {
-        return velocidad;
-    }
-
-    /**
      * Establece la velocidad
      */
     public void setVelocidad(float velocidad) {
