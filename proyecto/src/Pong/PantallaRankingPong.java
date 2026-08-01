@@ -67,7 +67,7 @@ public class PantallaRankingPong {
 
         dibujarTablaRanking(bg, 215);
     }
-    
+
     private void dibujarTablaRanking(Graphics2D bg, int yInicial) {
         List<EntradaRanking> top10 = gestorRanking.obtenerTop10();
         bg.setFont(new Font("Monospaced", Font.BOLD, 22));
@@ -76,31 +76,29 @@ public class PantallaRankingPong {
             bg.setColor(Color.WHITE);
             bg.drawString("NO HAY PUNTAJES AUN.", 250, 270);
             bg.drawString("SE EL PRIMERO!", 300, 310);
-            return;
-        }
+        } else {
+            bg.setColor(new Color(170, 210, 255));
+            bg.drawString("POS  NOMBRE      RESULT  PUNTOS  FECHA", 120, yInicial);
 
-        bg.setColor(new Color(170, 210, 255));
-        bg.drawString("POS  NOMBRE      RESULT  PUNTOS  FECHA", 120, yInicial);
+            bg.setColor(Color.WHITE);
+            int y = yInicial + 40;
+            for (int i = 0; i < top10.size(); i++) {
+                EntradaRanking entrada = top10.get(i);
+                String nombre = entrada.getNombre();
+                if (nombre.length() > 10) nombre = nombre.substring(0, 10);
 
-        bg.setColor(Color.WHITE);
-        int y = yInicial + 40;
-        for (int i = 0; i < top10.size(); i++) {
-            EntradaRanking entrada = top10.get(i);
-            String nombre = entrada.getNombre();
-            if (nombre.length() > 10) nombre = nombre.substring(0, 10);
+                int puntajeGanador = entrada.getPuntaje() / 10 + entrada.getNivel();
+                String resultado = puntajeGanador + "-" + entrada.getNivel();
 
-            // nivel guarda el puntaje del perdedor, así reconstruimos el resultado
-            int puntajeGanador  = entrada.getPuntaje() / 10 + entrada.getNivel();
-            String resultado = puntajeGanador + "-" + entrada.getNivel();
-
-            String linea = String.format("%2d.  %-10s  %-6s  %5d   %s",
-                    i + 1,
-                    nombre,
-                    resultado,
-                    entrada.getPuntaje(),
-                    entrada.getFecha());
-            bg.drawString(linea, 120, y);
-            y += 32;
+                String linea = String.format("%2d.  %-10s  %-6s  %5d   %s",
+                        i + 1,
+                        nombre,
+                        resultado,
+                        entrada.getPuntaje(),
+                        entrada.getFecha());
+                bg.drawString(linea, 120, y);
+                y += 32;
+            }
         }
     }
 }

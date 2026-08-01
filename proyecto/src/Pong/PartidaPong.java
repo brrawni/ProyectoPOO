@@ -187,45 +187,42 @@ public class PartidaPong {
             FontMetrics fm = bg.getFontMetrics();
             String volver = "Presiona ENTER para volver al menu";
             bg.drawString(volver, (ANCHO_LOGICO - fm.stringWidth(volver)) / 2, ALTO_LOGICO - 20);
-            return;
-        }
-
-        bg.setColor(tema.getColorTexto());
-        bg.setFont(new Font("Arial", Font.BOLD, 60));
-        FontMetrics fm = bg.getFontMetrics();
-        String txt = "GAME OVER";
-        bg.drawString(txt, (ANCHO_LOGICO - fm.stringWidth(txt)) / 2, ALTO_LOGICO / 2 - 40);
-
-        bg.setFont(new Font("Arial", Font.BOLD, 32));
-        fm = bg.getFontMetrics();
-        String ganadorTxt = ganador + " gana!";
-        bg.drawString(ganadorTxt, (ANCHO_LOGICO - fm.stringWidth(ganadorTxt)) / 2, ALTO_LOGICO / 2 + 20);
-
-        bg.setFont(new Font("Arial", Font.PLAIN, 20));
-        bg.setColor(Color.WHITE);
-        fm = bg.getFontMetrics();
-        if (modoJuego == 1 && ganador.equals("Jugador 2")) {
-            String msg = "La CPU gano esta vez...";
-            bg.drawString(msg, (ANCHO_LOGICO - fm.stringWidth(msg)) / 2, ALTO_LOGICO / 2 + 90);
         } else {
-            String pedirNombre = "Ingresa tu nombre:";
-            bg.drawString(pedirNombre, (ANCHO_LOGICO - fm.stringWidth(pedirNombre)) / 2, ALTO_LOGICO / 2 + 70);
-            String nombre = controlTeclado.getTextoIngresado() + "|";
+            bg.setColor(tema.getColorTexto());
+            bg.setFont(new Font("Arial", Font.BOLD, 60));
+            FontMetrics fm = bg.getFontMetrics();
+            String txt = "GAME OVER";
+            bg.drawString(txt, (ANCHO_LOGICO - fm.stringWidth(txt)) / 2, ALTO_LOGICO / 2 - 40);
+
+            bg.setFont(new Font("Arial", Font.BOLD, 32));
             fm = bg.getFontMetrics();
-            bg.drawString(nombre, (ANCHO_LOGICO - fm.stringWidth(nombre)) / 2, ALTO_LOGICO / 2 + 105);
-            bg.setColor(Color.YELLOW);
-            String guardar = "Presiona ENTER para guardar en el ranking";
+            String ganadorTxt = ganador + " gana!";
+            bg.drawString(ganadorTxt, (ANCHO_LOGICO - fm.stringWidth(ganadorTxt)) / 2, ALTO_LOGICO / 2 + 20);
+
+            bg.setFont(new Font("Arial", Font.PLAIN, 20));
+            bg.setColor(Color.WHITE);
             fm = bg.getFontMetrics();
-            bg.drawString(guardar, (ANCHO_LOGICO - fm.stringWidth(guardar)) / 2, ALTO_LOGICO / 2 + 140);
+            if (modoJuego == 1 && ganador.equals("Jugador 2")) {
+                String msg = "La CPU gano esta vez...";
+                bg.drawString(msg, (ANCHO_LOGICO - fm.stringWidth(msg)) / 2, ALTO_LOGICO / 2 + 90);
+            } else {
+                String pedirNombre = "Ingresa tu nombre:";
+                bg.drawString(pedirNombre, (ANCHO_LOGICO - fm.stringWidth(pedirNombre)) / 2, ALTO_LOGICO / 2 + 70);
+                String nombre = controlTeclado.getTextoIngresado() + "|";
+                fm = bg.getFontMetrics();
+                bg.drawString(nombre, (ANCHO_LOGICO - fm.stringWidth(nombre)) / 2, ALTO_LOGICO / 2 + 105);
+                bg.setColor(Color.YELLOW);
+                String guardar = "Presiona ENTER para guardar en el ranking";
+                fm = bg.getFontMetrics();
+                bg.drawString(guardar, (ANCHO_LOGICO - fm.stringWidth(guardar)) / 2, ALTO_LOGICO / 2 + 140);
+            }
         }
     }
 
     private void guardarRankingSiCorresponde() {
         if (modoJuego == 1 && ganador.equals("Jugador 2")) {
             guardarEnRanking("CPU");
-            return;
-        }
-        if (controlTeclado.isEnterPresionado()) {
+        } else if (controlTeclado.isEnterPresionado()) {
             String nombre = controlTeclado.getTextoIngresado();
             if (!nombre.isEmpty()) {
                 guardarEnRanking(nombre);

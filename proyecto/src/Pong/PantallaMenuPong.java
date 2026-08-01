@@ -47,18 +47,31 @@ public class PantallaMenuPong {
     }
 
     public Accion manejarClick(int mx, int my) {
+        Accion accion = Accion.NINGUNA;
         for (int i = 0; i < botones.length; i++) {
             if (!botones[i].contienePunto(mx, my)) continue;
             switch (i) {
-                case 0: return Accion.HUMANO_VS_HUMANO;
-                case 1: return Accion.HUMANO_VS_CPU;
-                case 2: return Accion.CONFIGURACION;
-                case 3: return Accion.RANKING;
-                case 4: return Accion.VOLVER;
-                default: return Accion.NINGUNA;
+                case 0:
+                    accion = Accion.HUMANO_VS_HUMANO;
+                    break;
+                case 1:
+                    accion = Accion.HUMANO_VS_CPU;
+                    break;
+                case 2:
+                    accion = Accion.CONFIGURACION;
+                    break;
+                case 3:
+                    accion = Accion.RANKING;
+                    break;
+                case 4:
+                    accion = Accion.VOLVER;
+                    break;
+                default:
+                    accion = Accion.NINGUNA;
+                    break;
             }
         }
-        return Accion.NINGUNA;
+        return accion;
     }
 
     public void actualizarHover(int mx, int my) {
