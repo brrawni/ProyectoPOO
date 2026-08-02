@@ -329,8 +329,11 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         }
     }
     public void reiniciarNivel(){
-        if (puntaje > 0)
+        if (puntaje > 500)
             puntaje -= 500; //si se pierde una vida, se pierden 500 puntos
+        else{
+            puntaje = 0;
+        }
         iniciarNivel();
     }
     public void finDeJuego(Graphics2D g){
