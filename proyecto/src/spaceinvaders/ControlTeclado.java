@@ -32,22 +32,18 @@ public class ControlTeclado extends KeyAdapter {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             enterPresionado = true;
-            return;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             escape = true;
-            return;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-            if (textoIngresado.length() > 0)
+        } else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            if (textoIngresado.length() > 0) {
                 textoIngresado.deleteCharAt(textoIngresado.length() - 1);
-            return;
+            }
+        } else {
+            // Cambiamos el switch por if para poder usar nuestras variables
+            if (e.getKeyCode() == teclaIzq) izquierda = true;
+            if (e.getKeyCode() == teclaDer) derecha = true;
+            if (e.getKeyCode() == teclaDisparo) disparo = true;
         }
-
-        // Cambiamos el switch por if para poder usar nuestras variables
-        if (e.getKeyCode() == teclaIzq) izquierda = true;
-        if (e.getKeyCode() == teclaDer) derecha = true;
-        if (e.getKeyCode() == teclaDisparo) disparo = true;
     }
 
     @Override

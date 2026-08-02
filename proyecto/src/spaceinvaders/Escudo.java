@@ -32,6 +32,7 @@ public class Escudo extends Entidad {
 
     public boolean verificarImpactoProyectil(int px, int py, int pAncho, int pAlto) {
         Rectangle limiteProyectil = new Rectangle(px, py, pAncho, pAlto);
+        boolean impacto = false;
 
         for (int fila = 0; fila < FILAS; fila++) {
             for (int col = 0; col < COLUMNAS; col++) {
@@ -45,20 +46,23 @@ public class Escudo extends Entidad {
 
                 if (limiteProyectil.intersects(limiteSegmento)) {
                     segmentos[fila][col] = false;
-                    return true;
+                    impacto = true;
                 }
             }
         }
-        return false;
+        return impacto;
     }
 
     public boolean estaDestruido() {
+        boolean destruido = true;
         for (int i = 0; i < FILAS; i++) {
             for (int j = 0; j < COLUMNAS; j++) {
-                if (segmentos[i][j]) return false;
+                if (segmentos[i][j]) {
+                    destruido = false;
+                } 
             }
         }
-        return true;
+        return destruido;
     }
 
     public void actualizar() { }

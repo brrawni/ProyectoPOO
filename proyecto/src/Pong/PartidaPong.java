@@ -1,10 +1,7 @@
 package Pong;
 
 import java.awt.*;
-import java.time.LocalDate;
 import javax.swing.JPanel;
-import motor.EntradaRanking;
-import motor.GestorRankingBase;
 
 /**
  * Logica y dibujo de una partida individual de Pong.
@@ -18,7 +15,6 @@ public class PartidaPong {
     private final int puntuacionMaxima;
     private final TemasPong tema;
     private final GestorSonidosPong gestorSonidos;
-    private final GestorRankingBase gestorRanking;
     private final PantallaRankingPong pantallaRanking;
 
     private Paleta paleta1;
@@ -32,17 +28,19 @@ public class PartidaPong {
     private int puntajeJugador2 = 0;
     private boolean juegoTerminado = false;
     private boolean rankingGuardado = false;
+    private boolean resultadoRankingPendiente = false;
     private boolean volverAlMenu = false;
     private String ganador = "";
+    private String nombreResultadoRanking = "";
+    private int puntajePerdedorResultado = 0;
+    private int puntajeRankingResultado = 0;
 
     public PartidaPong(int modoJuego, int puntuacionMaxima, TemasPong tema,
-                       GestorSonidosPong gestorSonidos, GestorRankingBase gestorRanking,
-                       PantallaRankingPong pantallaRanking) {
+                       GestorSonidosPong gestorSonidos, PantallaRankingPong pantallaRanking) {
         this.modoJuego = modoJuego;
         this.puntuacionMaxima = puntuacionMaxima;
         this.tema = tema;
         this.gestorSonidos = gestorSonidos;
-        this.gestorRanking = gestorRanking;
         this.pantallaRanking = pantallaRanking;
     }
 
@@ -134,6 +132,27 @@ public class PartidaPong {
         return volverAlMenu;
     }
 
+    public boolean hayResultadoRankingPendiente() {
+        return resultadoRankingPendiente;
+    }
+
+    public String getNombreResultadoRanking() {
+        return nombreResultadoRanking;
+    }
+
+    public int getPuntajePerdedorResultado() {
+        return puntajePerdedorResultado;
+    }
+
+    public int getPuntajeRankingResultado() {
+        return puntajeRankingResultado;
+    }
+
+    public void marcarRankingGuardado() {
+        resultadoRankingPendiente = false;
+        rankingGuardado = true;
+    }
+
     public void limpiar() {
         if (canvas != null && controlTeclado != null) {
             canvas.removeKeyListener(controlTeclado);
@@ -221,11 +240,11 @@ public class PartidaPong {
 
     private void guardarRankingSiCorresponde() {
         if (modoJuego == 1 && ganador.equals("Jugador 2")) {
-            guardarEnRanking("CPU");
+            prepararResultadoRanking("CPU");
         } else if (controlTeclado.isEnterPresionado()) {
             String nombre = controlTeclado.getTextoIngresado();
             if (!nombre.isEmpty()) {
-                guardarEnRanking(nombre);
+                prepararResultadoRanking(nombre);
                 controlTeclado.resetEntrada();
             } else {
                 controlTeclado.resetEnter();
@@ -233,13 +252,12 @@ public class PartidaPong {
         }
     }
 
-    private void guardarEnRanking(String nombreJugador) {
+    private void prepararResultadoRanking(String nombreJugador) {
         int puntajeGanador = Math.max(puntajeJugador1, puntajeJugador2);
         int puntajePerdedor = Math.min(puntajeJugador1, puntajeJugador2);
-        int puntajeRanking = (puntajeGanador - puntajePerdedor) * 10;
-        EntradaRanking entrada = new EntradaRanking(nombreJugador, puntajePerdedor, puntajeRanking, LocalDate.now());
-        gestorRanking.agregarEntrada(entrada);
-        gestorRanking.guardar();
-        rankingGuardado = true;
+        nombreResultadoRanking = nombreJugador;
+        puntajePerdedorResultado = puntajePerdedor;
+        puntajeRankingResultado = (puntajeGanador - puntajePerdedor) * 10;
+        resultadoRankingPendiente = true;
     }
 }

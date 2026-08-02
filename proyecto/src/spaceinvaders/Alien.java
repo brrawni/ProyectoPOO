@@ -50,14 +50,17 @@ public class Alien extends Enemigo {
     }
 
     public void actualizar() {
+        boolean debeSalir = false;
         if (ticksDestruido > 0) {
             ticksDestruido--;
-            return;
+            debeSalir = true;
         }
-        //la logica para actualizar la animación del alien
-        frameAnimacion++;
-        if (frameAnimacion >= 8) {//cambia de frame cada 8 actualizaciones
-            frameAnimacion = 0;
+        if (!debeSalir) {
+            //la logica para actualizar la animación del alien
+            frameAnimacion++;
+            if (frameAnimacion >= 8) {//cambia de frame cada 8 actualizaciones
+                frameAnimacion = 0;
+            }
         }
     }
 
@@ -128,25 +131,24 @@ public class Alien extends Enemigo {
                 g.setColor(Color.ORANGE);
                 g.fillRect(x, y, ancho, alto);
             }
-            return;
-        }
-
-        int frame = obtenerFrameAnimacion();
-        String skinInvasores = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
-        
-        String sufijo = "alternativa".equals(skinInvasores) ? "_alternativo_" : "_";
-        String ruta = "/img/spaceinvaders/" + nombreSprite + sufijo + frame + ".png";
-        BufferedImage img = gestor.cargar(ruta);
-        
-        if (img != null) {
-            //si es skin original, colorea la imagen negra
-            if ("original".equals(skinInvasores)) {
-                img = gestor.colorear(img, color);
-            }
-            g.drawImage(img, x, y, ancho, alto, null);
         } else {
-            g.setColor(color);
-            g.fillRect(x, y, ancho, alto);
+            int frame = obtenerFrameAnimacion();
+            String skinInvasores = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
+            
+            String sufijo = "alternativa".equals(skinInvasores) ? "_alternativo_" : "_";
+            String ruta = "/img/spaceinvaders/" + nombreSprite + sufijo + frame + ".png";
+            BufferedImage img = gestor.cargar(ruta);
+            
+            if (img != null) {
+                //si es skin original, colorea la imagen negra
+                if ("original".equals(skinInvasores)) {
+                    img = gestor.colorear(img, color);
+                }
+                g.drawImage(img, x, y, ancho, alto, null);
+            } else {
+                g.setColor(color);
+                g.fillRect(x, y, ancho, alto);
+            }
         }
     }
 
