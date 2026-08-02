@@ -8,4 +8,8 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
-
+**/out/
+**/*.jar
+.idea/
+.vscode/
+*.txt

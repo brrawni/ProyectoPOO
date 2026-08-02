@@ -21,26 +21,22 @@ public class GestorImagenes {
     }
 
     public BufferedImage cargar(String ruta) {
-        BufferedImage imagenDesdeCache = null;
-        if (cache.containsKey(ruta)) {
-            imagenDesdeCache = cache.get(ruta);
-        }
-        if (imagenDesdeCache != null) {
-            return imagenDesdeCache;
-        }
-        try {
-            File file = new java.io.File(System.getProperty("user.dir") + "/proyecto/resources" + ruta);
-            if (file.exists()) {
-                BufferedImage img = ImageIO.read(file);
-                cache.put(ruta, img);
-                return img;
+        BufferedImage imagen = cache.get(ruta);
+
+        if (imagen == null) {
+            try {
+                java.io.InputStream recurso = getClass().getResourceAsStream(ruta);
+                if (recurso == null) {
+                    System.out.println("No se pudo cargar: " + ruta);
+                } else {
+                    imagen = ImageIO.read(recurso);
+                    cache.put(ruta, imagen);
+                }
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
             }
-            System.out.println("No se pudo cargar: " + ruta);
-            return null;
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            return null;
         }
+        return imagen;
     }
 
     public BufferedImage colorear(BufferedImage img, Color nuevoColor) {

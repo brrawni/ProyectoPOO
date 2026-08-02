@@ -9,7 +9,7 @@ public class NaveNodriza extends Enemigo {
     private int contadorDisparos;
     private boolean visible = false;
     private int ticksDestruido = 0;
-    private static final int TICKS_ANIMACION_DESTRUCCION = 12; 
+    private static final int TICKS_ANIMACION_DESTRUCCION = 12; //duración de la animación de destrucción en ticks
 
     public NaveNodriza(Nivel nivel) {
         super(-50, 40, 60, 30, 2.0f); //arranca fuera de pantalla
@@ -59,13 +59,15 @@ public class NaveNodriza extends Enemigo {
     }
 
     public int calcularPuntos(int disparos) {
+        int puntos;
         if (disparos == 23 || (disparos > 23 && (disparos - 23) % 15 == 0)) {
-            return 300;
-        }
-        // resto de disparos según tabla original
-        int[] tabla = {100, 50, 150, 100, 100, 50, 100, 300, 100, 100, 150, 50};
-
-        return tabla[(disparos - 1) % tabla.length];
+            puntos = 300;
+        } else {
+            // resto de disparos según tabla original
+            int[] tabla = {100, 50, 150, 100, 100, 50, 100, 300, 100, 100, 150, 50};
+            puntos = tabla[(disparos - 1) % tabla.length];
+        } 
+        return puntos;
     }
 
     @Override
