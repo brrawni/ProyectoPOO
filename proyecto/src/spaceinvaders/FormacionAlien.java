@@ -39,7 +39,10 @@ public class FormacionAlien {
 
     public void moverTodos() {
         ticksMovimiento++;
-        if (ticksMovimiento < intervaloMovimiento) return;
+        boolean debeMover = ticksMovimiento >= intervaloMovimiento;
+        if (!debeMover) {
+            return;
+        }
         ticksMovimiento = 0;
 
         boolean cambioDireccion = false;

@@ -9,7 +9,7 @@ public class NaveNodriza extends Enemigo {
     private int contadorDisparos;
     private boolean visible = false;
     private int ticksDestruido = 0;
-    private static final int TICKS_ANIMACION_DESTRUCCION = 12; 
+    private static final int TICKS_ANIMACION_DESTRUCCION = 12; //duración de la animación de destrucción en ticks
 
     public NaveNodriza(Nivel nivel) {
         super(-50, 40, 60, 30, 2.0f); //arranca fuera de pantalla
@@ -36,14 +36,15 @@ public class NaveNodriza extends Enemigo {
     }
 
     public void actualizar() {
-        if (ticksDestruido > 0) {
+        boolean debePausarAnimacion = ticksDestruido > 0;
+        if (debePausarAnimacion) {
             ticksDestruido--;
             if (ticksDestruido == 0) {
                 visible = false;
             }
-            return;
+        } else {
+            mover();
         }
-        mover();
     }
 
     @Override
@@ -58,13 +59,15 @@ public class NaveNodriza extends Enemigo {
     }
 
     public int calcularPuntos(int disparos) {
+        int puntos;
         if (disparos == 23 || (disparos > 23 && (disparos - 23) % 15 == 0)) {
-            return 300;
-        }
-        // resto de disparos según tabla original
-        int[] tabla = {100, 50, 150, 100, 100, 50, 100, 300, 100, 100, 150, 50};
-
-        return tabla[(disparos - 1) % tabla.length];
+            puntos = 300;
+        } else {
+            // resto de disparos según tabla original
+            int[] tabla = {100, 50, 150, 100, 100, 50, 100, 300, 100, 100, 150, 50};
+            puntos = tabla[(disparos - 1) % tabla.length];
+        } 
+        return puntos;
     }
 
     @Override
@@ -92,34 +95,34 @@ public class NaveNodriza extends Enemigo {
 
     @Override
     public void dibujar(Graphics2D g) {
-        if (!visible || (!vivo && !estaDestruyendose())) return;
-
-        GestorImagenes gestor = GestorImagenes.getInstance();
-        if (estaDestruyendose()) {
-            BufferedImage img = gestor.cargar("/img/spaceinvaders/destruido.png");
-            if (img != null) {
-                g.drawImage(img, x, y, ancho, alto, null);
+        boolean puedeDibujar = visible && (vivo || estaDestruyendose());
+        if (puedeDibujar) {
+            GestorImagenes gestor = GestorImagenes.getInstance();
+            if (estaDestruyendose()) {
+                BufferedImage img = gestor.cargar("/img/spaceinvaders/destruido.png");
+                if (img != null) {
+                    g.drawImage(img, x, y, ancho, alto, null);
+                } else {
+                    g.setColor(Color.ORANGE);
+                    g.fillRect(x, y, ancho, alto);
+                }
             } else {
-                g.setColor(Color.ORANGE);
-                g.fillRect(x, y, ancho, alto);
-            }
-            return;
-        }
+                String skin = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
+                String sufijo = "alternativa".equals(skin) ? "nodriza_alternativa.png" : "navenodriza.png";
+                String ruta = "/img/spaceinvaders/" + sufijo;
 
-        String skin = GestorConfiguracionSpaceInvaders.getInstance().getSkinInvasores();
-        String sufijo = "alternativa".equals(skin) ? "nodriza_alternativa.png" : "navenodriza.png";
-        String ruta = "/img/spaceinvaders/" + sufijo;
-
-        BufferedImage img = gestor.cargar(ruta);
-        if (img != null) {
-            //si es skin original, colorea la imagen
-            if ("original".equals(skin)) {
-                img = gestor.colorear(img, Color.WHITE);
+                BufferedImage img = gestor.cargar(ruta);
+                if (img != null) {
+                    //si es skin original, colorea la imagen
+                    if ("original".equals(skin)) {
+                        img = gestor.colorear(img, Color.WHITE);
+                    }
+                    g.drawImage(img, x, y, ancho, alto, null);
+                } else {
+                    g.setColor(Color.WHITE);
+                    g.fillRect(x, y, ancho, alto);
+                }
             }
-            g.drawImage(img, x, y, ancho, alto, null);
-        } else {
-            g.setColor(Color.WHITE);
-            g.fillRect(x, y, ancho, alto);
         }
     }
 }

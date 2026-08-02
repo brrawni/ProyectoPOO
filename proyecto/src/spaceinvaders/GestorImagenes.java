@@ -21,38 +21,42 @@ public class GestorImagenes {
     }
 
     public BufferedImage cargar(String ruta) {
-        if (cache.containsKey(ruta)) return cache.get(ruta);
-        try {
-            File file = new java.io.File(System.getProperty("user.dir") + "/proyecto/resources" + ruta);
-            if (file.exists()) {
-                BufferedImage img = ImageIO.read(file);
-                cache.put(ruta, img);
-                return img;
+        BufferedImage imagen = cache.get(ruta);
+
+        if (imagen == null) {
+            try {
+                java.io.InputStream recurso = getClass().getResourceAsStream(ruta);
+                if (recurso == null) {
+                    System.out.println("No se pudo cargar: " + ruta);
+                } else {
+                    imagen = ImageIO.read(recurso);
+                    cache.put(ruta, imagen);
+                }
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
             }
-            System.out.println("No se pudo cargar: " + ruta);
-            return null;
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            return null;
         }
+        return imagen;
     }
 
     public BufferedImage colorear(BufferedImage img, Color nuevoColor) {
-        if (img == null) return null;
-        BufferedImage resultado = new BufferedImage(
-            img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB
-        );
-        for (int y = 0; y < img.getHeight(); y++) {
-            for (int x = 0; x < img.getWidth(); x++) {
-                int pixel = img.getRGB(x, y);
-                int alpha = (pixel >> 24) & 0xFF;
-                if (alpha > 0) {
-                    resultado.setRGB(x, y,
-                        (alpha << 24) |
-                        (nuevoColor.getRed()   << 16) |
-                        (nuevoColor.getGreen() << 8)  |
-                        nuevoColor.getBlue()
-                    );
+        BufferedImage resultado = null;
+        if (img != null) {
+            resultado = new BufferedImage(
+                img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB
+            );
+            for (int y = 0; y < img.getHeight(); y++) {
+                for (int x = 0; x < img.getWidth(); x++) {
+                    int pixel = img.getRGB(x, y);
+                    int alpha = (pixel >> 24) & 0xFF;
+                    if (alpha > 0) {
+                        resultado.setRGB(x, y,
+                            (alpha << 24) |
+                            (nuevoColor.getRed()   << 16) |
+                            (nuevoColor.getGreen() << 8)  |
+                            nuevoColor.getBlue()
+                        );
+                    }
                 }
             }
         }

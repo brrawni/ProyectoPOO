@@ -81,15 +81,17 @@ public class PantallaConfiguracion extends Videojuego {
         canvas.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (esperandoTecla == null) return;
-                int codigo = e.getKeyCode();
-                switch (esperandoTecla) {
-                    case "izquierda": teclaIzquierda = codigo; break;
-                    case "derecha":   teclaDerecha = codigo; break;
-                    case "disparo":   teclaDisparo = codigo; break;
+                boolean puedeAsignarTecla = esperandoTecla != null;
+                if (puedeAsignarTecla) {
+                    int codigo = e.getKeyCode();
+                    switch (esperandoTecla) {
+                        case "izquierda": teclaIzquierda = codigo; break;
+                        case "derecha":   teclaDerecha = codigo; break;
+                        case "disparo":   teclaDisparo = codigo; break;
+                    }
+                    actualizarTextosBotones();
+                    esperandoTecla = null;
                 }
-                actualizarTextosBotones();
-                esperandoTecla = null;
             }
         });
 
@@ -244,54 +246,55 @@ public class PantallaConfiguracion extends Videojuego {
     
     @Override
     public void gameDraw(Graphics2D g) {
-        if (buffer == null) return;
-        Graphics2D g2d = buffer.createGraphics();
+        if (buffer != null) {
+            Graphics2D g2d = buffer.createGraphics();
 
-        g2d.setColor(Color.DARK_GRAY);
-        g2d.fillRect(0, 0, ANCHO, ALTO);
+            g2d.setColor(Color.DARK_GRAY);
+            g2d.fillRect(0, 0, ANCHO, ALTO);
 
-        g2d.setFont(new Font("Arial", Font.BOLD, 36));
-        g2d.setColor(Color.WHITE);
-        String titulo = "CONFIGURACION";
-        FontMetrics fm = g2d.getFontMetrics();
-        g2d.drawString(titulo, 400 - fm.stringWidth(titulo)/2, 60);
+            g2d.setFont(new Font("Arial", Font.BOLD, 36));
+            g2d.setColor(Color.WHITE);
+            String titulo = "CONFIGURACION";
+            FontMetrics fm = g2d.getFontMetrics();
+            g2d.drawString(titulo, 400 - fm.stringWidth(titulo)/2, 60);
 
-        g2d.setFont(new Font("Arial", Font.PLAIN, 20));
-        
-        // Títulos de columnas
-        g2d.drawString("Velocidad:", 100, 130);
-        g2d.drawString("Controles:", 450, 130);
-        g2d.drawString("Apariencia:", 450, 310);
+            g2d.setFont(new Font("Arial", Font.PLAIN, 20));
+            
+            // Títulos de columnas
+            g2d.drawString("Velocidad:", 100, 130);
+            g2d.drawString("Controles:", 450, 130);
+            g2d.drawString("Apariencia:", 450, 310);
 
-        // Dibujar botones Columna Izquierda
-        btnVelIzq.dibujar(g2d);
-        btnVelDer.dibujar(g2d);
-        g2d.drawString(opcionVelocidad[indiceVelocidad], 175 - fm.stringWidth(opcionVelocidad[indiceVelocidad])/2, 178);
-        btnSonido.dibujar(g2d);
-        btnPantalla.dibujar(g2d);
-        btnMusica.dibujar(g2d);
+            // Dibujar botones Columna Izquierda
+            btnVelIzq.dibujar(g2d);
+            btnVelDer.dibujar(g2d);
+            g2d.drawString(opcionVelocidad[indiceVelocidad], 175 - fm.stringWidth(opcionVelocidad[indiceVelocidad])/2, 178);
+            btnSonido.dibujar(g2d);
+            btnPantalla.dibujar(g2d);
+            btnMusica.dibujar(g2d);
 
-        // Dibujar botones Columna Derecha
-        btnTeclaIzq.dibujar(g2d);
-        btnTeclaDer.dibujar(g2d);
-        btnTeclaDisparo.dibujar(g2d);
-        btnSkinNave.dibujar(g2d);
-        btnSkinInv.dibujar(g2d);
-        btnSkinProy.dibujar(g2d);
+            // Dibujar botones Columna Derecha
+            btnTeclaIzq.dibujar(g2d);
+            btnTeclaDer.dibujar(g2d);
+            btnTeclaDisparo.dibujar(g2d);
+            btnSkinNave.dibujar(g2d);
+            btnSkinInv.dibujar(g2d);
+            btnSkinProy.dibujar(g2d);
 
-        // Si está esperando tecla, mostrar aviso
-        if (esperandoTecla != null) {
-            g2d.setColor(Color.YELLOW);
-            g2d.drawString("Presiona una tecla para: " + esperandoTecla, 450, 100);
+            // Si está esperando tecla, mostrar aviso
+            if (esperandoTecla != null) {
+                g2d.setColor(Color.YELLOW);
+                g2d.drawString("Presiona una tecla para: " + esperandoTecla, 450, 100);
+            }
+
+            // Dibujar botones Inferiores
+            btnGuardar.dibujar(g2d);
+            btnReset.dibujar(g2d);
+            btnVolver.dibujar(g2d);
+
+            g2d.dispose();
+            g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
         }
-
-        // Dibujar botones Inferiores
-        btnGuardar.dibujar(g2d);
-        btnReset.dibujar(g2d);
-        btnVolver.dibujar(g2d);
-
-        g2d.dispose();
-        g.drawImage(buffer, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
     }
     
     @Override
