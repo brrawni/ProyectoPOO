@@ -76,6 +76,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         efectoCaidaReproducido = false;
         escenario = new Escenario(32, 32, nivelActual); // Ejemplo de creación del escenario
         heroe = new Heroe(32, 32, 32, 32, vidasHeroe, escenario); // Ejemplo de creación del héroe
+        heroe.skin = config.getSkin();
         guardias = new ArrayList<>();
         lingotes = new ArrayList<>();
         //iniciar temporizador en 3 minutos
@@ -145,7 +146,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
                     }
                 }
                 boolean heroeArriba = false;
-                heroe.skin = config.getSkin();
                 escenario.actualizarPozos();
                 // Este for es para verificar si el heroe esta pisando la cabeza de un guardia
                 for (Guardia g : guardias) {
