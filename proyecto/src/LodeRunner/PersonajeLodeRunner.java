@@ -418,7 +418,7 @@ class Heroe extends PersonajeLodeRunner{
     private boolean arribaDeGuardia;
     private int contadorTicks = 0;
     private int frameActual = 1;
-    private final int VELOCIDAD_ANIMACION = 2;
+    private int VELOCIDAD_ANIMACION = 2;
     private String estadoActual = "corriendo";
     public String skin;
     private boolean estaQuieto = false;
@@ -469,6 +469,9 @@ class Heroe extends PersonajeLodeRunner{
 
     @Override
     public void dibujar(Graphics2D g){
+        if (skin.equals("alternativo")){
+            VELOCIDAD_ANIMACION = 3;
+        }
         String claveAnimacion = estadoActual + frameActual + "_" + skin;
         GestorRecursos gestor = GestorRecursos.getInstance();
         gestor.cargarSkin(skin);
