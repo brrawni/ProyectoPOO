@@ -5,8 +5,6 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 
 public class ControlTeclado extends KeyAdapter {
-    private List<Escudo> escudos;
-
     // Variables para guardar las teclas configuradas
     private int teclaIzq;
     private int teclaDer;
