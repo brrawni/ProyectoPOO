@@ -65,7 +65,6 @@ public class GestorSonidosLodeRunner {
                 musicaA_Reproducir.setFramePosition(0);
                 musicaA_Reproducir.loop(Clip.LOOP_CONTINUOUSLY);
             }
-        }
     }
     private void reducirVolumen(Clip clip, float decibeles) {
         // Primero verificamos que el sistema operativo soporte cambiar el volumen
@@ -159,7 +158,6 @@ public class GestorSonidosLodeRunner {
             } catch (Exception e) {
                 System.out.println("No se pudo reproducir el efecto: " + nombreArchivo);
             }
-        }
     }
     public void setSonidoActivado(boolean activado) {
         this.sonidoActivado = activado;
