@@ -48,7 +48,7 @@ public class Escenario{
                     case 1: // Ladrillo Común
                         g.drawImage(ladrillo, x, y, null);
                         break;
-                    case 2: // Ladrillo tambien, usado para identificar escalera de salida
+                    case 2: // Ladrillo usado para identificar escalera de salida
                         g.drawImage(ladrillo, x, y, null);
                         break;
                     case 3: // Escalera
@@ -58,7 +58,7 @@ public class Escenario{
                         g.setColor(Color.WHITE);
                         g.fillRect(x, y + 4, ancho_bloque, 4);
                         break;
-                    case 5: // Aire tambien, usado para identificar escalera de salida
+                    case 5: // Aire usado para identificar escalera de salida
                         break;
                     default:
                         //no dibujar, pantalla negra

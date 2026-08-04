@@ -23,7 +23,7 @@ public class Launcher extends JFrame {
                 break;
 
             case "loderunner":
-                LodeRunnerMenu menuLR = new LodeRunnerMenu(this);
+                LodeRunnerMenu menuLR = new LodeRunnerMenu();
                 menuLR.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosed(java.awt.event.WindowEvent e) {

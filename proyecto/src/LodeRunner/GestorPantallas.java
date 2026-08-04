@@ -1,21 +1,15 @@
 package LodeRunner;
 
-import launcher.Boton;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class GestorPantallas extends JPanel {
     private CardLayout cardLayout;
     private LodeRunnerMenu lodeRunnerMenu;
-    private GestorSonidosLodeRunner gestorSonidosLodeRunner;
     // Constantes públicas para que los paneles sepan cómo se llama cada pantalla
     public static final String PANTALLA_MENU = "Menu";
     public static final String PANTALLA_CONFIG = "Config";
     public static final String PANTALLA_RANKING = "Ranking";
-    public static final String PANTALLA_JUEGO = "Juego";
 
     public GestorPantallas(LodeRunnerMenu lodeRunnerMenu) {
         this.lodeRunnerMenu = lodeRunnerMenu;
