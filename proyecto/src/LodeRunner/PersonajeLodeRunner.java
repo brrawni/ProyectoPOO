@@ -79,7 +79,7 @@ class Guardia extends PersonajeLodeRunner{
         int filaAbajo = (this.y + this.alto) / 32;
         int bloquePies = escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro);
 
-        if (bloquePies == 0 || bloquePies == 4) {
+        if ((bloquePies == 0 || bloquePies == 5) || bloquePies == 4) {
             hayPiso = false; // Hay aire, caemos
         } else {
             hayPiso = true; // Hay piso (ladrillo, escalera, etc.)
@@ -158,7 +158,9 @@ class Guardia extends PersonajeLodeRunner{
                     // Si el guardia ya está parado exactamente en la escalera elegida, la sube.
                     if ((colCentro == colEscaleraObjetivo ||
                             escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro + 1) == 1 ||
-                            escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro - 1) == 1) &&
+                            escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro - 1) == 1 ||
+                            escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro + 1) == 2 ||
+                            escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro - 1) == 2) &&
                             escenario.obtenerTipoBloqueEn(filaCuerpo, colCentro) == 3) {
                         this.direccion = 2; // Arriba
                     }
@@ -207,7 +209,6 @@ class Guardia extends PersonajeLodeRunner{
                     // Al dar falso, el guardia mantiene la dirección horizontal (0 o 1) y sigue de largo.
                     if (bloqueEnPies == 3 || bloqueAbajo == 3) {
                         this.direccion = 3;
-                        //return; //este return sirve para que en cada frame no se "Pise" la direccion actual del guardia
                     }
                     else if (colgadoDeBarra && abs(base) <= 16 && bloqueAbajo != 1) {
                         this.direccion = 3; // Le mandamos la orden de bajar
@@ -254,7 +255,7 @@ class Guardia extends PersonajeLodeRunner{
             case 0:
                 columnaIzquierda = (this.x - 2) / 32; //anticipamos el siguiente paso del guardia
                 tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaIzquierda);
-                if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
+                if ((tipoBloque == 0 || tipoBloque == 5) || tipoBloque == 3 || tipoBloque == 4){
                     this.x -= 3;
                     if (tipoBloque == 4){
                         this.y = ((this.y + 16) / 32) * 32; //alinear el eje y
@@ -272,7 +273,7 @@ class Guardia extends PersonajeLodeRunner{
             case 1:
                 columnaDerecha = (this.x + this.ancho + 2) / 32; //anticipamos el siguiente paso del guardia
                 tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaDerecha);
-                if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
+                if ((tipoBloque == 0 || tipoBloque == 5) || tipoBloque == 3 || tipoBloque == 4){
                     this.x += 3;
                     if (tipoBloque == 4){
                         this.y = ((this.y + 16) / 32) * 32; //alinear el eje y
@@ -304,7 +305,7 @@ class Guardia extends PersonajeLodeRunner{
                     int bloquePies = escenario.obtenerTipoBloqueEn(filaPies, colCentro);
 
                     // Si al bajar, los pies entraron adentro de un ladrillo sólido (1)
-                    if (bloquePies == 1) {
+                    if (bloquePies == 1 || bloquePies == 2) {
                         // Lo empujamos hacia arriba forzando su Y para que quede clavado perfecto sobre el piso
                         this.y = (filaPies * 32) - this.alto;
                     }
@@ -331,7 +332,7 @@ class Guardia extends PersonajeLodeRunner{
                 if (this.direccion == 2) {
                     // Para subir: verificar que no haya techo sólido
                     int filaArriba = (this.y - 2) / 32;
-                    if (escenario.obtenerTipoBloqueEn(filaArriba, colCentro) == 1 || escenario.obtenerTipoBloqueEn(filaArriba, colCentro) == 0) {
+                    if ((escenario.obtenerTipoBloqueEn(filaArriba, colCentro) == 1 || escenario.obtenerTipoBloqueEn(filaArriba, colCentro) == 2) || (escenario.obtenerTipoBloqueEn(filaArriba, colCentro) == 0 || escenario.obtenerTipoBloqueEn(filaArriba, colCentro) == 5)) {
                         this.direccion = nuevaDireccion;
                     }
                 } else {
@@ -381,7 +382,7 @@ class Guardia extends PersonajeLodeRunner{
             int bloquePiso = escenario.obtenerTipoBloqueEn(filaRand + 1, colRand);
 
             // Regla: Cuerpo en el aire (0) y apoyado en un ladrillo (1) o escalera (3)
-            if (bloqueCuerpo == 0 && (bloquePiso == 1 || bloquePiso == 3)) {
+            if ((bloqueCuerpo == 0 || bloqueCuerpo == 5) && ((bloquePiso == 1 || bloquePiso == 2) || bloquePiso == 3)) {
 
                 //Lo teletransportamos.
                 this.x = colRand * 32;
@@ -452,7 +453,7 @@ class Heroe extends PersonajeLodeRunner{
         int filaAbajo = (this.y + this.alto) / 32;
         int bloquePies = escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro);
 
-        if (bloquePies == 0 || bloquePies == 4 ) {
+        if ((bloquePies == 0 || bloquePies == 5) || bloquePies == 4 ) {
             hayPiso = false; // Hay aire, nos caemos
         } else {
             hayPiso = true; // Hay piso (ladrillo, escalera, etc.)
@@ -529,13 +530,13 @@ class Heroe extends PersonajeLodeRunner{
     public void cavarIzquierda(){
         int columnaCentro = (this.x + this.ancho / 2) / 32;
         int filaAbajo = (this.y + this.alto) / 32;
-        if (escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro - 1) == 1)
+        if (escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro - 1) == 1 || escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro - 1) == 2)
             escenario.romperBloque(filaAbajo, columnaCentro - 1);
     }
     public void cavarDerecha(){
         int columnaCentro = (this.x + this.ancho / 2) / 32;
         int filaAbajo = (this.y + this.alto) / 32;
-        if (escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro + 1) == 1)
+        if (escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro + 1) == 1 || escenario.obtenerTipoBloqueEn(filaAbajo, columnaCentro + 1) == 2)
             escenario.romperBloque(filaAbajo, columnaCentro + 1);
     }
     @Override
@@ -561,7 +562,7 @@ class Heroe extends PersonajeLodeRunner{
                 estaQuieto = false;
                 columnaIzquierda = (this.x - 2) / 32; //anticipamos el siguiente paso del guardia
                 tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaIzquierda);
-                if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
+                if ((tipoBloque == 0 || tipoBloque == 5) || tipoBloque == 3 || tipoBloque == 4){
                     this.x -= 4;
                     if (tipoBloque == 3){
                         enEscalera = true;
@@ -589,7 +590,7 @@ class Heroe extends PersonajeLodeRunner{
                 estaQuieto = false;
                 columnaDerecha = (this.x + this.ancho + 2) / 32; //anticipamos el siguiente paso del guardia
                 tipoBloque = escenario.obtenerTipoBloqueEn(filaCentro, columnaDerecha);
-                if (tipoBloque == 0 || tipoBloque == 3 || tipoBloque == 4){
+                if ((tipoBloque == 0 || tipoBloque == 5) || tipoBloque == 3 || tipoBloque == 4){
                     this.x += 4;
                     if (tipoBloque == 3){
                         enEscalera = true;
@@ -622,7 +623,7 @@ class Heroe extends PersonajeLodeRunner{
                     int bloqueArriba = escenario.obtenerTipoBloqueEn(filaCabeza, colCentroAlineado);
 
                     // Si arriba hay aire (0) o escalera (3), sube. Si hay ladrillo, choca y no hace nada.
-                    if (bloqueArriba != 1) {
+                    if (bloqueArriba != 1 && bloqueArriba != 2) {
                         this.y -= 2;
                     }
                 }
@@ -638,7 +639,7 @@ class Heroe extends PersonajeLodeRunner{
                     int colSuelo = this.x / 32;
                     int bloqueAbajo = escenario.obtenerTipoBloqueEn(filaSuelo, colSuelo);
 
-                    if (bloqueAbajo != 1) {
+                    if (bloqueAbajo != 1 && bloqueAbajo != 2) {
                         this.y += 2; // Si no hay ladrillo, sigue bajando
                     }
                 }

@@ -70,6 +70,17 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         sonidos = new GestorSonidosLodeRunner(config.isEfectosDeSonidoActivados(), config.isMusicaDeFondoActivada() ,config.getPistaMusical());
         sonidos.reproducirMusicaPartida();
         iniciarNivel();
+        if (config.isPantallaCompleta()){
+            super.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize(); //esto nos ayuda a obtener la resolucion de la pantalla en la que se eejcuta el juego
+
+            canvas.setSize(pantalla);
+            canvas.setPreferredSize(pantalla);
+        }else{
+            frame.setSize(800, 600);
+            canvas.setSize(800, 600);
+            frame.setLocationRelativeTo(null);
+        }
     }
     public void iniciarNivel(){
         efectoEscaleraReproducido = false;
@@ -86,7 +97,8 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
         int guardiasCreados = 0;
         int limiteGuardias = 0;
         for (int i = 0; i < nivelActual; i++){
-            limiteGuardias += 2;
+            if (i < 3)
+                limiteGuardias += 2;
         }
         while (guardiasCreados < limiteGuardias) {
             int colRand = (int)(Math.random() * 25); // Columnas de 0 a 25
@@ -114,7 +126,7 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
             int bloqueDeAbajo = escenario.obtenerTipoBloqueEn(filaRand + 1, columnaRand);
 
             //El casillero actual debe ser Aire (0) y el de abajo Ladrillo (1)
-            if (bloqueActual == 0 && bloqueDeAbajo == 1) {
+            if ((bloqueActual == 0 || bloqueActual == 5) && (bloqueDeAbajo == 1 || bloqueDeAbajo == 2)) {
                 lingotes.add(new Oro(columnaRand * 32, filaRand * 32, 16, 16));
                 orosCreados++;
             }
@@ -122,134 +134,125 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
     }
     @Override
     public void gameUpdate(double delta) {
-                if (!enEjecucion){
+                if (enEjecucion){
+                    frames++;
+                    if (frames == 30){ // 35 frames son aproximadamente un segundo
+                        frames = 0;
+                        temporizador--;
+                        if (temporizador % 60 == 0){ //ya transcurrio un minuto
+                            puntajePorMin -= 100; //se descuentan 100 puntos del puntaje por minutos (500) por cada minuto transcurrido
+                        }
+                    }
+                    boolean heroeArriba = false;
+                    escenario.actualizarPozos();
+                    // Este for es para verificar si el heroe esta pisando la cabeza de un guardia
+                    for (Guardia g : guardias) {
+                        boolean alineadosEnX = Math.abs(heroe.getX() - g.getX()) < 32;
+                        boolean tocandoCabeza = (heroe.getY() + heroe.getAlto() >= g.getY()) &&
+                                (heroe.getY() + heroe.getAlto() <= g.getY() + 4);
+                        if (alineadosEnX && tocandoCabeza) {
+                            heroeArriba = true; // No usamos break para que siga revisando a los demás
+                        }
+                    }
+                    // Le pasamos el estado al héroe de entrada
+                    heroe.setArribaDeGuardia(heroeArriba);
+                    // Si el heroe se esta cayendo, reproducir sonido
+                    if (heroe.isEnCaidaLibre() && !efectoCaidaReproducido){
+                        sonidos.reproducirEfectoCaida();
+                        efectoCaidaReproducido = true;
+                    }
+                    else if (!heroe.isEnCaidaLibre()){
+                        sonidos.detenerEfectoCaida();
+                        efectoCaidaReproducido = false;
+                    }
+                    //logica de persecucion
+                    for (Guardia g : guardias){
+                        g.perseguir(heroe);
+                        g.mover();
+
+                        // Si lo toca, y NO le está pisando la cabeza, el héroe muere
+                        if (g.detectarColision(heroe)){
+                            if (!heroe.isArribaDeGuardia()){
+                                vidasHeroe--;
+                                reiniciarNivel();
+                            }
+                        }
+                        // Chequeo de pozo y paredes
+                        int filaCentro = (g.getY() + g.getAlto() / 2) / 32;
+                        int colCentro = (g.getX() + g.getAncho() / 2) / 32;
+                        int bloqueCuerpo = escenario.obtenerTipoBloqueEn(filaCentro, colCentro);
+
+                        // 1ro: Si el bloque es un 1 sólido, significa que el pozo se cerró (o se bugeó en la pared). Reaparece.
+                        if ((bloqueCuerpo == 1 || bloqueCuerpo == 2)) {
+                            puntaje += 150;
+                            g.reaparecer();
+                        }
+                        // 2do: Si no se cerró, pero está en un pozo activo
+                        else if (g.estaEnPozo()){
+                            Oro oroRobado = g.getOroGuardado();
+
+                            if (oroRobado != null) {
+                                oroRobado.setX(g.getX());
+                                oroRobado.setY(g.getY() - 16);
+                                g.soltarOro();
+                            }
+                        }
+                    }
+
+                    if (escenario.obtenerTipoBloqueEn((heroe.getY() + heroe.getAlto() / 2) / 32, (heroe.getX() + heroe.getAncho() / 2) / 32) == 1 || escenario.obtenerTipoBloqueEn((heroe.getY() + heroe.getAlto() / 2) / 32, (heroe.getX() + heroe.getAncho() / 2) / 32) == 2){
+                        //si el heroe queda atrapado en un pozo y este se cierra, pierde una vida y se reinicia el nivel
+                        vidasHeroe--;
+                        reiniciarNivel();
+                    }
+                    heroe.mover();
+
+                    for (Oro o : lingotes){
+                        // Los guardias intentan robar la plata que esté tirada
+                        for(Guardia g : guardias){
+                            g.robarOro(o);
+                        }
+
+                        o.mover(); // Si el oro está en manos de un guardia, lo sigue. Si no, se queda quieto.
+                        heroe.recolectarOro(o);
+                        if (o.isRecolectadoPorHeroe()){
+                            sonidos.reproducirEfectoAgarrarOro();
+                            puntaje += Oro.obtenerValor();
+                        }
+
+                    }
+                    lingotes.removeIf(o -> o.isRecolectadoPorHeroe());
+                    lingotesRestantes = lingotes.size();
+                    if (lingotesRestantes == 0){
+                        if (!efectoEscaleraReproducido){
+                            sonidos.reproducirEfectoEscaleraActiva();
+                            efectoEscaleraReproducido = true;
+                        }
+                        escenario.setEscaleraSalidaActiva(true);
+                        escenario.activarEscalera();
+                        if (heroe.getY() <= 0){ //el heroe cruzo la escalera
+                            puntaje += 200;
+                            puntaje += puntajePorMin;
+                            escenario.setEscaleraSalidaActiva(false);
+                            if (nivelActual == 4){
+                                sonidos.reproducirEfectoGanarPartida();
+                                enEjecucion = false;
+                                juegoGanado = true;
+                            }
+                            if (!juegoGanado){
+                                vidasHeroe++; //Si el heroe completa el nivel, se le otorga una vida extra
+                                nivelActual++; //siguiente nivel
+                                iniciarNivel();
+                            }
+                        }
+                    }
+                    //si el heroe pierde todas sus vidas, game over
+                    if (vidasHeroe == 0){
+                        sonidos.reproducirEfectoGameOver();
+                        enEjecucion = false;
+                    }
+                }
+                else{
                     sonidos.detenerMusicaPartida();
-                    return;
-                }
-                if (config.isPantallaCompleta()){
-                    super.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                    Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize(); //esto nos ayuda a obtener la resolucion de la pantalla en la que se eejcuta el juego
-
-                    canvas.setSize(pantalla);
-                    canvas.setPreferredSize(pantalla);
-                }else{
-                    frame.setSize(800, 600);
-                    canvas.setSize(800, 600);
-                    frame.setLocationRelativeTo(null);
-                }
-                frames++;
-                if (frames == 30){ // 35 frames son aproximadamente un segundo
-                    frames = 0;
-                    temporizador--;
-                    if (temporizador % 60 == 0){ //ya transcurrio un minuto
-                        puntajePorMin -= 100; //se descuentan 100 puntos del puntaje por minutos (500) por cada minuto transcurrido
-                    }
-                }
-                boolean heroeArriba = false;
-                escenario.actualizarPozos();
-                // Este for es para verificar si el heroe esta pisando la cabeza de un guardia
-                for (Guardia g : guardias) {
-                    boolean alineadosEnX = Math.abs(heroe.getX() - g.getX()) < 32;
-                    boolean tocandoCabeza = (heroe.getY() + heroe.getAlto() >= g.getY()) &&
-                            (heroe.getY() + heroe.getAlto() <= g.getY() + 4);
-                    if (alineadosEnX && tocandoCabeza) {
-                        heroeArriba = true; // No usamos break para que siga revisando a los demás
-                    }
-                }
-                // Le pasamos el estado al héroe de entrada
-                heroe.setArribaDeGuardia(heroeArriba);
-                // Si el heroe se esta cayendo, reproducir sonido
-                if (heroe.isEnCaidaLibre() && !efectoCaidaReproducido){
-                    sonidos.reproducirEfectoCaida();
-                    efectoCaidaReproducido = true;
-                }
-                else if (!heroe.isEnCaidaLibre()){
-                    sonidos.detenerEfectoCaida();
-                    efectoCaidaReproducido = false;
-                }
-                //logica de persecucion
-                for (Guardia g : guardias){
-                    g.perseguir(heroe);
-                    g.mover();
-
-                    // Si lo toca, y NO le está pisando la cabeza, el héroe muere
-                    if (g.detectarColision(heroe)){
-                        if (!heroe.isArribaDeGuardia()){
-                            vidasHeroe--;
-                            reiniciarNivel();
-                        }
-                    }
-                    // Chequeo de pozo y paredes
-                    int filaCentro = (g.getY() + g.getAlto() / 2) / 32;
-                    int colCentro = (g.getX() + g.getAncho() / 2) / 32;
-                    int bloqueCuerpo = escenario.obtenerTipoBloqueEn(filaCentro, colCentro);
-
-                    // 1ro: Si el bloque es un 1 sólido, significa que el pozo se cerró (o se bugeó en la pared). Reaparece.
-                    if (bloqueCuerpo == 1) {
-                        puntaje += 150;
-                        g.reaparecer();
-                    }
-                    // 2do: Si no se cerró, pero está en un pozo activo
-                    else if (g.estaEnPozo()){
-                        Oro oroRobado = g.getOroGuardado();
-
-                        if (oroRobado != null) {
-                            oroRobado.setX(g.getX());
-                            oroRobado.setY(g.getY() - 16);
-                            g.soltarOro();
-                        }
-                    }
-                }
-
-                if (escenario.obtenerTipoBloqueEn((heroe.getY() + heroe.getAlto() / 2) / 32, (heroe.getX() + heroe.getAncho() / 2) / 32) == 1){
-                    //si el heroe queda atrapado en un pozo y este se cierra, pierde una vida y se reinicia el nivel
-                    vidasHeroe--;
-                    reiniciarNivel();
-                }
-                heroe.mover();
-
-                for (Oro o : lingotes){
-                    // Los guardias intentan robar la plata que esté tirada
-                    for(Guardia g : guardias){
-                        g.robarOro(o);
-                    }
-
-                    o.mover(); // Si el oro está en manos de un guardia, lo sigue. Si no, se queda quieto.
-                    heroe.recolectarOro(o);
-                    if (o.isRecolectadoPorHeroe()){
-                        sonidos.reproducirEfectoAgarrarOro();
-                        puntaje += Oro.obtenerValor();
-                    }
-
-                }
-                lingotes.removeIf(o -> o.isRecolectadoPorHeroe());
-                lingotesRestantes = lingotes.size();
-                if (lingotesRestantes == 0){
-                    if (!efectoEscaleraReproducido){
-                        sonidos.reproducirEfectoEscaleraActiva();
-                        efectoEscaleraReproducido = true;
-                    }
-                    escenario.setEscaleraSalidaActiva(true);
-                    escenario.activarEscalera(nivelActual);
-                    if (heroe.getY() <= 0){ //el heroe cruzo la escalera
-                        puntaje += 200;
-                        puntaje += puntajePorMin;
-                        escenario.setEscaleraSalidaActiva(false);
-                        if (nivelActual == 3){
-                            sonidos.reproducirEfectoGanarPartida();
-                            enEjecucion = false;
-                            juegoGanado = true;
-                            return;
-                        }
-                        vidasHeroe++; //Si el heroe completa el nivel, se le otorga una vida extra
-                        nivelActual++; //siguiente nivel
-                        iniciarNivel();
-                    }
-                }
-                //si el heroe pierde todas sus vidas, game over
-                if (vidasHeroe == 0){
-                    sonidos.reproducirEfectoGameOver();
-                    enEjecucion = false;
                 }
                 try {
                     Thread.sleep(32);
@@ -405,7 +408,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
             } else if (mirandoDer) {
                 heroe.cavarDerecha();
             }
-            // Cortamos la ejecución aquí para que no entre al switch
         }
         switch(e.getKeyCode()){
             case KeyEvent.VK_ENTER:

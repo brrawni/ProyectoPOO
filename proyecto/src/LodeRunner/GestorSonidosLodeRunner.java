@@ -50,21 +50,21 @@ public class GestorSonidosLodeRunner {
         }
     }
     public void reproducirMusicaPartida() {
-        if (!musicaActivada) return;
+        if (musicaActivada){
+            detenerMusicaMenu();
 
-        detenerMusicaMenu();
+            Clip musicaA_Reproducir = null;
+            if (pistaSeleccionada.equals("original")) {
+                musicaA_Reproducir = musicaPartida;
+            } else {
+                musicaA_Reproducir = musicaPartidaAlternativa;
+            }
 
-        Clip musicaA_Reproducir = null;
-        if (pistaSeleccionada.equals("original")) {
-            musicaA_Reproducir = musicaPartida;
-        } else {
-            musicaA_Reproducir = musicaPartidaAlternativa;
-        }
-
-        // Reproducimos el elegido
-        if (musicaA_Reproducir != null) {
-            musicaA_Reproducir.setFramePosition(0);
-            musicaA_Reproducir.loop(Clip.LOOP_CONTINUOUSLY);
+            // Reproducimos el elegido
+            if (musicaA_Reproducir != null) {
+                musicaA_Reproducir.setFramePosition(0);
+                musicaA_Reproducir.loop(Clip.LOOP_CONTINUOUSLY);
+            }
         }
     }
     private void reducirVolumen(Clip clip, float decibeles) {
@@ -140,25 +140,25 @@ public class GestorSonidosLodeRunner {
      varias veces superpuestos o muy rápido.
     */
     private void reproducirEfecto(String nombreArchivo) {
-        if (!sonidoActivado) return;
+        if (sonidoActivado){
+            try {
+                InputStream audioSrc = getClass().getResourceAsStream(RUTA + nombreArchivo);
+                if (audioSrc != null) {
+                    InputStream bufferedIn = new BufferedInputStream(audioSrc);
+                    AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
 
-        try {
-            InputStream audioSrc = getClass().getResourceAsStream(RUTA + nombreArchivo);
-            if (audioSrc != null) {
-                InputStream bufferedIn = new BufferedInputStream(audioSrc);
-                AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
-
-                Clip clipSFX = AudioSystem.getClip();
-                clipSFX.open(audioStream);
-                clipSFX.addLineListener(event -> { //esto es para que cuando el clip deje de sonar, no ocupe mas memoria.
-                    if (event.getType() == LineEvent.Type.STOP) {
-                        clipSFX.close();
-                    }
-                });
-                clipSFX.start(); // Reproduce una sola vez
+                    Clip clipSFX = AudioSystem.getClip();
+                    clipSFX.open(audioStream);
+                    clipSFX.addLineListener(event -> { //esto es para que cuando el clip deje de sonar, no ocupe mas memoria.
+                        if (event.getType() == LineEvent.Type.STOP) {
+                            clipSFX.close();
+                        }
+                    });
+                    clipSFX.start(); // Reproduce una sola vez
+                }
+            } catch (Exception e) {
+                System.out.println("No se pudo reproducir el efecto: " + nombreArchivo);
             }
-        } catch (Exception e) {
-            System.out.println("No se pudo reproducir el efecto: " + nombreArchivo);
         }
     }
     public void setSonidoActivado(boolean activado) {

@@ -66,12 +66,12 @@ public class GestorRecursos {
             imgHeroe.put("idle1" + "_" + nombreSkin, recortarSpriteAlternativo(hojaSpritesAlternativo, COLUMNA_SKIN_ALTERNATIVO, 0, 16, 17));
 
             for (int i = 0; i < 4; i++){
-                // CORRIENDO: Y=24, Ancho=16, Alto=16
-                imgHeroe.put("corriendo" + (i + 1) + "_" + nombreSkin, recortarSpriteAlternativo(hojaSpritesAlternativo, COLUMNA_SKIN_ALTERNATIVO + i, 24, 16, 16));
-
-                // ESCALANDO: Y=48, Ancho=15, Alto=20
-                imgHeroe.put("escalera" + (i + 1) + "_" + nombreSkin, recortarSpriteAlternativo(hojaSpritesAlternativo, COLUMNA_SKIN_ALTERNATIVO + i, 48, 15, 20));
-
+                if (i < 3)
+                    // CORRIENDO: Y=24, Ancho=16, Alto=16
+                    imgHeroe.put("corriendo" + (i + 1) + "_" + nombreSkin, recortarSpriteAlternativo(hojaSpritesAlternativo, COLUMNA_SKIN_ALTERNATIVO + i, 24, 16, 16));
+                if (i < 2)
+                    // ESCALANDO: Y=48, Ancho=15, Alto=20
+                    imgHeroe.put("escalera" + (i + 1) + "_" + nombreSkin, recortarSpriteAlternativo(hojaSpritesAlternativo, COLUMNA_SKIN_ALTERNATIVO + i, 48, 15, 20));
                 // CAYENDO: Y=96, Ancho=16, Alto=19.
                 // Como solo tiene 2 frames, usamos (i % 2) para alternar entre la columna base + 0 y la columna base + 1.
                 int columnaCayendo = COLUMNA_SKIN_ALTERNATIVO + (i % 2);

@@ -48,12 +48,17 @@ public class Escenario{
                     case 1: // Ladrillo Común
                         g.drawImage(ladrillo, x, y, null);
                         break;
+                    case 2: // Ladrillo tambien, usado para identificar escalera de salida
+                        g.drawImage(ladrillo, x, y, null);
+                        break;
                     case 3: // Escalera
                         g.drawImage(escalera, x-16, y-16, 64, 64, null); //esto es para que no se vea borroso
                         break;
                     case 4: // Barra/Soga
                         g.setColor(Color.WHITE);
                         g.fillRect(x, y + 4, ancho_bloque, 4);
+                        break;
+                    case 5: // Aire tambien, usado para identificar escalera de salida
                         break;
                     default:
                         //no dibujar, pantalla negra
@@ -102,19 +107,15 @@ public class Escenario{
     public void setEscaleraSalidaActiva(boolean escaleraSalidaActiva){
         this.escaleraSalidaActiva = escaleraSalidaActiva;
     }
-    public void activarEscalera(int nivel){
-        if (escaleraSalidaActiva && nivel == 2){
-            matrizMundo[0][12] = matrizMundo[1][12] = matrizMundo[2][12] = matrizMundo[3][12] = matrizMundo[4][12] = 3;
-            matrizMundo[1][19] = 1; //trampa
-        }
-        else if (escaleraSalidaActiva && nivel == 1){
-            //columna 20, filas 0, 1, 2, 3 y 4, trampa:
-            matrizMundo[5][22] = 1;
-            matrizMundo[5][13] = 1; //trampas
-            matrizMundo[0][20] = matrizMundo[1][20] = matrizMundo[2][20] = matrizMundo[3][20] = matrizMundo[4][20] = 3;
-        }
-        else if (escaleraSalidaActiva && nivel == 3){
-            matrizMundo[0][2] = matrizMundo[1][2] = 3;
+    public void activarEscalera() {
+        if (escaleraSalidaActiva) {
+            for (int fila = 0; fila < matrizMundo.length; fila++) {
+                for (int columna = 0; columna < matrizMundo[fila].length; columna++) {
+                    if (matrizMundo[fila][columna] == 5 || matrizMundo[fila][columna] == 2){
+                        matrizMundo[fila][columna] = 3;
+                    }
+                }
+            }
         }
     }
 }
