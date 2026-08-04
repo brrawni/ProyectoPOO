@@ -6,9 +6,7 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 
 public class LodeRunnerMenu extends JFrame{
-    private Launcher launcher;
-    public LodeRunnerMenu(Launcher launcher) {
-        this.launcher = launcher;
+    public LodeRunnerMenu() {
         // Configuramos la ventana
         setTitle("Lode Runner");
         setSize(800, 600);
@@ -23,7 +21,4 @@ public class LodeRunnerMenu extends JFrame{
         add(gestor);
     }
 
-    public Launcher getLauncher() {
-        return launcher;
-    }
 }
