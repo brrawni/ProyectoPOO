@@ -408,10 +408,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
             } else if (mirandoDer) {
                 heroe.cavarDerecha();
             }
-<<<<<<< HEAD
-=======
-            // Cortamos la ejecución aquí para que no entre al switch
->>>>>>> 0d94d65b6e05eab398b6b687242595842ef95b31
         }
         switch(e.getKeyCode()){
             case KeyEvent.VK_ENTER:

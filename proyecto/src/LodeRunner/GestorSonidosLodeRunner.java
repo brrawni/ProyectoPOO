@@ -50,7 +50,7 @@ public class GestorSonidosLodeRunner {
         }
     }
     public void reproducirMusicaPartida() {
-        if (musicaActivada){
+        if (musicaActivada) {
             detenerMusicaMenu();
 
             Clip musicaA_Reproducir = null;
@@ -65,100 +65,102 @@ public class GestorSonidosLodeRunner {
                 musicaA_Reproducir.setFramePosition(0);
                 musicaA_Reproducir.loop(Clip.LOOP_CONTINUOUSLY);
             }
-    }
-    private void reducirVolumen(Clip clip, float decibeles) {
-        // Primero verificamos que el sistema operativo soporte cambiar el volumen
-        if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
-            FloatControl controlVolumen = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            controlVolumen.setValue(decibeles);
         }
     }
-
-    public void reproducirEfectoCavar() {
-        reproducirEfecto("cavar.wav");
-    }
-
-    public void reproducirEfectoAgarrarOro() {
-        reproducirEfecto("recolectar.wav");
-    }
-
-    public void reproducirEfectoGameOver() {
-        reproducirEfecto("Game_Over.wav");
-    }
-
-    public void reproducirEfectoGanarPartida() {
-        reproducirEfecto("Partida_Ganada.wav");
-    }
-    public void reproducirEfectoCaida() {
-        if (sonidoActivado && efectoCaida != null) {
-            efectoCaida.setFramePosition(0); // Lo rebobinamos al principio
-            efectoCaida.start();             // Le damos play
+        private void reducirVolumen (Clip clip,float decibeles){
+            // Primero verificamos que el sistema operativo soporte cambiar el volumen
+            if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                FloatControl controlVolumen = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                controlVolumen.setValue(decibeles);
+            }
         }
-    }
 
-    public void detenerEfectoCaida() {
-        if (efectoCaida != null && efectoCaida.isRunning()) {
-            efectoCaida.stop();
+        public void reproducirEfectoCavar () {
+            reproducirEfecto("cavar.wav");
         }
-    }
-    public void reproducirEfectoEscaleraActiva(){
-        reproducirEfecto("escalera_salida.wav");
-    }
+
+        public void reproducirEfectoAgarrarOro () {
+            reproducirEfecto("recolectar.wav");
+        }
+
+        public void reproducirEfectoGameOver () {
+            reproducirEfecto("Game_Over.wav");
+        }
+
+        public void reproducirEfectoGanarPartida () {
+            reproducirEfecto("Partida_Ganada.wav");
+        }
+        public void reproducirEfectoCaida () {
+            if (sonidoActivado && efectoCaida != null) {
+                efectoCaida.setFramePosition(0); // Lo rebobinamos al principio
+                efectoCaida.start();             // Le damos play
+            }
+        }
+
+        public void detenerEfectoCaida () {
+            if (efectoCaida != null && efectoCaida.isRunning()) {
+                efectoCaida.stop();
+            }
+        }
+        public void reproducirEfectoEscaleraActiva () {
+            reproducirEfecto("escalera_salida.wav");
+        }
 
     /*
      Este metodo carga el archivo .wav a la memoria.
      Se usa para las músicas largas que querés tener listas en las variables (musicaMenu, etc).
      */
-    private Clip cargarClip(String nombreArchivo) {
-        try {
-            // Usamos getClass().getResourceAsStream() para que funcione incluso
-            // si el juego se compila como un archivo .jar
-            InputStream audioSrc = getClass().getResourceAsStream(RUTA + nombreArchivo);
-            if (audioSrc == null) {
-                System.out.println("No se encontró el archivo de audio: " + RUTA + nombreArchivo);
+        private Clip cargarClip (String nombreArchivo){
+            try {
+                // Usamos getClass().getResourceAsStream() para que funcione incluso
+                // si el juego se compila como un archivo .jar
+                InputStream audioSrc = getClass().getResourceAsStream(RUTA + nombreArchivo);
+                if (audioSrc == null) {
+                    System.out.println("No se encontró el archivo de audio: " + RUTA + nombreArchivo);
+                    return null;
+                }
+
+                // BufferedInputStream ayuda a que Java lea el archivo más rápido
+                InputStream bufferedIn = new BufferedInputStream(audioSrc);
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
+
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioStream);
+                return clip;
+
+            } catch (Exception e) {
+                System.out.println("Error al cargar el audio: " + nombreArchivo);
+                e.printStackTrace();
                 return null;
             }
-
-            // BufferedInputStream ayuda a que Java lea el archivo más rápido
-            InputStream bufferedIn = new BufferedInputStream(audioSrc);
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
-
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-            return clip;
-
-        } catch (Exception e) {
-            System.out.println("Error al cargar el audio: " + nombreArchivo);
-            e.printStackTrace();
-            return null;
         }
-    }
     /*
      Este metodo carga y reproduce un sonido en el momento.
      Ideal para efectos de sonido cortos (como agarrar oro) que pueden sonar
      varias veces superpuestos o muy rápido.
     */
-    private void reproducirEfecto(String nombreArchivo) {
-        if (sonidoActivado){
-            try {
-                InputStream audioSrc = getClass().getResourceAsStream(RUTA + nombreArchivo);
-                if (audioSrc != null) {
-                    InputStream bufferedIn = new BufferedInputStream(audioSrc);
-                    AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
+        private void reproducirEfecto (String nombreArchivo){
+            if (sonidoActivado) {
+                try {
+                    InputStream audioSrc = getClass().getResourceAsStream(RUTA + nombreArchivo);
+                    if (audioSrc != null) {
+                        InputStream bufferedIn = new BufferedInputStream(audioSrc);
+                        AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
 
-                    Clip clipSFX = AudioSystem.getClip();
-                    clipSFX.open(audioStream);
-                    clipSFX.addLineListener(event -> { //esto es para que cuando el clip deje de sonar, no ocupe mas memoria.
-                        if (event.getType() == LineEvent.Type.STOP) {
-                            clipSFX.close();
-                        }
-                    });
-                    clipSFX.start(); // Reproduce una sola vez
+                        Clip clipSFX = AudioSystem.getClip();
+                        clipSFX.open(audioStream);
+                        clipSFX.addLineListener(event -> { //esto es para que cuando el clip deje de sonar, no ocupe mas memoria.
+                            if (event.getType() == LineEvent.Type.STOP) {
+                                clipSFX.close();
+                            }
+                        });
+                        clipSFX.start(); // Reproduce una sola vez
+                    }
+                } catch (Exception e) {
+                    System.out.println("No se pudo reproducir el efecto: " + nombreArchivo);
                 }
-            } catch (Exception e) {
-                System.out.println("No se pudo reproducir el efecto: " + nombreArchivo);
             }
-    }
+        }
     public void setSonidoActivado(boolean activado) {
         this.sonidoActivado = activado;
         if (!activado) {
