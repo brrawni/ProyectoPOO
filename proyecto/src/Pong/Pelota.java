@@ -13,7 +13,6 @@ public class Pelota extends Entidad {
     private float velocidadBase;
     private float velocidadActual;
     private int rebotesSinAnotar;
-    private int anchoVentana;
     private int altoVentana;
 
     private TemasPong tema;
@@ -23,9 +22,8 @@ public class Pelota extends Entidad {
     private static final float INCREMENTO_VELOCIDAD = 0.35f;
     private static final int REBOTES_PARA_ACELERAR = 1;
 
-    public Pelota(int x, int y, int ancho, int alto, int anchoVentana, int altoVentana) {
+    public Pelota(int x, int y, int ancho, int alto, int altoVentana) {
         super(x, y, ancho, alto);
-        this.anchoVentana = anchoVentana;
         this.altoVentana = altoVentana;
         this.velocidadBase = VELOCIDAD_INICIAL;
         this.velocidadActual = VELOCIDAD_INICIAL;

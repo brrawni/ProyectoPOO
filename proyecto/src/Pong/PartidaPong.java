@@ -61,7 +61,7 @@ public class PartidaPong {
         paleta1.setAltoVentana(ALTO_LOGICO);
         paleta2.setAltoVentana(ALTO_LOGICO);
 
-        pelota = new Pelota(ANCHO_LOGICO / 2 - 5, ALTO_LOGICO / 2 - 5, 10, 10, ANCHO_LOGICO, ALTO_LOGICO);
+        pelota = new Pelota(ANCHO_LOGICO / 2 - 5, ALTO_LOGICO / 2 - 5, 10, 10, ALTO_LOGICO);
         pelota.setTema(tema);
 
         if (modoJuego == 1) {
