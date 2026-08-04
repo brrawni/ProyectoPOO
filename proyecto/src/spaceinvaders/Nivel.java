@@ -4,7 +4,6 @@ public class Nivel {
 
     private final int   numero;
     private float velocidadAlien;
-    private int   filaInicio;
     private int   filas;
     private int   columnas;
     private float probabilidadDisparo;
@@ -58,7 +57,6 @@ public class Nivel {
     public void cargar() { configurar(numero); }
     public int   obtenerNumero() { return numero; }
     public float obtenerVelocidadAlien() { return velocidadAlien; }
-    public int   obtenerFilaInicio() { return filaInicio; }
     public int   obtenerFilas() { return filas; }
     public int   obtenerColumnas() { return columnas; }
     public float obtenerProbabilidadDisparo() { return probabilidadDisparo; }

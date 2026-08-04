@@ -28,7 +28,6 @@ public class SpaceInvaders extends Videojuego {
     private int nivelActual = 1;
     private int puntaje = 0; 
     private boolean enEjecucion = true;
-    private int contadorDisparos = 0;
     private int ticksNaveNodriza = 0;
 
     //dimensiones de pantalla
@@ -38,8 +37,6 @@ public class SpaceInvaders extends Videojuego {
     //atributos para ranking
     private RankingSpaceInvaders gestorRanking = new RankingSpaceInvaders();
     private boolean rankingGuardado = false;
-    private String nombreJugador = "";
-    private boolean ingresandoNombre = false;
     private int ticksGameOver = 0;
     private static final int TICKS_ANTES_VOLVER_AL_MENU = 300; // ~5 segundos
 
@@ -228,7 +225,6 @@ public class SpaceInvaders extends Videojuego {
     }
 
     public NaveNodriza getNaveNodriza() { return nodriza; }
-    public int getContadorDisparos() { return contadorDisparos; }
     public void sumarPuntaje(int puntos) { puntaje += puntos; }
     public GestorSonidosSpaceInvaders getGestorSonidos() { return gestorSonidos; }
 

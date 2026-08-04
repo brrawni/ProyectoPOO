@@ -25,12 +25,13 @@ public class ProyectilCanon extends Proyectil {
         if (debeDesactivar) {
             desactivar();
         } else {
-            verificarImpacto();
+            detectarColision();
         }
     }
 
 
-    public void verificarImpacto() {
+    @Override
+    public boolean detectarColision() {
         boolean impactoDetectado = false;
 
         //contra aliens
@@ -74,12 +75,8 @@ public class ProyectilCanon extends Proyectil {
                 }
             }
         }
-    }
 
-    // Métodos de la interfaz de entidad
-    @Override
-    public boolean detectarColision() {
-        return !estaActivo();
+        return impactoDetectado;
     }
 
     @Override

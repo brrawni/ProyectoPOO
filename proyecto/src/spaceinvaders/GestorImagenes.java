@@ -2,7 +2,6 @@ package spaceinvaders;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
@@ -61,12 +60,5 @@ public class GestorImagenes {
             }
         }
         return resultado;
-    }
-    public BufferedImage cargarDeCache(String clave) {
-        return cache.get(clave);
-    }
-
-    public void guardarEnCache(String clave, BufferedImage img) {
-        cache.put(clave, img);
     }
 }
