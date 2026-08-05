@@ -1,4 +1,4 @@
-﻿# Retro Launcher — Proyecto POO 2026
+﻿# Retro Arcade — Proyecto POO 2026
 
 Plataforma de videojuegos retro desarrollada en Java con interfaz gráfica Swing, usando los principios de la Programación Orientada a Objetos: encapsulamiento, herencia, polimorfismo y abstracción.
 
@@ -40,8 +40,9 @@ java -cp out/production/proyecto:resources Main
 ### Ejecutar el JAR
 
 ```bash
-java -jar RetroArcade.jar
+java -jar ProyectoFinal.jar
 ```
+o con doble click
 
 ## Cómo jugar
 
@@ -118,6 +119,12 @@ Tenis de mesa clásico para dos jugadores (humano vs humano o humano vs CPU).
 - La pelota se acelera progresivamente con cada rebote
 - El ángulo de rebote depende de dónde golpee la paleta
 - La partida termina cuando un jugador alcanza el puntaje límite configurado
+
+**Puntuación:**
+- Cada punto de diferencia que haya en el marcador final cuenta como 10pts
+- Ejemplo una partida 11 - 8, termina con 30pts para el ganador
+- Por otro lado, una partida 11 - 0 termina con 110 pts para el ganador
+
 
 ---
 
