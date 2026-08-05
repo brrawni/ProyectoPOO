@@ -32,7 +32,6 @@ public class GestorRecursos {
         }
     }
 
-    // Método original (para el skin base y los guardias, que sí respetan la grilla 16x16)
     private BufferedImage recortarSprite(BufferedImage hoja, int columna, int fila) {
         return hoja.getSubimage(
                 columna * TAMANIO_SPRITE,
@@ -42,8 +41,6 @@ public class GestorRecursos {
         );
     }
 
-    // NUEVO MÉTODO: Recibe Y, ancho y alto a medida. 
-    // Mantenemos X como (columna * 16) asumiendo que la separación horizontal sigue siendo cada 16 px.
     private BufferedImage recortarSpriteAlternativo(BufferedImage hoja, int columna, int y, int ancho, int alto) {
         return hoja.getSubimage(
                 columna * TAMANIO_SPRITE,
