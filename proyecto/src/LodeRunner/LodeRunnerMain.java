@@ -265,8 +265,6 @@ public class LodeRunnerMain extends Videojuego implements KeyListener{
 
     @Override
     public void gameDraw(Graphics2D g) {
-        if (buffer == null)
-            return;
         Graphics2D g2 = buffer.createGraphics();
         int windowWidth = frame.getContentPane().getWidth();
         int windowHeight = frame.getContentPane().getHeight();
